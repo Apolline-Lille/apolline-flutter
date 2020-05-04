@@ -53,63 +53,70 @@ class _SensorViewState extends State<SensorView> {
     });
   }
 
+  void handleServiceDiscovered(BluetoothService service)
+  {
+    if(service.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorServiceUUID)
+    {
+      updateState("Blue Sensor Dust Sensor found - configuring characteristic");
+      var characteristics = service.characteristics;
+      /* Search for the Dust Sensor characteristic */
+      for(BluetoothCharacteristic c in characteristics) {
+        if(c.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorCharacteristicUUID)
+        {
+          updateState("Characteristic found - reading, READ flag is " + c.properties.read.toString());
+
+          /* Enable notification */
+          updateState("Enable notification");
+
+          /* Enable notification */
+          c.setNotifyValue(true).then((s) {
+
+            /* Catch updates on characteristic  */
+            c.value.listen((value) {
+              _handleCharacteristicUpdate(value);
+            }
+            );
+
+            /* Now we tell the sensor to start sending data by sending char 'c' (?) */
+            updateState("Starting up streaming");
+            c.write([0x63]).then((s) {
+              print("Requested streaming start");
+            });
+          });
+        }
+      }
+    }
+  }
+
+  void handleDeviceConnect(BluetoothDevice d)
+  {
+    updateState("Configuring device");
+    List<BluetoothService> services;
+    d.discoverServices().then ((s) {
+
+      /* Discover services, and search for the Dust Sensor service */
+      s.forEach((service) {
+        handleServiceDiscovered(service);
+      });
+    });
+  }
+
   Future<void> initializeDevice()
   async {
     print("Connecting to device");
     await widget.device.connect();
 
-    /* TODO: check the appropriate service is discovered here */
-    //
-    updateState("Configuring device");
-    List<BluetoothService> services = await widget.device.discoverServices();
-
-    /* Discover services, and search for the Dust Sensor service */
-    services.forEach((service) async {
-      if(service.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorServiceUUID)
+    /* Listen on connection state changes */
+    var deviceStateSub = widget.device.state.listen((s) {
+      if(s == BluetoothDeviceState.connected)
         {
-          updateState("Blue Sensor Dust Sensor found - configuring characteristic");
-          var characteristics = service.characteristics;
-          /* Search for the Dust Sensor characteristic */
-          for(BluetoothCharacteristic c in characteristics) {
-            if(c.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorCharacteristicUUID)
-              {
-                /* Read the characteristic
-                TODO: this has been commented as it crashes the process.
-                But it seems to be required to initialize correctly the device...
-                 */
-                updateState("Characteristic found - reading");
-                //List<int> value = await c.read();
-
-                updateState("Enable notification");
-                /* Enable notification */
-                await c.setNotifyValue(true);
-
-                /* Catch updates */
-                c.value.listen((value) {
-                    _handleCharacteristicUpdate(value);
-                  }
-                );
-
-                updateState("Telling sensor to start sending data");
-                var descriptors = c.descriptors;
-                for(BluetoothDescriptor d in descriptors) {
-                  if(d.uuid.toString().toLowerCase() == BlueSensorAttributes.CLIENT_CHARACTERISTIC_CONFIG)
-                    {
-                      /* Write ENABLE_NOTIFICATION value */
-                      /* TODO: on iOS, this crashes as iOS is expecting another API call designed for this purposes, which FlutterBlue does not use */
-                      await d.write([0x01, 0x00]);
-                    }
-                }
-
-                /* Now we tell the sensor to start sending data by sending char 'c', but this won't work if we haven't read the characteristic previously. */
-                updateState("Starting up streaming");
-                await c.write([0x63]);
-
-              }
-
-          }
-        }
+          /* Perform device initialization */
+          handleDeviceConnect(widget.device);
+        } else {
+        /* TODO: Handle reconnection here */
+      }
     });
+
 
   }
 
