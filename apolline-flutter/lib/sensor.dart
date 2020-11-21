@@ -6,9 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-/**for charts*/
-import 'package:syncfusion_flutter_gauges/gauges.dart';
-
+import 'services/realtime_data_service.dart';
+import 'services/service_locator.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
 
@@ -29,6 +28,7 @@ class _SensorViewState extends State<SensorView> {
   bool initialized = false;
   StreamSubscription sub; //used for remove listening value to sensor
 
+  RealtimeDataService _dataService = locator<RealtimeDataService>();
   /* Called when data is received from the sensor */
   void _handleCharacteristicUpdate(List<int> value) {
     String s = String.fromCharCodes(value);
@@ -40,6 +40,7 @@ class _SensorViewState extends State<SensorView> {
       /* Split values in a parseable format, and send them to the UI */
       setState(() {
         lastReceivedData = SensorModel(values: values);
+        _dataService.update(values);
         initialized = true;
 
         /* Perform additional handling here */
