@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'bluetoothDevicesPage.dart';
-void main() => runApp(ApollineApp());
+import 'services/service_locator.dart';
 
+void main() {
+  setupServiceLocator();
+  runApp(ApollineApp());
+}
 // This acts as the landing window of the app.
 // Scans and displays Bluetooth devices in range, and allows to connect to them.
 
