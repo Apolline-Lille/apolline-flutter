@@ -8,6 +8,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 
 import 'services/realtime_data_service.dart';
 import 'services/service_locator.dart';
+import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
 
@@ -158,7 +159,7 @@ class _SensorViewState extends State<SensorView> {
       /* We got data : display them */
       return MaterialApp(
         home: DefaultTabController(
-          length: 2,
+          length: 3,
           child: Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.green,
@@ -166,6 +167,7 @@ class _SensorViewState extends State<SensorView> {
                   tabs: [
                     Tab(icon: Icon(Icons.home)),
                     Tab(icon: Icon(Icons.insert_chart)),
+                    Tab(icon: Icon(Icons.map)),
                   ],
                 ),
                 title: Text('Apolline'),
@@ -173,6 +175,7 @@ class _SensorViewState extends State<SensorView> {
               body: TabBarView(children: [
                 Quality(lastReceivedData: lastReceivedData),
                 Stats(dataSensor: lastReceivedData),
+                MapSample(),
               ])),
         ),
       );
