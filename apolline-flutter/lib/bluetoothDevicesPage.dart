@@ -29,28 +29,62 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   Map<String, BluetoothDevice> devices = {};
   Map<String, BluetoothDevice> pairedDevices = {};
   List<BluetoothDevice> alreadyUsedDevice = [];
-  
+
   @override
   void initState() {
     super.initState();
-     _performDetection();
+    initializeDevice();
+  }
+
+  ///
+  ///Permet de tester si le bluetooth est activé ou pas
+  Future<void> initializeDevice() async {
+    var isOn = await widget.flutterBlue.isOn;
+    if (isOn) {
+      _performDetection();
+    } else {
+      showDialogBluetooth();
+    }
+  }
+
+  ///
+  ///Afficher un message pour activer le bluetooth
+  void showDialogBluetooth() {
+    Widget okbtn = FlatButton(
+      child: Text("ok"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Alert"),
+      content: Text("Activez votre bluetooth pour détecter des appareils"),
+      actions: [okbtn],
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => alert,
+    );
   }
 
   /* Starts BLE detection */
   void _performDetection() {
-    
     // Start scanning
     setState(() {
       timeout = false;
     });
-    
+
     widget.flutterBlue.startScan(timeout: Duration(seconds: 10)).then((val) {
       setState(() {
         timeout = true;
       });
     });
 
-    widget.flutterBlue.connectedDevices.asStream().listen((List<BluetoothDevice> ds) {
+    widget.flutterBlue.connectedDevices
+        .asStream()
+        .listen((List<BluetoothDevice> ds) {
       for (BluetoothDevice device in ds) {
         setState(() {
           pairedDevices.putIfAbsent(device.id.toString(), () => device);
@@ -71,16 +105,17 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     });*/
   }
 
-  void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
+  void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l,
+      Function(List<Widget>, BluetoothDevice) cond) {
     devices.forEach((id, d) {
       if (cond(l, d))
         l.add(Card(
             child: ListTile(
-            title: Text(d.name),
-            subtitle: Text(id),
-            onTap: () {
-              connectToDevice(d, id);
-            },
+          title: Text(d.name),
+          subtitle: Text(id),
+          onTap: () {
+            connectToDevice(d, id);
+          },
         )));
     });
   }
@@ -98,7 +133,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     List<Widget> wList = new List<Widget>();
     /* Add the state label at the top */
     //wList.add(Text(state)); // TODO: remove
-    if(pairedDevices.length > 0) {
+    if (pairedDevices.length > 0) {
       wList.add(Text("Périphérique appairés"));
       _addWidgetDevices(pairedDevices, wList, _conditionForPaireddevices);
     }
@@ -107,7 +142,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     _addWidgetDevices(devices, wList, _conditionForDevices);
     /* Add a button for each device */
     /* TODO: filter device list */
-    
 
     return wList;
   }
@@ -119,11 +153,10 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     /* We selected a device - go to the device screen passing information about the selected device */
     var isconnected = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => SensorView(device: device)),
+      MaterialPageRoute(builder: (context) => SensorView(device: device)),
     );
 
-    if(isconnected) {
+    if (isconnected) {
       setState(() {
         devices.remove(id);
         pairedDevices.putIfAbsent(id, () => device);
@@ -134,22 +167,23 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///
   ///Exécuter lorsqu'on clique sur le button Annalyser ou Arreter
   void _onPressLookforButton() {
-    if(timeout == true) {
-      _performDetection();
+    if (timeout == true) {
+      initializeDevice();
     } else {
       widget.flutterBlue.stopScan();
     }
   }
 
   List<Widget> _buildChildrenButton() {
-    if(timeout) {
+    if (timeout) {
       return <Widget>[
         Text("Analyser"),
       ];
     } else {
       return <Widget>[
         SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Colors.blue), //TODO choisir une meilleur couleur
+          child: CircularProgressIndicator(
+              backgroundColor: Colors.blue), //TODO choisir une meilleur couleur
           width: 20,
           height: 20,
         ),
@@ -164,9 +198,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         onPressed: () {
           _onPressLookforButton();
         },
-        child: Row(
-          children: _buildChildrenButton()
-        ),
+        child: Row(children: _buildChildrenButton()),
       ),
     ];
     return wList;
@@ -194,8 +226,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: ListView(children: _buildDevicesList())
-      ),
+          child: ListView(children: _buildDevicesList())),
     );
   }
 }
