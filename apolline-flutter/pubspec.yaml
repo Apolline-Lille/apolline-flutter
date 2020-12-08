@@ -28,6 +28,7 @@ dependencies:
   get_it: ^5.0.1
   mp_chart: ^0.3.0
   google_maps_flutter: ^1.0.3
+  flutter_launcher_icons: ^0.8.1
 
 dev_dependencies:
   flutter_test:
