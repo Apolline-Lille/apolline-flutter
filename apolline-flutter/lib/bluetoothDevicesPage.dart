@@ -1,7 +1,6 @@
 import 'package:apollineflutter/sensor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class BluetoothDevicesPage extends StatefulWidget {
   BluetoothDevicesPage({Key key, this.title}) : super(key: key);
@@ -28,7 +27,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   bool timeout = true;
   Map<String, BluetoothDevice> devices = {};
   Map<String, BluetoothDevice> pairedDevices = {};
-  List<BluetoothDevice> alreadyUsedDevice = [];
 
   @override
   void initState() {
@@ -52,9 +50,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   void showDialogBluetooth() {
     Widget okbtn = FlatButton(
       child: Text("ok"),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
+      onPressed: () { Navigator.of(context).pop(); },
     );
 
     AlertDialog alert = AlertDialog(
@@ -94,15 +90,17 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     /* For each result, insert into the detected devices list if not already present */
     var subscription = widget.flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
-        setState(() {
-          devices.putIfAbsent(r.device.id.toString(), () => r.device);
-        });
+        if(r.device.name.length > 0) {
+          setState(() {
+            devices.putIfAbsent(r.device.id.toString(), () => r.device);
+          });
+        }
       }
     });
 
-    /*setState(() {
+    setState(() {
       state = "Detected devices:";
-    });*/
+    });
   }
 
   void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l,
