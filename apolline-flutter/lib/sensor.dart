@@ -2,15 +2,19 @@ import 'dart:async';
 
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/sensormodel.dart';
+import 'package:apollineflutter/utils/position.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:apollineflutter/models/sensor_device.dart';
 
 import 'services/realtime_data_service.dart';
 import 'services/service_locator.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
+import 'services/influxdb_client.dart';
+
 
 enum ConnexionType {Normal, Disconnect}
 
@@ -37,7 +41,8 @@ class _SensorViewState extends State<SensorView> {
   bool showErrorAction = false;
   Timer timer;
   ConnexionType connectType = ConnexionType.Normal;
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>(); 
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  InfluxDBAPI _service = InfluxDBAPI(); 
 
   RealtimeDataService _dataService = locator<RealtimeDataService>();
 
@@ -49,9 +54,11 @@ class _SensorViewState extends State<SensorView> {
     if (buf.contains('\n')) {
       print("Got full line: " + buf);
       List<String> values = buf.split(';');
+      var position = Position();
       /* Split values in a parseable format, and send them to the UI */
       setState(() {
-        lastReceivedData = SensorModel(values: values);
+        lastReceivedData = SensorModel(values: values, device: SensorDevice(widget.device), position: position);
+        _service.write(lastReceivedData.fmtToInfluxData());
         _dataService.update(values);
         initialized = true;
 

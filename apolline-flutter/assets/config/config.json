@@ -1,0 +1,6 @@
+{
+    "apiUrl": "http://192.168.0.33",
+    "password": "test",
+    "username": "test",
+    "dbname": "apolline"
+}
