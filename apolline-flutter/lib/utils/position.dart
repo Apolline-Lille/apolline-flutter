@@ -1,8 +1,6 @@
 
 class Position {
-  String provider;
-  String geohash;
-  String transport;
+  String provider, geohash, transport;
 
   Position({this.provider="no", this.geohash="no", this.transport="no"});
 

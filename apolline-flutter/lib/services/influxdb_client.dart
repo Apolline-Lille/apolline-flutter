@@ -7,10 +7,10 @@ import 'package:global_configuration/global_configuration.dart';
 ///
 ///
 class InfluxDBAPI {
-  final String _connectionString = "http://192.168.0.33";
-  final String _db = "apolline";
-  final String _username = "test";
-  final String _password = "test";
+  final String _connectionString = GlobalConfiguration().get("api_url");
+  final String _db = GlobalConfiguration().get("dbname");
+  final String _username = GlobalConfiguration().get("username");
+  final String _password = GlobalConfiguration().get("password");
   
   static final InfluxDBAPI _instance = InfluxDBAPI._internal();
   _InfluxDBClient client = _InfluxDBClient(http.Client());

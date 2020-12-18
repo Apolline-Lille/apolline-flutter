@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 import 'bluetoothDevicesPage.dart';
 import 'services/service_locator.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GlobalConfiguration().loadFromAsset("config_dev.json");
   setupServiceLocator();
   runApp(ApollineApp());
 }

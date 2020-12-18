@@ -30,6 +30,7 @@ dependencies:
   google_maps_flutter: ^1.0.3
   flutter_launcher_icons: ^0.8.1
   http: ^0.12.2
+  global_configuration: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -44,7 +45,7 @@ flutter:
 
   assets:
     - assets/sun.png
-    - assets/config/
+    - assets/cfg/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
