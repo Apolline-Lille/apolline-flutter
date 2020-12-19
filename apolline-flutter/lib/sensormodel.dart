@@ -46,8 +46,12 @@ class SensorModel {
   ///
   ///add one row for one properties.
   String addNestedData(String propertie, String value, String unit) {
+    var provider  = this.position?.provider ?? "no";
+    var geohash   = this.position?.geohash ?? "no";
+    var transport = this.position?.transport ?? "no";
+    var deviceName  = device?.deviceName ?? "Apolline00";
     return "$propertie,uuid=${BlueSensorAttributes.DustSensorServiceUUID},"+
-           "device=${device.deviceName},"+
+           "device=$deviceName,provider=$provider,geohash=$geohash,transport=$transport,"+
            "unit=$unit value=$value ${_date*1000000}";
   }
 

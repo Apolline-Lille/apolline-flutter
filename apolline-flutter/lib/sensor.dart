@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/sensormodel.dart';
 import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/services/location_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -42,7 +43,8 @@ class _SensorViewState extends State<SensorView> {
   Timer timer;
   ConnexionType connectType = ConnexionType.Normal;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  InfluxDBAPI _service = InfluxDBAPI(); 
+  InfluxDBAPI _service = InfluxDBAPI();
+  Position _currentPosition;
 
   RealtimeDataService _dataService = locator<RealtimeDataService>();
 
@@ -54,7 +56,7 @@ class _SensorViewState extends State<SensorView> {
     if (buf.contains('\n')) {
       print("Got full line: " + buf);
       List<String> values = buf.split(';');
-      var position = Position();
+      var position = this._currentPosition ?? Position();
       /* Split values in a parseable format, and send them to the UI */
       setState(() {
         lastReceivedData = SensorModel(values: values, device: SensorDevice(widget.device), position: position);
@@ -220,10 +222,17 @@ class _SensorViewState extends State<SensorView> {
     }
   }
 
+  void initializeLocation() {
+    SimpleLocationService().locationStream.listen((p) {
+      this._currentPosition = p;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     initializeDevice();
+    initializeLocation();
   }
 
   @override

@@ -1,5 +1,5 @@
 {
-    "api_url": "http://192.168.0.33",
+    "api_url": "http://192.168.43.103",
     "password": "test",
     "username": "test",
     "dbname": "apolline"

@@ -31,6 +31,10 @@ dependencies:
   flutter_launcher_icons: ^0.8.1
   http: ^0.12.2
   global_configuration: ^1.6.0
+  # hash localisation
+  geohash: ^0.2.1
+  # location
+  geolocator: ^6.1.13
 
 dev_dependencies:
   flutter_test:
