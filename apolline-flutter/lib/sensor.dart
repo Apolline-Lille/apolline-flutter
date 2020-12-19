@@ -17,7 +17,7 @@ import 'widgets/stats.dart';
 import 'services/influxdb_client.dart';
 
 
-enum ConnexionType {Normal, Disconnect}
+enum ConnexionType { Normal, Disconnect }
 
 class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
@@ -37,7 +37,8 @@ class _SensorViewState extends State<SensorView> {
   StreamSubscription sub; //used for remove listening value to sensor
   bool isConnected = false;
 
-  List<StreamSubscription> subs = []; //used for remove listening value to sensor
+  List<StreamSubscription> subs =
+      []; //used for remove listening value to sensor
   StreamSubscription subData;
   bool showErrorAction = false;
   Timer timer;
@@ -81,11 +82,12 @@ class _SensorViewState extends State<SensorView> {
   ///
   void handleNotification(BluetoothCharacteristic c) {
     subData = c.value.listen((value) {
-      if( connectType == ConnexionType.Disconnect ) { //tester si on est dans le cas d'une reconnexion
+      if (connectType == ConnexionType.Disconnect) {
+        //tester si on est dans le cas d'une reconnexion
         connectType = ConnexionType.Normal;
         showSnackbar("Capteur reconnecté !");
       }
-      
+
       _handleCharacteristicUpdate(value);
     });
 
@@ -94,28 +96,35 @@ class _SensorViewState extends State<SensorView> {
       //updateState("Starting up streaming");
       c.write([0x63]).then((s) {
         print("Requested streaming start");
-      }).catchError((e) { print(e); });
+      }).catchError((e) {
+        print(e);
+      });
     });
   }
 
   void handleServiceDiscovered(BluetoothService service) {
-    if(service.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorServiceUUID)
-    {
+    if (service.uuid.toString().toLowerCase() ==
+        BlueSensorAttributes.DustSensorServiceUUID) {
       updateState("Blue Sensor Dust Sensor found - configuring characteristic");
       var characteristics = service.characteristics;
 
       /* Search for the Dust Sensor characteristic */
-      for(BluetoothCharacteristic c in characteristics) {
-        if(c.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorCharacteristicUUID)
-        {
-          updateState("Characteristic found - reading, NOtification flag is " + c.properties.notify.toString());
+      for (BluetoothCharacteristic c in characteristics) {
+        if (c.uuid.toString().toLowerCase() ==
+            BlueSensorAttributes.DustSensorCharacteristicUUID) {
+          updateState("Characteristic found - reading, NOtification flag is " +
+              c.properties.notify.toString());
 
           /* Enable notification */
           updateState("Enable notification");
 
-          c.setNotifyValue(true).then((s) { /* Catch updates on characteristic  */})
-          .catchError((e) { print(e); })
-          .whenComplete(() { handleNotification(c); });
+          c.setNotifyValue(true).then((s) {
+            /* Catch updates on characteristic  */
+          }).catchError((e) {
+            print(e);
+          }).whenComplete(() {
+            handleNotification(c);
+          });
         }
       }
     }
@@ -123,11 +132,11 @@ class _SensorViewState extends State<SensorView> {
 
   ///
   ///Allows you to give information when you are unable to reconnect
-  Future<void> showInformation() async{
-    var text = "L'appareil sensor est soit éteint ou distant,"+
-               "veuillez vous assurez que l'appareil est chargé et près de votre téléphone;"+
-               " faite un retour en arrière ou fermé et réouvré l'application; " + 
-               "sinon contactez l'administrateur";
+  Future<void> showInformation() async {
+    var text = "L'appareil sensor est soit éteint ou distant," +
+        "veuillez vous assurez que l'appareil est chargé et près de votre téléphone;" +
+        " faite un retour en arrière ou fermé et réouvré l'application; " +
+        "sinon contactez l'administrateur";
     await showDialog(
       context: context,
       builder: (context) {
@@ -155,7 +164,7 @@ class _SensorViewState extends State<SensorView> {
   ///Function to be executed after disconnection
   void passDisconnect() {
     isConnected = false;
-    buf="";
+    buf = "";
     connectType = ConnexionType.Disconnect; //deconnexion
     timer?.cancel();
     setState(() {
@@ -168,7 +177,7 @@ class _SensorViewState extends State<SensorView> {
   ///Display a snackBar
   void showSnackbar(String msg) {
     var snackbar = SnackBar(content: Text(msg));
-    if(_scaffoldKey != null && _scaffoldKey.currentState != null) {
+    if (_scaffoldKey != null && _scaffoldKey.currentState != null) {
       _scaffoldKey.currentState.hideCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(snackbar);
     }
@@ -178,13 +187,13 @@ class _SensorViewState extends State<SensorView> {
   ///
   void handleDeviceConnect(BluetoothDevice d) {
     var sub = widget.device.state.listen((state) {
-      if(state == BluetoothDeviceState.disconnecting) {
-         /*TODO: detectecter quand cela arrive */
-      } else if(state == BluetoothDeviceState.disconnected) {
+      if (state == BluetoothDeviceState.disconnecting) {
+        /*TODO: detectecter quand cela arrive */
+      } else if (state == BluetoothDeviceState.disconnected) {
         passDisconnect();
-      } else if(state == BluetoothDeviceState.connected) {
+      } else if (state == BluetoothDeviceState.connected) {
         print("--------------------connected--------------");
-        if(connectType == ConnexionType.Disconnect && !isConnected) {
+        if (connectType == ConnexionType.Disconnect && !isConnected) {
           pastConnect();
         }
       } else {
@@ -210,8 +219,8 @@ class _SensorViewState extends State<SensorView> {
       await widget.device.connect();
       isConnected = true;
       /* TODO: voir s'il ya possibilité de négocier le mtu */
-    } catch(e) {
-      if(e.code != "already_connected") {
+    } catch (e) {
+      if (e.code != "already_connected") {
         throw e;
       }
       if (e.code == "already_connected") {
@@ -237,8 +246,10 @@ class _SensorViewState extends State<SensorView> {
 
   @override
   void dispose() {
-   subs.forEach((sub) { sub.cancel(); });
-    if(subData != null) {
+    subs.forEach((sub) {
+      sub.cancel();
+    });
+    if (subData != null) {
       subData.cancel();
     }
     timer?.cancel();
@@ -248,14 +259,15 @@ class _SensorViewState extends State<SensorView> {
   ///
   ///
   List<Widget> _buildAppBarAction() {
-    return showErrorAction ? <Widget>[
-      IconButton(
-        icon: Icon(Icons.error), 
-        onPressed: () {
-          showInformation();
-        }
-      )
-    ] : [];
+    return showErrorAction
+        ? <Widget>[
+            IconButton(
+                icon: Icon(Icons.error),
+                onPressed: () {
+                  showInformation();
+                })
+          ]
+        : [];
   }
 
   ///
@@ -277,9 +289,8 @@ class _SensorViewState extends State<SensorView> {
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-               Navigator.pop(context, isConnected);
-              }
-          ),
+                Navigator.pop(context, isConnected);
+              }),
           actions: _buildAppBarAction(),
         ),
         body: Center(
@@ -291,7 +302,7 @@ class _SensorViewState extends State<SensorView> {
       );
     } else {
       /* We got data : display them */
-     return WillPopScope(
+      return WillPopScope(
         onWillPop: _onWillPop,
         child: MaterialApp(
           home: DefaultTabController(
@@ -309,11 +320,13 @@ class _SensorViewState extends State<SensorView> {
                   ),
                   title: Text('Apolline'),
                 ),
-                body: TabBarView(children: [
-                  Quality(lastReceivedData: lastReceivedData),
-                  Stats(dataSensor: lastReceivedData),
-                  MapSample(),
-                ])),
+                body: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      Quality(lastReceivedData: lastReceivedData),
+                      Stats(dataSensor: lastReceivedData),
+                      MapSample(),
+                    ])),
           ),
         ),
       );
