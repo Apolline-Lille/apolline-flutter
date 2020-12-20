@@ -4,8 +4,8 @@ import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 
 ///
-///
-///Location service
+///Author (Issagha Barry)
+///Location service.
 class SimpleLocationService {
 
   ///current position.

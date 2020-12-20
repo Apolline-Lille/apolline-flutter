@@ -8,13 +8,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/models/sensor_device.dart';
+import 'package:apollineflutter/services/influxdb_client.dart';
 
 import 'services/realtime_data_service.dart';
 import 'services/service_locator.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
-import 'services/influxdb_client.dart';
 
 
 enum ConnexionType { Normal, Disconnect }
@@ -232,9 +232,10 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void initializeLocation() {
-    SimpleLocationService().locationStream.listen((p) {
+    var sub = SimpleLocationService().locationStream.listen((p) {
       this._currentPosition = p;
     });
+    subs.add(sub);
   }
 
   @override
