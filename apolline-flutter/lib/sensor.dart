@@ -23,7 +23,6 @@ class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
 
   final BluetoothDevice device;
-  bool isConnected = false;
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
@@ -34,7 +33,8 @@ class _SensorViewState extends State<SensorView> {
   String buf = "";
   SensorModel lastReceivedData;
   bool initialized = false;
-  StreamSubscription sub; //used for remove listening value to sensor
+  StreamSubscription subBluetoothState; //used for remove listening value to sensor
+  StreamSubscription subLocation;
   bool isConnected = false;
 
   List<StreamSubscription> subs =
@@ -151,26 +151,32 @@ class _SensorViewState extends State<SensorView> {
 
   ///
   ///Function to be executed after a connection
-  void pastConnect() {
-    isConnected = true;
+  void postConnect() {
     setState(() {
       showErrorAction = false;
     });
-    subData?.cancel();
     handleDeviceConnect(widget.device);
   }
 
   ///
   ///Function to be executed after disconnection
-  void passDisconnect() {
+  void postDisconnect() {
     isConnected = false;
     buf = "";
     connectType = ConnexionType.Disconnect; //deconnexion
-    timer?.cancel();
+    this.destroyStream();
     setState(() {
       showErrorAction = true;
     });
     showSnackbar("Connection perdu avec le capteur !");
+  }
+
+  ///use for prevent when setState call after dispose methode.
+  @override
+  void setState(fn) {
+    if(this.mounted){
+      super.setState(fn);
+    }
   }
 
   ///
@@ -184,58 +190,64 @@ class _SensorViewState extends State<SensorView> {
   }
 
   ///
-  ///
-  void handleDeviceConnect(BluetoothDevice d) {
-    var sub = widget.device.state.listen((state) {
+  ///listen device state.
+  void listenDeviceState() {
+    this.subBluetoothState = widget.device.state.listen((state) {
       if (state == BluetoothDeviceState.disconnecting) {
         /*TODO: detectecter quand cela arrive */
       } else if (state == BluetoothDeviceState.disconnected) {
-        passDisconnect();
+        postDisconnect();
       } else if (state == BluetoothDeviceState.connected) {
         print("--------------------connected--------------");
         if (connectType == ConnexionType.Disconnect && !isConnected) {
-          pastConnect();
+          postConnect();
         }
       } else {
         print("--------------------connecting------------");
       }
     });
-    subs.add(sub);
-
-    updateState("Configuring device");
-    List<BluetoothService> services;
-    d.discoverServices().then((s) {
-      /* Discover services, and search for the Dust Sensor service */
-      s.forEach((service) {
-        handleServiceDiscovered(service);
-      });
-    });
   }
 
+  ///
+  ///
+  void handleDeviceConnect(BluetoothDevice d) {
+    
+    if(!isConnected) {
+      isConnected = true;
+      updateState("Configuring device");
+      d.discoverServices().then((s) {
+        /* Discover services, and search for the Dust Sensor service */
+        s.forEach((service) {
+          handleServiceDiscovered(service);
+        });
+      });
+
+    }
+
+  }
+
+  ///
+  ///
   Future<void> initializeDevice() async {
     print("Connecting to device");
 
     try {
       await widget.device.connect();
-      isConnected = true;
       /* TODO: voir s'il ya possibilité de négocier le mtu */
     } catch (e) {
       if (e.code != "already_connected") {
         throw e;
       }
-      if (e.code == "already_connected") {
-        isConnected = true;
-      }
     } finally {
+      listenDeviceState();
       handleDeviceConnect(widget.device);
     }
   }
 
   void initializeLocation() {
-    var sub = SimpleLocationService().locationStream.listen((p) {
+    this.subLocation = SimpleLocationService().locationStream.listen((p) {
       this._currentPosition = p;
     });
-    subs.add(sub);
   }
 
   @override
@@ -245,15 +257,19 @@ class _SensorViewState extends State<SensorView> {
     initializeLocation();
   }
 
+  ///
+  ///detroy partiel stream when loose connection.
+  void destroyStream() {
+    this.subData?.cancel();
+    this.timer?.cancel();
+  }
+
   @override
   void dispose() {
-    subs.forEach((sub) {
-      sub.cancel();
-    });
-    if (subData != null) {
-      subData.cancel();
-    }
-    timer?.cancel();
+    this.destroyStream();
+    this.subBluetoothState?.cancel();
+    this.subLocation?.cancel();
+    widget.device.disconnect();
     super.dispose();
   }
 
