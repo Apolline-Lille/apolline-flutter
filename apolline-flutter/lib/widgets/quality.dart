@@ -122,52 +122,60 @@ class Quality extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(0),
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      crossAxisCount: 2,
-      children: <Widget>[
-        Container(
-          child: _buildGauge(
-              "PM1",
-              lastReceivedData.values[SensorModel.SENSOR_PM_1],
-              "µg/m3",
-              Colors.blueGrey,
-              new BoxDecoration()),
-        ),
-        Container(
-          child: _buildGauge(
-              "PM2.5",
-              lastReceivedData.values[SensorModel.SENSOR_PM_2_5],
-              "µg/m3",
-              Colors.blueGrey,
-              new BoxDecoration()),
-        ),
-        Container(
-          child: _buildGauge(
-              "PM10",
-              lastReceivedData.values[SensorModel.SENSOR_PM_10],
-              "µg/m3",
-              Colors.blueGrey,
-              new BoxDecoration()),
-        ),
-        Container(
-          child: _buildGauge(
-              "TEMPERATURE",
-              lastReceivedData.values[SensorModel.SENSOR_TEMP],
-              "°C",
-              Color(0xFFFFCD60),
-              new BoxDecoration(
-                  image: new DecorationImage(
-                      image: ExactAssetImage('assets/sun.png'),
-                      fit: BoxFit.fitHeight))),
-        ),
-        Container(
-            child: _buildGaugeBattery(
-                "BAT", lastReceivedData.values[SensorModel.SENSOR_VOLT]))
-      ],
+    return Scaffold(
+      body: OrientationBuilder(
+        builder: (BuildContext builContext, Orientation orientation) {
+          return Center(
+            child: GridView.count(
+              primary: false,
+              padding: const EdgeInsets.all(0),
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              crossAxisCount: orientation == Orientation.landscape ? 3 : 2,
+              children: <Widget>[
+                Container(
+                  child: _buildGauge(
+                      "PM1",
+                      lastReceivedData.values[SensorModel.SENSOR_PM_1],
+                      "µg/m3",
+                      Colors.blueGrey,
+                      new BoxDecoration()),
+                ),
+                Container(
+                  child: _buildGauge(
+                      "PM2.5",
+                      lastReceivedData.values[SensorModel.SENSOR_PM_2_5],
+                      "µg/m3",
+                      Colors.blueGrey,
+                      new BoxDecoration()),
+                ),
+                Container(
+                  child: _buildGauge(
+                      "PM10",
+                      lastReceivedData.values[SensorModel.SENSOR_PM_10],
+                      "µg/m3",
+                      Colors.blueGrey,
+                      new BoxDecoration()),
+                ),
+                Container(
+                  child: _buildGauge(
+                      "TEMPERATURE",
+                      lastReceivedData.values[SensorModel.SENSOR_TEMP],
+                      "°C",
+                      Color(0xFFFFCD60),
+                      new BoxDecoration(
+                          image: new DecorationImage(
+                              image: ExactAssetImage('assets/sun.png'),
+                              fit: BoxFit.fitHeight))),
+                ),
+                Container(
+                    child: _buildGaugeBattery("BAT",
+                        lastReceivedData.values[SensorModel.SENSOR_VOLT]))
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
