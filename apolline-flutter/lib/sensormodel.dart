@@ -17,6 +17,12 @@ class SensorModel {
   static const int SENSOR_TEMP = 17;
   static const int SENSOR_HUMI = 18;
   static const int SENSOR_VOLT = 19;
+  static const int SENSOR_PM_ABOVE_0_3 = 4;
+  static const int SENSOR_PM_ABOVE_0_5 = 5;
+  static const int SENSOR_PM_ABOVE_1 = 6;
+  static const int SENSOR_PM_ABOVE_2_5 = 7;
+  static const int SENSOR_PM_ABOVE_5 = 8;
+  static const int SENSOR_PM_ABOVE_10 = 9;
   SensorDevice device;
   int _date;
   Position position;
@@ -61,10 +67,17 @@ class SensorModel {
     var pm1  = addNestedData("pm.01.value", this.values[SENSOR_PM_1], Units.CONCENTRATION_UG_M3);
     var pm25 = addNestedData("pm.2_5.value", this.values[SENSOR_PM_2_5], Units.CONCENTRATION_UG_M3);
     var pm10 = addNestedData("pm.10.value", this.values[SENSOR_PM_10], Units.CONCENTRATION_UG_M3);
+    var pm03ab = addNestedData("pm.0_3.above", this.values[SENSOR_PM_ABOVE_0_3], Units.CONCENTRATION_ABOVE);
+    var pm05ab = addNestedData("pm.0_5.above", this.values[SENSOR_PM_ABOVE_0_5], Units.CONCENTRATION_ABOVE);
+    var pm1ab = addNestedData("pm.1.above", this.values[SENSOR_PM_ABOVE_1], Units.CONCENTRATION_ABOVE);
+    var pm25ab = addNestedData("pm.2_5.above", this.values[SENSOR_PM_ABOVE_2_5], Units.CONCENTRATION_ABOVE);
+    var pm5ab = addNestedData("pm.5.above", this.values[SENSOR_PM_ABOVE_5], Units.CONCENTRATION_ABOVE);
+    var pm10ab = addNestedData("pm.10.above", this.values[SENSOR_PM_ABOVE_10], Units.CONCENTRATION_ABOVE);
     var tmpC = addNestedData("temperature.c", this.values[SENSOR_TEMP], Units.TEMPERATURE_CELSIUS);
     var tmpK = addNestedData("temperature.k", this.temperatureK.toString(), Units.TEMPERATURE_KELVIN);
     var humi = addNestedData("humidity", this.values[SENSOR_HUMI], Units.PERCENTAGE);
     var humiC = addNestedData("humidity.compensated", this.humidityC.toString(), Units.PERCENTAGE);
-    return "$pm1\n$pm25\n$pm10\n$tmpC\n$tmpK\n$humi\n$humiC";
+
+    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$humi\n$humiC";
   }
 }

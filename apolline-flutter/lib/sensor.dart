@@ -36,6 +36,7 @@ class _SensorViewState extends State<SensorView> {
   StreamSubscription subBluetoothState; //used for remove listening value to sensor
   StreamSubscription subLocation;
   bool isConnected = false;
+  List<SensorModel> lastData = [];
 
   List<StreamSubscription> subs =
       []; //used for remove listening value to sensor
@@ -58,16 +59,30 @@ class _SensorViewState extends State<SensorView> {
       print("Got full line: " + buf);
       List<String> values = buf.split(';');
       var position = this._currentPosition ?? Position();
-      /* Split values in a parseable format, and send them to the UI */
+      
+      var model = SensorModel(values: values, device: SensorDevice(widget.device), position: position);
+      _service.write(model.fmtToInfluxData());
+      _dataService.update(values);
+      this.updateOrWriteData(model);
+      
       setState(() {
-        lastReceivedData = SensorModel(values: values, device: SensorDevice(widget.device), position: position);
-        _service.write(lastReceivedData.fmtToInfluxData());
-        _dataService.update(values);
+        lastReceivedData = model;
         initialized = true;
 
         /* Perform additional handling here */
       });
       buf = "";
+    }
+  }
+
+  void updateOrWriteData(SensorModel model) {
+    if(this.lastData.length >= 60) {
+      this.lastData.forEach((pModel) {
+        _service.write(pModel.fmtToInfluxData());
+      });
+      this.lastData.clear();
+    } else {
+      this.lastData.add(model);
     }
   }
 
