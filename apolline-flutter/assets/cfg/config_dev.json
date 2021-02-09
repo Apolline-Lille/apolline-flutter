@@ -1,7 +1,7 @@
 {
-    "api_url": "http://192.168.43.103",
-    "ping_url": "http://192.168.43.103/health",
-    "password": "test",
-    "username": "test",
+    "api_url": "http://192.168.0.33",
+    "ping_url": "http://192.168.0.33/health",
+    "password": "apollineapp",
+    "username": "apollineapp",
     "dbname": "apolline"
 }

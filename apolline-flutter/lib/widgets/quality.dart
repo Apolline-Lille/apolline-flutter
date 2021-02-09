@@ -1,4 +1,4 @@
-import 'package:apollineflutter/sensormodel.dart';
+import 'package:apollineflutter/models/sensormodel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

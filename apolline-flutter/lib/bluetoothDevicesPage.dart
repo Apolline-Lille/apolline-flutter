@@ -1,4 +1,6 @@
 import 'package:apollineflutter/sensor.dart';
+import 'package:apollineflutter/services/influxdb_client.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -27,6 +29,10 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   bool timeout = true;
   Map<String, BluetoothDevice> devices = {};
   Map<String, BluetoothDevice> pairedDevices = {};
+  // use for influxDB to send data to the back
+  InfluxDBAPI _service = InfluxDBAPI();
+  // use for sqfLite to save data in local
+  SqfLiteService _sqfLiteSerive = SqfLiteService();
 
   @override
   void initState() {
@@ -50,7 +56,9 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   void showDialogBluetooth() {
     Widget okbtn = FlatButton(
       child: Text("ok"),
-      onPressed: () { Navigator.of(context).pop(); },
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
     );
 
     AlertDialog alert = AlertDialog(
@@ -78,9 +86,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       });
     });
 
-    widget.flutterBlue.connectedDevices
-        .asStream()
-        .listen((List<BluetoothDevice> ds) {
+    widget.flutterBlue.connectedDevices.asStream().listen((List<BluetoothDevice> ds) {
       for (BluetoothDevice device in ds) {
         setState(() {
           pairedDevices.putIfAbsent(device.id.toString(), () => device);
@@ -90,7 +96,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     /* For each result, insert into the detected devices list if not already present */
     var subscription = widget.flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
-        if(r.device.name.length > 0) {
+        if (r.device.name.length > 0) {
           setState(() {
             devices.putIfAbsent(r.device.id.toString(), () => r.device);
           });
@@ -103,8 +109,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     });
   }
 
-  void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l,
-      Function(List<Widget>, BluetoothDevice) cond) {
+  void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
     devices.forEach((id, d) {
       if (cond(l, d))
         l.add(Card(
@@ -180,8 +185,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     } else {
       return <Widget>[
         SizedBox(
-          child: CircularProgressIndicator(
-              backgroundColor: Colors.blue), //TODO choisir une meilleur couleur
+          child: CircularProgressIndicator(backgroundColor: Colors.blue), //TODO choisir une meilleur couleur
           width: 20,
           height: 20,
         ),

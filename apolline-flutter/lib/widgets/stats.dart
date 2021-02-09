@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 
+import 'package:apollineflutter/models/sensormodel.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ import 'package:mp_chart/mp/core/enums/axis_dependency.dart';
 import 'package:mp_chart/mp/core/enums/x_axis_position.dart';
 import 'package:mp_chart/mp/core/highlight/highlight.dart';
 import 'package:mp_chart/mp/core/utils/color_utils.dart';
-import 'package:apollineflutter/sensormodel.dart';
 import 'package:mp_chart/mp/core/value_formatter/value_formatter.dart';
 
 class Stats extends StatefulWidget {
@@ -32,18 +32,24 @@ class Stats extends StatefulWidget {
 class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   StatsState({Key key, this.datas});
   RealtimeDataService _dataService = locator<RealtimeDataService>();
+  // stream to listen the arrival of new data 
   Stream<SensorModels> _dataStream = locator<RealtimeDataService>().dataStream;
+  // a controller with the stream it controls.
   StreamSubscription<SensorModels> _streamSubscription;
+  // contorller for chart
   LineChartController controller;
   SensorModel datas;
+  // Line PM1
   ILineDataSet setPM1;
+  // Line PM2.5
   ILineDataSet setPM2_5;
+  // Line PM10
   ILineDataSet setPM10;
   bool intialized = false;
   double i0 = 0;
   double i1 = 0;
   double i2 = 0;
-
+  // used to get format date
   List<String> _dataTimeX = List();
   @override
   void dispose() {
@@ -54,6 +60,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   @override
   void initState() {
     _initController();
+    // add point to chart after recieve newData
     _streamSubscription = _dataStream.listen((newData) {
       if (intialized) {
         _addEntry(
@@ -67,6 +74,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
       }
     });
     super.initState();
+    //create line for PM1, PM2.5 and PM10
     Timer(Duration(milliseconds: 0), () {
       LineData data = controller?.data;
       data = LineData();
@@ -81,6 +89,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     });
   }
 
+  // button to stop or play chart
   void _togglePulsar() {
     if (_dataService.isRunning) {
       _dataService.stop();
@@ -117,7 +126,8 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   Widget build(BuildContext context) {
     return getBody();
   }
-
+  
+  //init chart
   void _initController() {
     var desc = Description()..enabled = false;
     controller = LineChartController(
@@ -166,6 +176,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
 
   final List<Color> colors = ColorUtils.VORDIPLOM_COLORS;
 
+  // add point (x, y) for line which the index is setIndex
   void _addEntry(int setIndex, double x, double y) {
     LineData data = controller?.data;
 
@@ -182,6 +193,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     controller.state?.setStateIfNotDispose();
   }
 
+  // create line data for PM1
   LineDataSet _createSet() {
     LineDataSet set = LineDataSet(null, "PM 1");
     set.setLineWidth(2.5);
@@ -194,6 +206,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     return set;
   }
 
+  // create line data for PM2.5
   LineDataSet _createSet2() {
     LineDataSet set = LineDataSet(null, "PM 2.5");
     set.setLineWidth(2.5);
@@ -206,6 +219,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     return set;
   }
 
+  // create line data for PM10
   LineDataSet _createSet3() {
     LineDataSet set = LineDataSet(null, "PM 10");
     set.setLineWidth(2.5);
@@ -219,10 +233,12 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   }
 }
 
+// used to format date
 class A extends ValueFormatter {
   A(this._dataTimeX) : super();
 
   final List<String> _dataTimeX;
+  // get format date
   @override
   String getFormattedValue1(double value) {
     List<String> timeX =

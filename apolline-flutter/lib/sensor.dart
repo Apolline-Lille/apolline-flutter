@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:apollineflutter/gattsample.dart';
-import 'package:apollineflutter/sensormodel.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/utils/position.dart';
 import 'package:apollineflutter/services/location_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,14 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/models/sensor_device.dart';
 import 'package:apollineflutter/services/influxdb_client.dart';
-import 'package:apollineflutter/models/sensor_collection.dart';
-
+import 'models/sensormodel.dart';
 import 'services/realtime_data_service.dart';
 import 'services/service_locator.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
-
 
 enum ConnexionType { Normal, Disconnect }
 
@@ -37,19 +36,34 @@ class _SensorViewState extends State<SensorView> {
   StreamSubscription subBluetoothState; //used for remove listening value to sensor
   StreamSubscription subLocation;
   bool isConnected = false;
-  SensorCollection lastData = SensorCollection();
-
-  List<StreamSubscription> subs =
-      []; //used for remove listening value to sensor
+  List<StreamSubscription> subs = []; //used for remove listening value to sensor
   StreamSubscription subData;
   bool showErrorAction = false;
-  Timer timer;
+  Timer timer, timerSynchro;
   ConnexionType connectType = ConnexionType.Normal;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  // use for influxDB to send data to the back
   InfluxDBAPI _service = InfluxDBAPI();
+  // use for sqfLite to save data in local
+  SqfLiteService _sqfLiteService = SqfLiteService();
   Position _currentPosition;
 
   RealtimeDataService _dataService = locator<RealtimeDataService>();
+
+  void initializeLocation() {
+    this.subLocation = SimpleLocationService().locationStream.listen((p) {
+      this._currentPosition = p;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDevice();
+    initializeLocation();
+    //synchronisation data
+    this.timerSynchro = Timer.periodic(Duration(seconds: 120), (Timer t) => synchronizeData());
+  }
 
   /* Called when data is received from the sensor */
   void _handleCharacteristicUpdate(List<int> value) {
@@ -60,11 +74,12 @@ class _SensorViewState extends State<SensorView> {
       print("Got full line: " + buf);
       List<String> values = buf.split(';');
       var position = this._currentPosition ?? Position();
-      
+
       var model = SensorModel(values: values, device: SensorDevice(widget.device), position: position);
       _dataService.update(values);
-      this.updateOrWriteData(model);
-      
+      /* insert to sqflite */
+      _sqfLiteService.insertSensor(model.toJSON());
+
       setState(() {
         lastReceivedData = model;
         initialized = true;
@@ -75,13 +90,35 @@ class _SensorViewState extends State<SensorView> {
     }
   }
 
-  void updateOrWriteData(SensorModel model) {
-    if(this.lastData.length >= 60) {
-      _service.write(this.lastData.fmtToInfluxData());
-      this.lastData.clear();
-    } else {
-      this.lastData.addModel(model);
-    }
+  // Synchronsation data sensor
+  void synchronizeData() {
+    // find all data not synchronisation
+    int pagination = 160;
+    _sqfLiteService.getAllSensorModelsNotSyncro().then((sensormodels) {
+      if (sensormodels.length > 0) {
+        // Pagination data before sending to influxDB
+        var iter = (sensormodels.length / pagination).ceil();
+        for (var i = 0; i < iter; i++) {
+          int start = i * pagination;
+          int end = (i + 1) * pagination;
+          if (1 == iter || i + 1 == iter) {
+            end = sensormodels.length;
+          }
+          var sousList = sensormodels.sublist(start, end);
+          //Send data to influxDB
+          _service.write(SensorModel.sensorsFmtToInfluxData(sousList)).then((_) {
+            List<int> ids = [];
+            sensormodels.forEach((sousList) {
+              ids.add(sousList.id);
+            });
+            //Update data (synchronisation) in sqfLite
+            _sqfLiteService.updateSensorSynchronisation(ids);
+          }).catchError((error) {
+            print(error);
+          });
+        }
+      }
+    });
   }
 
   void updateState(String st) {
@@ -116,17 +153,14 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void handleServiceDiscovered(BluetoothService service) {
-    if (service.uuid.toString().toLowerCase() ==
-        BlueSensorAttributes.DustSensorServiceUUID) {
+    if (service.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorServiceUUID) {
       updateState("Blue Sensor Dust Sensor found - configuring characteristic");
       var characteristics = service.characteristics;
 
       /* Search for the Dust Sensor characteristic */
       for (BluetoothCharacteristic c in characteristics) {
-        if (c.uuid.toString().toLowerCase() ==
-            BlueSensorAttributes.DustSensorCharacteristicUUID) {
-          updateState("Characteristic found - reading, NOtification flag is " +
-              c.properties.notify.toString());
+        if (c.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorCharacteristicUUID) {
+          updateState("Characteristic found - reading, NOtification flag is " + c.properties.notify.toString());
 
           /* Enable notification */
           updateState("Enable notification");
@@ -174,10 +208,10 @@ class _SensorViewState extends State<SensorView> {
   ///
   ///Function to be executed after disconnection
   void postDisconnect() {
-    isConnected = false;
     buf = "";
-    connectType = ConnexionType.Disconnect; //deconnexion
     this.destroyStream();
+    isConnected = false;
+    connectType = ConnexionType.Disconnect; //deconnexion
     setState(() {
       showErrorAction = true;
     });
@@ -187,7 +221,7 @@ class _SensorViewState extends State<SensorView> {
   ///use for prevent when setState call after dispose methode.
   @override
   void setState(fn) {
-    if(this.mounted){
+    if (this.mounted) {
       super.setState(fn);
     }
   }
@@ -209,10 +243,12 @@ class _SensorViewState extends State<SensorView> {
       if (state == BluetoothDeviceState.disconnecting) {
         /*TODO: detectecter quand cela arrive */
       } else if (state == BluetoothDeviceState.disconnected) {
+        print("--------------------disconnected--------------");
         postDisconnect();
       } else if (state == BluetoothDeviceState.connected) {
         print("--------------------connected--------------");
         if (connectType == ConnexionType.Disconnect && !isConnected) {
+          print("-------------------connectedExécute---------");
           postConnect();
         }
       } else {
@@ -224,8 +260,7 @@ class _SensorViewState extends State<SensorView> {
   ///
   ///
   void handleDeviceConnect(BluetoothDevice d) {
-    
-    if(!isConnected) {
+    if (!isConnected) {
       isConnected = true;
       updateState("Configuring device");
       d.discoverServices().then((s) {
@@ -234,9 +269,7 @@ class _SensorViewState extends State<SensorView> {
           handleServiceDiscovered(service);
         });
       });
-
     }
-
   }
 
   ///
@@ -257,19 +290,6 @@ class _SensorViewState extends State<SensorView> {
     }
   }
 
-  void initializeLocation() {
-    this.subLocation = SimpleLocationService().locationStream.listen((p) {
-      this._currentPosition = p;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initializeDevice();
-    initializeLocation();
-  }
-
   ///
   ///detroy partiel stream when loose connection.
   void destroyStream() {
@@ -283,6 +303,7 @@ class _SensorViewState extends State<SensorView> {
     this.subBluetoothState?.cancel();
     this.subLocation?.cancel();
     widget.device.disconnect();
+    this.timerSynchro?.cancel();
     super.dispose();
   }
 
@@ -350,13 +371,11 @@ class _SensorViewState extends State<SensorView> {
                   ),
                   title: Text('Apolline'),
                 ),
-                body: TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
-                    children: [
-                      Quality(lastReceivedData: lastReceivedData),
-                      Stats(dataSensor: lastReceivedData),
-                      MapSample(),
-                    ])),
+                body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
+                  Quality(lastReceivedData: lastReceivedData),
+                  Stats(dataSensor: lastReceivedData),
+                  MapSample(),
+                ])),
           ),
         ),
       );

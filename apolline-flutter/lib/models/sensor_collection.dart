@@ -1,4 +1,4 @@
-import 'package:apollineflutter/sensormodel.dart';
+import 'package:apollineflutter/models/sensormodel.dart';
 
 class SensorCollection {
 
