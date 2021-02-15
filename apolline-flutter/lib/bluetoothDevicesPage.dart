@@ -3,6 +3,9 @@ import 'package:apollineflutter/services/influxdb_client.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:apollineflutter/services/local_persistant_service.dart';
+import 'package:apollineflutter/services/user_configuration_service.dart';
+import 'package:apollineflutter/services/service_locator.dart';
 
 class BluetoothDevicesPage extends StatefulWidget {
   BluetoothDevicesPage({Key key, this.title}) : super(key: key);
@@ -33,11 +36,16 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   InfluxDBAPI _service = InfluxDBAPI();
   // use for sqfLite to save data in local
   SqfLiteService _sqfLiteSerive = SqfLiteService();
+  ///user configuration in the ui
+  UserConfigurationService ucS = locator<UserConfigurationService>();
 
   @override
   void initState() {
     super.initState();
-    initializeDevice();
+    //initializeDevice();
+    this.ucS.addListener(() {
+      LocalKeyValuePersistance.saveObject("userconf", ucS.userConf.toJson());
+    });
   }
 
   ///

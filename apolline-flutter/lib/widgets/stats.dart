@@ -33,9 +33,9 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   StatsState({Key key, this.datas});
   RealtimeDataService _dataService = locator<RealtimeDataService>();
   // stream to listen the arrival of new data 
-  Stream<SensorModels> _dataStream = locator<RealtimeDataService>().dataStream;
+  Stream<SensorModel> _dataStream = locator<RealtimeDataService>().dataStream;
   // a controller with the stream it controls.
-  StreamSubscription<SensorModels> _streamSubscription;
+  StreamSubscription<SensorModel> _streamSubscription;
   // contorller for chart
   LineChartController controller;
   SensorModel datas;

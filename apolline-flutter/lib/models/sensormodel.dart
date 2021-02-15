@@ -38,7 +38,7 @@ class SensorModel {
   ///
   ///constructor of senorModel.
   SensorModel({this.values, this.device, this.position}) {
-    this._date = DateTime.now().microsecondsSinceEpoch;
+    this._date = DateTime.now().millisecondsSinceEpoch;
   }
 
   ///
@@ -52,6 +52,12 @@ class SensorModel {
   ///return the temperature in kelvin.
   double get temperatureK {
     return double.parse(this.values[SENSOR_TEMP]) + 273.15;
+  }
+
+  ///
+  ///return the pm 25 value
+  double get pm25value {
+    return double.parse(this.values[SENSOR_PM_2_5]);
   }
 
   ///

@@ -5,20 +5,21 @@ import 'package:apollineflutter/exception/bad_request_exception.dart';
 import 'package:apollineflutter/exception/lost_connection_exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:global_configuration/global_configuration.dart';
+import 'package:apollineflutter/configuration_key_name.dart';
 
 ///Author (Issagha Barry)
 ///Influx db api.
 class InfluxDBAPI {
   ///the address where to save data.
-  final String _connectionString = GlobalConfiguration().get("api_url");
+  final String _connectionString = GlobalConfiguration().get(ApollineConf.API_URL);
   ///the name of database.
-  final String _db = GlobalConfiguration().get("dbname");
+  final String _db = GlobalConfiguration().get(ApollineConf.DBNAME);
   ///the user.
-  final String _username = GlobalConfiguration().get("username");
+  final String _username = GlobalConfiguration().get(ApollineConf.USERNAME);
   ///the password.
-  final String _password = GlobalConfiguration().get("password");
+  final String _password = GlobalConfiguration().get(ApollineConf.PASSWORD);
   ///the health url
-  final String _pingUrl = GlobalConfiguration().get("ping_url");
+  final String _pingUrl = GlobalConfiguration().get(ApollineConf.PING_URL);
   
   static final InfluxDBAPI _instance = InfluxDBAPI._internal();
   _InfluxDBClient client = _InfluxDBClient(http.Client());

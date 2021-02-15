@@ -16,6 +16,7 @@ import 'services/service_locator.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
+import 'package:apollineflutter/services/service_locator.dart';
 
 enum ConnexionType { Normal, Disconnect }
 
@@ -76,7 +77,7 @@ class _SensorViewState extends State<SensorView> {
       var position = this._currentPosition ?? Position();
 
       var model = SensorModel(values: values, device: SensorDevice(widget.device), position: position);
-      _dataService.update(values);
+      _dataService.update(model);
       /* insert to sqflite */
       _sqfLiteService.insertSensor(model.toJSON());
 

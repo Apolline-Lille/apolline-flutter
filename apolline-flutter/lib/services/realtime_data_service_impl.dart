@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'realtime_data_service.dart';
+import 'package:apollineflutter/models/sensormodel.dart';
 
 class RealtimeDataServiceImpl extends RealtimeDataService {
-  StreamController<SensorModels> _streamController;
+  StreamController<SensorModel> _streamController;
   List<String> values = [];
   // ignore: non_constant_identifier_names
   bool is_running = true;
@@ -32,7 +33,7 @@ class RealtimeDataServiceImpl extends RealtimeDataService {
   }
 
   @override
-  Stream<SensorModels> get dataStream {
+  Stream<SensorModel> get dataStream {
     if (_streamController == null) {
       _streamController = StreamController.broadcast(
         onListen: start,
@@ -48,11 +49,11 @@ class RealtimeDataServiceImpl extends RealtimeDataService {
   }
 
   @override
-  void update(List<String> newValues) {
+  void update(SensorModel newValues) {
     // values = newValues;
     if (_streamController != null && is_running == true) {
-      values = newValues;
-      _streamController.add(SensorModels(newValues));
+      values = newValues.values;
+      _streamController.add(newValues);
     }
   }
 }
