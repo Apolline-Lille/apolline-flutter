@@ -3,6 +3,7 @@ import 'dart:async';
 import 'realtime_data_service.dart';
 import 'package:apollineflutter/models/sensormodel.dart';
 
+/// RealtimeDataServiceImpl to implement method for the service
 class RealtimeDataServiceImpl extends RealtimeDataService {
   StreamController<SensorModel> _streamController;
   List<String> values = [];

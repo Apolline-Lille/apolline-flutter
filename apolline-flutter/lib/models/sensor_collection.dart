@@ -1,25 +1,31 @@
 import 'package:apollineflutter/models/sensormodel.dart';
 
-class SensorCollection {
 
+/// Sensore Collection used to make last data in collection 
+class SensorCollection {
+  // to stock lastData
   List<SensorModel> lastData;
 
   int get length {
     return this.lastData.length;
   }
 
+  /// Conctructor
   SensorCollection() {
     this.lastData = [];
   }
-
+  
+  /// Add a sensor model to lastData collection
   void addModel(SensorModel model) {
     this.lastData.add(model);
   }
 
+  /// Clean collection
   void clear() {
     this.lastData.clear();
   }
-
+  
+  /// make data in send format
   String fmtToInfluxData() {
     var result = "";
 

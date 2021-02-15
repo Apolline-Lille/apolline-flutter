@@ -139,6 +139,7 @@ class MapUiBodyState extends State<MapUiBody> {
     return await rootBundle.loadString(path);
   }
 
+  /// to change map stype like mode night
   void _setMapStyle(String mapStyle) {
     setState(() {
       _nightMode = true;
@@ -352,7 +353,7 @@ class MapUiBodyState extends State<MapUiBody> {
         var json = SimpleGeoHash.decode(position.geohash);
         this._kInitialPosition = CameraPosition(
           target: LatLng(json["latitude"], json["longitude"]),
-          zoom: 19.0,
+          zoom: 18.0,
         );
         
       }

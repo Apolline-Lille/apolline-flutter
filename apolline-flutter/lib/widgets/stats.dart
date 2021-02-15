@@ -79,11 +79,11 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
       LineData data = controller?.data;
       data = LineData();
       controller.data = data;
-      setPM1 = _createSet();
+      setPM1 = _createSet("PM1", Colors.black);
       data.addDataSet(setPM1);
-      setPM2_5 = _createSet2();
+      setPM2_5 = _createSet("PM2.5", Colors.red);
       data.addDataSet(setPM2_5);
-      setPM10 = _createSet3();
+      setPM10 = _createSet("PM10", Colors.yellow);
       data.addDataSet(setPM10);
       intialized = true;
     });
@@ -193,38 +193,12 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     controller.state?.setStateIfNotDispose();
   }
 
-  // create line data for PM1
-  LineDataSet _createSet() {
-    LineDataSet set = LineDataSet(null, "PM 1");
+  // create line data for PM1, PM10, PM2.5
+  LineDataSet _createSet(String name, Color color) {
+    LineDataSet set = LineDataSet(null, name);
     set.setLineWidth(2.5);
     set.setCircleRadius(4.5);
-    set.setColor1(Color.fromARGB(255, 240, 99, 99));
-    set.setCircleColor(Color.fromARGB(255, 240, 99, 99));
-    set.setHighLightColor(Color.fromARGB(255, 190, 190, 190));
-    set.setAxisDependency(AxisDependency.LEFT);
-    set.setValueTextSize(10);
-    return set;
-  }
-
-  // create line data for PM2.5
-  LineDataSet _createSet2() {
-    LineDataSet set = LineDataSet(null, "PM 2.5");
-    set.setLineWidth(2.5);
-    set.setCircleRadius(4.5);
-    set.setColor1(Color.fromARGB(100, 0, 255, 99));
-    set.setCircleColor(Color.fromARGB(255, 240, 99, 99));
-    set.setHighLightColor(Color.fromARGB(255, 190, 190, 190));
-    set.setAxisDependency(AxisDependency.LEFT);
-    set.setValueTextSize(10);
-    return set;
-  }
-
-  // create line data for PM10
-  LineDataSet _createSet3() {
-    LineDataSet set = LineDataSet(null, "PM 10");
-    set.setLineWidth(2.5);
-    set.setCircleRadius(4.5);
-    set.setColor1(Color.fromARGB(120, 0, 99, 99));
+    set.setColor1(color);
     set.setCircleColor(Color.fromARGB(255, 240, 99, 99));
     set.setHighLightColor(Color.fromARGB(255, 190, 190, 190));
     set.setAxisDependency(AxisDependency.LEFT);
