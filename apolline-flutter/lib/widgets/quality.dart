@@ -9,6 +9,7 @@ class Quality extends StatelessWidget {
 
   Quality({Key key, this.lastReceivedData}) : super(key: key);
 
+  //Commun method to create similar gauge (PM1, PM2.5 , PM10 and TEMPERATURE)
   SfRadialGauge _buildGauge(String title, String data, String unit, Color color,
       BoxDecoration boxDecoration) {
     return SfRadialGauge(title: GaugeTitle(text: title), axes: <RadialAxis>[
@@ -50,6 +51,7 @@ class Quality extends StatelessWidget {
     ]);
   }
 
+  //Build BATTERY gauge
   SfRadialGauge _buildGaugeBattery(String title, String data) {
     String level;
     double pointer;
@@ -74,32 +76,38 @@ class Quality extends StatelessWidget {
       level = "20";
       pointer = 20;
     }
+    //Creates Battery gauge parts
     return SfRadialGauge(title: GaugeTitle(text: title), axes: <RadialAxis>[
       RadialAxis(minimum: 0, maximum: 100, ranges: <GaugeRange>[
+        //first part
         GaugeRange(
             startValue: 0,
             endValue: 20,
             color: Colors.red,
             startWidth: 10,
             endWidth: 10),
+        //second part
         GaugeRange(
             startValue: 20,
             endValue: 40,
             color: Colors.orange,
             startWidth: 10,
             endWidth: 10),
+        //third part
         GaugeRange(
             startValue: 40,
             endValue: 60,
             color: Colors.green[200],
             startWidth: 10,
             endWidth: 10),
+        //forth part
         GaugeRange(
             startValue: 60,
             endValue: 80,
             color: Colors.green[300],
             startWidth: 10,
             endWidth: 10),
+        //fifth part
         GaugeRange(
             startValue: 80,
             endValue: 100,
@@ -120,6 +128,7 @@ class Quality extends StatelessWidget {
     ]);
   }
 
+  //Build gauges
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,16 +140,19 @@ class Quality extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
+              //displays 3 gauges when screen is horizontal and 2 when is vertical
               crossAxisCount: orientation == Orientation.landscape ? 3 : 2,
               children: <Widget>[
+                //creates PM1 gauge
                 Container(
                   child: _buildGauge(
-                      "PM1",
-                      lastReceivedData.values[SensorModel.SENSOR_PM_1],
-                      "µg/m3",
-                      Colors.blueGrey,
-                      new BoxDecoration()),
+                      "PM1", //title
+                      lastReceivedData.values[SensorModel.SENSOR_PM_1], //data
+                      "µg/m3", //unit
+                      Colors.blueGrey, //color
+                      new BoxDecoration()), //box
                 ),
+                //creates PM2.5 gauge
                 Container(
                   child: _buildGauge(
                       "PM2.5",
@@ -149,6 +161,7 @@ class Quality extends StatelessWidget {
                       Colors.blueGrey,
                       new BoxDecoration()),
                 ),
+                //creates PM10 gauge
                 Container(
                   child: _buildGauge(
                       "PM10",
@@ -157,6 +170,7 @@ class Quality extends StatelessWidget {
                       Colors.blueGrey,
                       new BoxDecoration()),
                 ),
+                //creates TEMPERATURE gauge
                 Container(
                   child: _buildGauge(
                       "TEMPERATURE",
@@ -165,9 +179,11 @@ class Quality extends StatelessWidget {
                       Color(0xFFFFCD60),
                       new BoxDecoration(
                           image: new DecorationImage(
-                              image: ExactAssetImage('assets/sun.png'),
+                              image: ExactAssetImage(
+                                  'assets/sun.png'), //creates image for temperature gauge
                               fit: BoxFit.fitHeight))),
                 ),
+                //creates BATTERY gauge
                 Container(
                     child: _buildGaugeBattery("BAT",
                         lastReceivedData.values[SensorModel.SENSOR_VOLT]))
