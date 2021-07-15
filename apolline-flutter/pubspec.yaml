@@ -12,6 +12,7 @@ description: Apolline sensors app
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.0+1
+publish_to: none
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -26,7 +27,11 @@ dependencies:
   cupertino_icons: ^0.1.2
   syncfusion_flutter_gauges: ^18.2.55
   get_it: ^5.0.1
-  mp_chart: ^0.3.0
+  mp_chart:
+    git:
+      url: git://github.com/f69/MPFlutterChart.git
+      ref: master
+      path: mp_chart
   google_maps_flutter: ^1.0.6
   flutter_launcher_icons: ^0.8.1
   http: ^0.12.2
