@@ -47,10 +47,6 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-      - name: Moving to project directory
-        run: cd apolline-flutter
-      - name: Installing dependencies
-        run: flutter pub get
 
       - name: Generating configuration file
         env:
@@ -59,6 +55,11 @@ jobs:
           APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
           APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
         run: dart scripts/configuration_generation.dart
+
+      - name: Moving to project directory
+        run: cd apolline-flutter
+      - name: Installing dependencies
+        run: flutter pub get
 
       - name: Build Apolline APK
         run: flutter build apk
