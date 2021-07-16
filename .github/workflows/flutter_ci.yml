@@ -16,7 +16,10 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-      - run: cd apolline-flutter && flutter pub get
+      - name: Moving to project directory
+        run: cd apolline-flutter
+      - name: Installing dependencies
+        run: flutter pub get
       - name: Lint analysis
         run: flutter analyze
 
@@ -35,7 +38,10 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-      - run: flutter pub get
+      - name: Moving to project directory
+        run: cd apolline-flutter
+      - name: Installing dependencies
+        run: flutter pub get
 
       - name: Generating configuration file
         env:
