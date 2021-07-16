@@ -1,5 +1,5 @@
 name: Flutter CI
-on: [push, pull_request]
+on: [push]
 env:
   FLUTTER_VERSION: '2.0.3'
 
