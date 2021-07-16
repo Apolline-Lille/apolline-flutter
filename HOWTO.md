@@ -12,6 +12,14 @@ flutter devices //pour vérifier si votre appareil android est reconnu
 flutter run //pour faire tourner la simulation.
 ```
 
+## Backend configuration generation
+
+Before running the application, you MUST generate endpoint configuration by running:
+```shell script
+dart scripts/configuration_generation.dart
+```
+Then, you can set variables in the `apolline-flutter/assets/cfg/config_dev.json` file.
+
 
 ## Structuration du projet
 --------------------------
@@ -60,28 +68,7 @@ Le développement est fait principalement dans le dossier *lib*, avec quelque ma
 - Le dossier *lib/utils* contient des utilitaires pour la position et encode de la position
 - Le dossier *lib/widget* contient la page des mesures de l'air, un diagramme de ces données, et une carte avec des points de chaleur
 - le fichier *main.dart* est l'entré de l'application
-- la possibilité d'utiliser les fichiers *main_prod.dart* et *main_dev.dart* pour de l'intégration continue, un exemple de ma configuration vscode pour le debug dans le fichier lauch.json
 
-```
-"configurations": [
-    {
-        "name": "apolline dev",
-        "cwd": "apolline-flutter",
-        "request": "launch",
-        "type": "dart",
-        "program": "lib/main_dev.dart",
-        "flutterMode": "debug"
-    },
-    {
-        "name": "apolline prod",
-        "cwd": "apolline-flutter",
-        "request": "launch",
-        "type": "dart",
-        "program": "lib/main_prod.dart",
-        "flutterMode": "release"
-    }
-]
-```
 <br/>
 
 ## Fonctionnement du projet
