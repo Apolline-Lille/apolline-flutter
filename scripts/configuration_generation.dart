@@ -1,7 +1,7 @@
 import 'dart:io';
 
 Future<void> main() async {
-  final filename = 'apolline-flutter/assets/cfg/config_dev.json';
+  final filename = 'apolline-flutter/assets/config_dev.json';
   File(filename).writeAsString(
       """{
     "api_url": "${Platform.environment['APOLLINE_API_URL']}",

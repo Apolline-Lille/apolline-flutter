@@ -18,7 +18,7 @@ Before running the application, you MUST generate endpoint configuration by runn
 ```shell script
 dart scripts/configuration_generation.dart
 ```
-Then, you can set variables in the `apolline-flutter/assets/cfg/config_dev.json` file.
+Then, you can set variables in the `apolline-flutter/assets/config_dev.json` file.
 
 
 ## Structuration du projet
