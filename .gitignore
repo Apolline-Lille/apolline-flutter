@@ -888,3 +888,4 @@ DerivedData/
 
 ### Configuration files
 apolline-flutter/assets/cfg/*.json
+!apolline-flutter/assets/cfg
