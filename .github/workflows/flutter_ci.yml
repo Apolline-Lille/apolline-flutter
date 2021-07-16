@@ -16,7 +16,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-      - run: flutter pub get
+      - run: cd apolline-flutter && flutter pub get
       - name: Lint analysis
         run: flutter analyze
 
