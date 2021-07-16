@@ -80,7 +80,7 @@ class SensorModel {
     var geohash = this.position?.geohash ?? "no";
     var transport = this.position?.transport ?? "no";
     var deviceName = device?.deviceName ?? "Apolline00";
-    return "$propertie,uuid=${BlueSensorAttributes.DustSensorServiceUUID}," +
+    return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
         "device=$deviceName,provider=$provider,geohash=$geohash,transport=$transport," +
         "unit=$unit value=$value ${_date * 1000000}";
   }
@@ -118,7 +118,7 @@ class SensorModel {
   Map<String, dynamic> toJSON() {
     var json = Map<String, dynamic>();
     json["deviceName"] = device?.deviceName ?? "Apolline00";
-    json["uuid"] = BlueSensorAttributes.DustSensorServiceUUID;
+    json["uuid"] = BlueSensorAttributes.dustSensorServiceUUID;
     json["provider"] = this.position?.provider ?? "no";
     json["geohash"] = this.position?.geohash ?? "no";
     json["transport"] = this.position?.transport ?? "no";

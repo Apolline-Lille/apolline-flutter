@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
@@ -85,9 +84,6 @@ class MapUiBodyState extends State<MapUiBody> {
     zoom: 11.0,
   );
 
-  CameraPosition _position;
-  bool _isMapCreated = false;
-  bool _isMoving = false;
   bool _compassEnabled = true;
   bool _mapToolbarEnabled = true;
   CameraTargetBounds _cameraTargetBounds = CameraTargetBounds.unbounded;
@@ -103,13 +99,11 @@ class MapUiBodyState extends State<MapUiBody> {
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
-  bool _nightMode = false;
 
   @override
   void initState() {
     super.initState();
     this._circles = HashSet<Circle>();
-    this._position = this._kInitialPosition;
     this.getSensorDataAfterDate();
     this.listenSensorData();
   }
@@ -133,18 +127,6 @@ class MapUiBodyState extends State<MapUiBody> {
   void dispose() {
     this._sub?.cancel();
     super.dispose();
-  }
-
-  Future<String> _getFileData(String path) async {
-    return await rootBundle.loadString(path);
-  }
-
-  /// to change map stype like mode night
-  void _setMapStyle(String mapStyle) {
-    setState(() {
-      _nightMode = true;
-      _controller.setMapStyle(mapStyle);
-    });
   }
 
   ///
@@ -223,27 +205,6 @@ class MapUiBodyState extends State<MapUiBody> {
     }
   }
 
-  ///
-  ///Not used, help to change in night mode.
-  Widget _nightModeToggler() {
-    if (!_isMapCreated) {
-      return null;
-    }
-    return FlatButton(
-      //child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
-      onPressed: () {
-        if (_nightMode) {
-          setState(() {
-            _nightMode = false;
-            _controller.setMapStyle(null);
-          });
-        } else {
-          _getFileData('assets/night_mode.json').then(_setMapStyle);
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final GoogleMap googleMap = GoogleMap(
@@ -294,7 +255,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///Call when cameraPosition update
   void _updateCameraPosition(CameraPosition position) {
-    _position = position;
+    //_position = position;
   }
 
   ///
@@ -347,7 +308,6 @@ class MapUiBodyState extends State<MapUiBody> {
   /// [controller] GoogleMapController help to do something.
   void onMapCreated(GoogleMapController controller) {
     _controller = controller;
-    _isMapCreated = true;
     SimpleLocationService().getLocation().then((position) {
       if(position.geohash != "no") {
         var json = SimpleGeoHash.decode(position.geohash);
@@ -357,7 +317,6 @@ class MapUiBodyState extends State<MapUiBody> {
         );
         
       }
-      this._position = this._kInitialPosition;
       this._controller.animateCamera(CameraUpdate.newCameraPosition(this._kInitialPosition));
     });
   }

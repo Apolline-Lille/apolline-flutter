@@ -11,6 +11,8 @@ class SimpleLocationService {
   ///current position.
   Position _currentPosition;
   ///stream.
+  ///TODO close stream
+  // ignore: close_sinks
   StreamController<Position> _locationStream = StreamController<Position>.broadcast();
 
   ///

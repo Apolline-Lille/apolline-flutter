@@ -42,8 +42,8 @@ class InfluxDBAPI {
 
   ///
   ///check the address [address].
-  Future<void> ping() {
-   client.pingSilent("$_pingUrl"); //utilisation de /health car la v2.0 le contient déjà. actu sur v1.8.x
+  Future<void> ping() async {
+   return client.pingSilent("$_pingUrl"); //utilisation de /health car la v2.0 le contient déjà. actu sur v1.8.x
   }
 
 }
@@ -73,7 +73,7 @@ class _InfluxDBClient extends http.BaseClient {
     try{
       resp = await this.get(url);
       print("server is running"); //TODO supprimé à la fin.
-    } on SocketException catch(e) {
+    } on SocketException catch(_) {
       throw LostConnectionException("server is unavailable");
     }
     

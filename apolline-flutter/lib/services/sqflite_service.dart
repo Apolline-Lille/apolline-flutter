@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:apollineflutter/models/sensor_collection.dart';
 import 'package:apollineflutter/models/sensormodel.dart';
-import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';

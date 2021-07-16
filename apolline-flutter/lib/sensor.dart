@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
@@ -154,13 +153,13 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void handleServiceDiscovered(BluetoothService service) {
-    if (service.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorServiceUUID) {
+    if (service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID) {
       updateState("Blue Sensor Dust Sensor found - configuring characteristic");
       var characteristics = service.characteristics;
 
       /* Search for the Dust Sensor characteristic */
       for (BluetoothCharacteristic c in characteristics) {
-        if (c.uuid.toString().toLowerCase() == BlueSensorAttributes.DustSensorCharacteristicUUID) {
+        if (c.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID) {
           updateState("Characteristic found - reading, NOtification flag is " + c.properties.notify.toString());
 
           /* Enable notification */
@@ -232,8 +231,10 @@ class _SensorViewState extends State<SensorView> {
   void showSnackbar(String msg) {
     var snackbar = SnackBar(content: Text(msg));
     if (_scaffoldKey != null && _scaffoldKey.currentState != null) {
-      _scaffoldKey.currentState.hideCurrentSnackBar();
-      _scaffoldKey.currentState.showSnackBar(snackbar);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      // _scaffoldKey.currentState.hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      // _scaffoldKey.currentState.showSnackBar(snackbar);
     }
   }
 
