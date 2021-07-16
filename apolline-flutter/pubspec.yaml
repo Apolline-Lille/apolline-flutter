@@ -38,6 +38,7 @@ dependencies:
   global_configuration: ^1.6.0
   # hash localisation
   geohash: ^0.2.1
+  path_provider: ^2.0.2
   # location
   geolocator: ^6.1.13
   sqflite: ^1.3.2+1
