@@ -25,12 +25,12 @@ jobs:
           APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
         run: dart scripts/configuration_generation.dart
 
-      - name: Moving to project directory
-        run: cd apolline-flutter
       - name: Installing dependencies
         run: flutter pub get
+        working-directory: apolline-flutter
       - name: Lint analysis
         run: flutter analyze
+        working-directory: apolline-flutter
 
 
   build-android:
@@ -56,17 +56,17 @@ jobs:
           APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
         run: dart scripts/configuration_generation.dart
 
-      - name: Moving to project directory
-        run: cd apolline-flutter
       - name: Installing dependencies
         run: flutter pub get
+        working-directory: apolline-flutter
 
       - name: Build Apolline APK
         run: flutter build apk
+        working-directory: apolline-flutter
       - uses: actions/upload-artifact@v1
         with:
           name: Apolline.apk
-          path: build/app/outputs/apk/release/app-release.apk
+          path: apolline-flutter/build/app/outputs/apk/release/app-release.apk
 
 
   build-iOS:
@@ -93,7 +93,8 @@ jobs:
 
       - name: build iOS Apolline package
         run: flutter build ios --release --no-codesign
+        working-directory: apolline-flutter
       - uses: actions/upload-artifact@v1
         with:
           name: Apolline.app
-          path: build/ios/iphoneos/Runner.app
+          path: apolline-flutter/build/ios/iphoneos/Runner.app
