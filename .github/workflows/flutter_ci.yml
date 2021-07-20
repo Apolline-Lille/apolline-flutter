@@ -104,9 +104,16 @@ jobs:
         with:
           name: Apolline.app
           path: apolline-flutter/build/ios/iphoneos/Runner.app
-      - uses: ncipollo/release-action@v1
+      - name: Publish release
+        uses: softprops/action-gh-release@v1
         with:
-          artifacts: "apolline-flutter/build/ios/iphoneos/Runner.app"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          files: apolline-flutter/build/ios/iphoneos/Runner.app
           tag: ios-latest
-          allowUpdates: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+#      - uses: ncipollo/release-action@v1
+#        with:
+#          artifacts: "apolline-flutter/build/ios/iphoneos/Runner.app"
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          tag: ios-latest
+#          allowUpdates: true
