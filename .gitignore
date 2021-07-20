@@ -887,4 +887,4 @@ DerivedData/
 
 
 ### Configuration files
-apolline-flutter/assets/*.json
+apolline-flutter/assets/config*
