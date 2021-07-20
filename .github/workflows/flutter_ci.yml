@@ -108,7 +108,7 @@ jobs:
         uses: papeloto/action-zip@v1
         with:
           files: apolline-flutter/build/ios/iphoneos/Runner.app
-          dest: Apolline.zip
+          dest: Apolline-iOS.zip
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "Apolline-iOS.zip"
