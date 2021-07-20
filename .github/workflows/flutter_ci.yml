@@ -108,7 +108,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: apolline-flutter/build/ios/iphoneos/Runner.app
-          tag: ios-latest
+          tag_name: ios-latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
 #      - uses: ncipollo/release-action@v1
