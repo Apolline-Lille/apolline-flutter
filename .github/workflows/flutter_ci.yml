@@ -105,12 +105,11 @@ jobs:
           name: Apolline.app
           path: apolline-flutter/build/ios/iphoneos/Runner.app
       - name: Publish release
-        uses: softprops/action-gh-release@v1
+        uses: AButler/upload-release-assets@v2.0
         with:
-          files: apolline-flutter/build/ios/iphoneos/Runner.app
-          tag_name: ios-latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+          files: 'apolline-flutter/build/ios/iphoneos/Runner.app'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          release-tag: ios-latest
 #      - uses: ncipollo/release-action@v1
 #        with:
 #          artifacts: "apolline-flutter/build/ios/iphoneos/Runner.app"
