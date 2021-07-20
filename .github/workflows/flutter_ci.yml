@@ -73,7 +73,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: android-latest
           allowUpdates: true
-          draft: true
 
 
   build-iOS:
@@ -111,4 +110,3 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ios-latest
           allowUpdates: true
-          draft: true
