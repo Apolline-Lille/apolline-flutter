@@ -42,6 +42,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     this.ucS.addListener(() {
       LocalKeyValuePersistance.saveObject("userconf", ucS.userConf.toJson());
     });
+    initializeDevice();
   }
 
   ///
