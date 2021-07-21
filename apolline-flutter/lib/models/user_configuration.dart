@@ -63,13 +63,13 @@ class UserConfiguration {
 
   ///
   ///setteur
-  void set pmIndex(int index) {
+  set pmIndex(int index) {
     this._pmIndex = index;
   }
 
   ///
   ///Setteur
-  void set mapSyncFrequency(MapFrequency frequency) {
+  set mapSyncFrequency(MapFrequency frequency) {
     this._mapSyncFrequency = frequency;
   }
 

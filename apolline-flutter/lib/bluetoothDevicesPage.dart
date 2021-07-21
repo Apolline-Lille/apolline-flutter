@@ -1,12 +1,12 @@
 import 'package:apollineflutter/sensor.dart';
-import 'package:apollineflutter/services/influxdb_client.dart';
-import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 
+// TODO fix
+// ignore: must_be_immutable
 class BluetoothDevicesPage extends StatefulWidget {
   BluetoothDevicesPage({Key key, this.title}) : super(key: key);
 
@@ -32,10 +32,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   bool timeout = true;
   Map<String, BluetoothDevice> devices = {};
   Map<String, BluetoothDevice> pairedDevices = {};
-  // use for influxDB to send data to the back
-  InfluxDBAPI _service = InfluxDBAPI();
-  // use for sqfLite to save data in local
-  SqfLiteService _sqfLiteSerive = SqfLiteService();
   ///user configuration in the ui
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
@@ -62,7 +58,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///
   ///Afficher un message pour activer le bluetooth
   void showDialogBluetooth() {
-    Widget okbtn = FlatButton(
+    Widget okbtn = TextButton(
       child: Text("ok"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -102,7 +98,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       }
     });
     /* For each result, insert into the detected devices list if not already present */
-    var subscription = widget.flutterBlue.scanResults.listen((results) {
+    widget.flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
         if (r.device.name.length > 0) {
           setState(() {
@@ -141,7 +137,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
   /* Build the UI list of detected devices */
   List<Widget> _buildDevicesList() {
-    List<Widget> wList = new List<Widget>();
+    List<Widget> wList = [];
     /* Add the state label at the top */
     //wList.add(Text(state)); // TODO: remove
     if (pairedDevices.length > 0) {
@@ -188,7 +184,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   List<Widget> _buildChildrenButton() {
     if (timeout) {
       return <Widget>[
-        Text("Analyser"),
+        // ignore: missing_required_param
+        TextButton(child: Text("Analyser")),
       ];
     } else {
       return <Widget>[
@@ -197,14 +194,15 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           width: 20,
           height: 20,
         ),
-        Text("Arreter"),
+        // ignore: missing_required_param
+        TextButton(child: Text("Arrêter")),
       ];
     }
   }
 
   List<Widget> _buildAppBarAction() {
     List<Widget> wList = <Widget>[
-      FlatButton(
+      TextButton(
         onPressed: () {
           _onPressLookforButton();
         },

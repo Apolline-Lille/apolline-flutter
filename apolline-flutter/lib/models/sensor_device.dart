@@ -5,7 +5,6 @@ import 'package:flutter_blue/flutter_blue.dart';
 class SensorDevice {
   BluetoothDevice _device;
   String _name;
-  String _uuid;
 
   /// Authors BARRY Issagha, GDISSA Ramy
   ///constructor
@@ -13,7 +12,6 @@ class SensorDevice {
 
   SensorDevice.fromNameAndUId(name, uuid) {
     this._name = name;
-    this._uuid = uuid;
   }
 
   ///

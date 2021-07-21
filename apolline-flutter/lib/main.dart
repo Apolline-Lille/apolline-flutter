@@ -6,7 +6,7 @@ import 'services/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await GlobalConfiguration().loadFromAsset("config_dev.json");
+  await GlobalConfiguration().loadFromPath("assets/config_dev.json");
   setupServiceLocator();
   runApp(ApollineApp());
 }

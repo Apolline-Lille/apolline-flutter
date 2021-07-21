@@ -20,6 +20,8 @@ import 'package:mp_chart/mp/core/highlight/highlight.dart';
 import 'package:mp_chart/mp/core/utils/color_utils.dart';
 import 'package:mp_chart/mp/core/value_formatter/value_formatter.dart';
 
+// TODO fix
+// ignore: must_be_immutable
 class Stats extends StatefulWidget {
   Stats({Key key, this.dataSensor}) : super(key: key);
   SensorModel dataSensor;
@@ -50,7 +52,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   double i1 = 0;
   double i2 = 0;
   // used to get format date
-  List<String> _dataTimeX = List();
+  List<String> _dataTimeX = [];
   @override
   void dispose() {
     _streamSubscription.cancel();
@@ -99,7 +101,6 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     setState(() {});
   }
 
-  @override
   Widget getBody() {
     return Stack(children: <Widget>[
       Positioned(
