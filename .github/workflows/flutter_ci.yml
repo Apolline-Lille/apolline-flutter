@@ -1,5 +1,9 @@
 name: Flutter CI
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - master
+      - develop
 env:
   FLUTTER_VERSION: '2.0.3'
 
