@@ -83,6 +83,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: android-latest
           allowUpdates: true
+          body: This is the latest Android version of the Apolline application.
 
 
   build-iOS:
@@ -132,3 +133,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ios-latest
           allowUpdates: true
+          body: This is the latest iOS version of the Apolline application.
