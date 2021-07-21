@@ -1,5 +1,8 @@
-name: Flutter CI
-on: [push]
+name: Release CI
+on:
+  push:
+    branches:
+      - develop
 env:
   FLUTTER_VERSION: '2.0.3'
 
@@ -76,6 +79,15 @@ jobs:
           name: Apolline.apk
           path: apolline-flutter/build/app/outputs/apk/release/app-release.apk
 
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "apolline-flutter/build/app/outputs/apk/release/app-release.apk"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: android-latest
+          allowUpdates: true
+          body: This is the latest Android version of the Apolline application.
+
 
   build-iOS:
     name: Build iOS package
@@ -111,3 +123,17 @@ jobs:
         with:
           name: Apolline.app
           path: apolline-flutter/build/ios/iphoneos/Runner.app
+
+      - name: Zip release
+        uses: papeloto/action-zip@v1
+        with:
+          files: apolline-flutter/build/ios/iphoneos/Runner.app
+          dest: Apolline-iOS.zip
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "Apolline-iOS.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ios-latest
+          allowUpdates: true
+          body: This is the latest iOS version of the Apolline application.
