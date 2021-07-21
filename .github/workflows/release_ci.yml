@@ -73,6 +73,10 @@ jobs:
       - name: Build Apolline APK
         run: flutter build apk
         working-directory: apolline-flutter
+        
+      - name: Get compilation time
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"        
 
       - name: Save build artefact
         uses: actions/upload-artifact@v1
@@ -87,7 +91,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: android-latest
           allowUpdates: true
-          body: This is the latest Android version of the Apolline application.
+          body: This is the latest Android version of the Apolline application (created on ${{ steps.date.outputs.date }}).
 
 
   build-iOS:
@@ -118,6 +122,10 @@ jobs:
       - name: Build iOS Apolline package
         run: flutter build ios --release --no-codesign
         working-directory: apolline-flutter
+        
+      - name: Get compilation time
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"           
 
       - name: Save build artefact
         uses: actions/upload-artifact@v1
@@ -129,7 +137,8 @@ jobs:
         uses: papeloto/action-zip@v1
         with:
           files: apolline-flutter/build/ios/iphoneos/Runner.app
-          dest: Apolline-iOS.zip
+          dest: Apolline-iOS.zip       
+          
       - name: Publish release
         uses: ncipollo/release-action@v1
         with:
@@ -137,4 +146,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ios-latest
           allowUpdates: true
-          body: This is the latest iOS version of the Apolline application.
+          body: This is the latest iOS version of the Apolline application (created on ${{ steps.date.outputs.date }}).
