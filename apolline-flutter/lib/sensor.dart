@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
@@ -142,8 +143,10 @@ class _SensorViewState extends State<SensorView> {
     });
 
     /* Now we tell the sensor to start sending data by sending char 'c' (?) */
-    timer = Timer(Duration(seconds: 5), () {
+    timer = Timer(Duration(seconds: 5), () async {
       //updateState("Starting up streaming");
+      await this._synchronizeClock(c);
+
       c.write([0x63]).then((s) {
         print("Requested streaming start");
       }).catchError((e) {
@@ -151,6 +154,20 @@ class _SensorViewState extends State<SensorView> {
       });
     });
   }
+
+
+  Future<void> _synchronizeClock (BluetoothCharacteristic device) {
+    print("Synchronizing clock");
+    String command = "i";
+    DateTime now = DateTime.now();
+    String time = "${now.hour};${now.minute};${now.second};${now.day};${now.month};${now.year}";
+    String clockCommand = "$command$time";
+
+    return device.write(clockCommand.codeUnits)
+        .then((value) { return value; })
+        .catchError((e) { print('ERROR WHILE SYNCHRONIZING CLOCK: $e'); });
+  }
+
 
   void handleServiceDiscovered(BluetoothService service) {
     if (service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID) {
