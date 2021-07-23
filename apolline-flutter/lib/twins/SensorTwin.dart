@@ -1,7 +1,10 @@
+import 'package:apollineflutter/twins/SensorTwinEvent.dart';
+
 class SensorTwin {
   String _uuid;
   bool _isSendingData;
   bool _isSendingHistory;
+  Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
 
   String get uuid {
@@ -26,4 +29,8 @@ class SensorTwin {
 
   /// Synchronises internal clock with phone's time.
   Future<void> synchronizeClock () {}
+
+
+  /// Registers a function to be called when new data is produced.
+  void on (SensorTwinEvent event, SensorTwinEventCallback callback) {}
 }
