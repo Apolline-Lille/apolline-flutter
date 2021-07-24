@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
+import 'package:apollineflutter/twins/SensorTwin.dart';
 import 'package:apollineflutter/utils/position.dart';
 import 'package:apollineflutter/services/location_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,6 +48,7 @@ class _SensorViewState extends State<SensorView> {
   // use for sqfLite to save data in local
   SqfLiteService _sqfLiteService = SqfLiteService();
   Position _currentPosition;
+  SensorTwin _sensor;
 
   RealtimeDataService _dataService = locator<RealtimeDataService>();
 
@@ -185,6 +187,10 @@ class _SensorViewState extends State<SensorView> {
 
           /* Enable notification */
           updateState("Enable notification");
+
+          /* Building sensor instance */
+          this._sensor = SensorTwin(device: c);
+
 
           c.setNotifyValue(true).then((s) {
             /* Catch updates on characteristic  */

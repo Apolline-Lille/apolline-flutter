@@ -1,14 +1,22 @@
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class SensorTwin {
   String _uuid;
+  BluetoothCharacteristic _device;
   bool _isSendingData;
   bool _isSendingHistory;
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
 
+  SensorTwin({@required BluetoothCharacteristic device}) {
+    this._device = device;
+  }
+
+
   String get uuid {
-    return this._uuid;
+    return this._device.uuid.toString();
   }
 
 
