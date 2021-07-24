@@ -146,7 +146,7 @@ class _SensorViewState extends State<SensorView> {
     /* Now we tell the sensor to start sending data by sending char 'c' (?) */
     timer = Timer(Duration(seconds: 5), () async {
       //updateState("Starting up streaming");
-      await this._synchronizeClock(c);
+      await this._sensor.synchronizeClock();
 
       c.write([0x63]).then((s) {
         print("Requested streaming start");
@@ -154,24 +154,6 @@ class _SensorViewState extends State<SensorView> {
         print(e);
       });
     });
-  }
-
-
-  Future<void> _synchronizeClock (BluetoothCharacteristic device) {
-    print("Synchronizing clock");
-    String command = "i";
-    DateTime now = DateTime.now();
-    String time = "${now.hour};${now.minute};${now.second};${now.day};${now.month};${now.year}";
-    String clockCommand = "$command$time";
-    
-    // converting command to bytes
-    List<int> clockCommandBytes = clockCommand.codeUnits;
-    // adding NULL at the end of the command
-    List<int> finalCommand = new List.from(clockCommandBytes)..addAll([0x0]);
-
-    return device.write(finalCommand)
-        .then((value) { return value; })
-        .catchError((e) { print('ERROR WHILE SYNCHRONIZING CLOCK: $e'); });
   }
 
 

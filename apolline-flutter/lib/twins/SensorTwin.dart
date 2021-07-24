@@ -36,7 +36,22 @@ class SensorTwin {
 
 
   /// Synchronises internal clock with phone's time.
-  Future<void> synchronizeClock () {}
+  Future<void> synchronizeClock () {
+    print("Synchronizing clock");
+    String command = "i";
+    DateTime now = DateTime.now();
+    String time = "${now.hour};${now.minute};${now.second};${now.day};${now.month};${now.year}";
+    String clockCommand = "$command$time";
+
+    // converting command to bytes
+    List<int> clockCommandBytes = clockCommand.codeUnits;
+    // adding NULL at the end of the command
+    List<int> finalCommand = new List.from(clockCommandBytes)..addAll([0x0]);
+
+    return _device.write(finalCommand)
+        .then((value) { return value; })
+        .catchError((e) { print('ERROR WHILE SYNCHRONIZING CLOCK: $e'); });
+  }
 
 
   /// Registers a function to be called when new data is produced.
