@@ -147,12 +147,7 @@ class _SensorViewState extends State<SensorView> {
     timer = Timer(Duration(seconds: 5), () async {
       //updateState("Starting up streaming");
       await this._sensor.synchronizeClock();
-
-      c.write([0x63]).then((s) {
-        print("Requested streaming start");
-      }).catchError((e) {
-        print(e);
-      });
+      this._sensor.launchDataLiveTransmission();
     });
   }
 

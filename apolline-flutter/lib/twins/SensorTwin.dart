@@ -12,6 +12,8 @@ class SensorTwin {
 
   SensorTwin({@required BluetoothCharacteristic device}) {
     this._device = device;
+    this._isSendingData = false;
+    this._isSendingHistory = false;
   }
 
 
@@ -23,7 +25,16 @@ class SensorTwin {
   /// Starts sending data live (one point every second) through Bluetooth
   /// connection.
   /// Does nothing if data transmission is already in progress.
-  Future<void> launchDataLiveTransmission () {}
+  Future<void> launchDataLiveTransmission () {
+    if (_isSendingData) return null;
+    _isSendingData = true;
+
+    return _device.write([0x63]).then((s) {
+      print("Requested streaming start");
+    }).catchError((e) {
+      print(e);
+    });
+  }
 
   /// Stops sending data.
   /// Does nothing if data transmission is not in progress.
