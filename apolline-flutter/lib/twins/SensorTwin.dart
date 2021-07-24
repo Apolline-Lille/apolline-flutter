@@ -74,6 +74,7 @@ class SensorTwin {
   }
 
 
+  /// Redistributes sensor data to registered callbacks.
   Future<void> _setUpListeners () {
     return _device.setNotifyValue(true).then((s) {
       /* Catch updates on characteristic  */
@@ -93,9 +94,11 @@ class SensorTwin {
     });
   }
 
-  void start () async {
+
+  /// Sets up listeners and synchronises sensor clock.
+  /// Must be called before starting data transmission.
+  Future<void> init () async {
     await _setUpListeners();
     await synchronizeClock();
-    launchDataLiveTransmission();
   }
 }

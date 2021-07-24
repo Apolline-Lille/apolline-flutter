@@ -149,7 +149,7 @@ class _SensorViewState extends State<SensorView> {
           this._sensor.on(SensorTwinEvent.live_data, (data) {
             _handleSensorUpdate(data);
           });
-          this._sensor.start();
+          this._sensor.init().then((value) => this._sensor.launchDataLiveTransmission());
         }
       }
     }
