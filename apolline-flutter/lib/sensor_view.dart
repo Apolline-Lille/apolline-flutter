@@ -131,7 +131,7 @@ class _SensorViewState extends State<SensorView> {
   }
 
 
-  void handleServiceDiscovered(BluetoothService service) {
+  Future<void> handleServiceDiscovered(BluetoothService service) async {
     if (service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID) {
       updateState("Blue Sensor Dust Sensor found - configuring characteristic");
       var characteristics = service.characteristics;
@@ -139,17 +139,14 @@ class _SensorViewState extends State<SensorView> {
       /* Search for the Dust Sensor characteristic */
       for (BluetoothCharacteristic c in characteristics) {
         if (c.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID) {
-          updateState("Characteristic found - reading, NOtification flag is " + c.properties.notify.toString());
-
-          /* Enable notification */
-          updateState("Enable notification");
-
-          /* Building sensor instance */
+          updateState("Setting up listeners...");
           this._sensor = SensorTwin(device: c);
           this._sensor.on(SensorTwinEvent.live_data, (data) {
             _handleSensorUpdate(data);
           });
-          this._sensor.init().then((value) => this._sensor.launchDataLiveTransmission());
+          await this._sensor.init();
+          await this._sensor.launchDataLiveTransmission();
+          updateState("Waiting for sensor data...");
         }
       }
     }
