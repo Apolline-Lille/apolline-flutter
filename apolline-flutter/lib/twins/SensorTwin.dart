@@ -4,6 +4,20 @@ import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+
+
+///
+/// This class acts as a digital twin for air quality sensors.
+///
+/// Through it, a sensor can be activated, clock-synchronized with a phone,
+/// and asked to transmit data.
+///
+/// Data can be received in two ways:
+///   * live; sensor sends data in real time (approximately one point per second)
+///   * history; sensor sends all data it gathered in the past.
+///
+/// To access these data, one can subscribe to data events using the "on" method.
+///
 class SensorTwin {
   String _uuid;
   BluetoothCharacteristic _device;
