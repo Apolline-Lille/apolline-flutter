@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -69,5 +71,31 @@ class SensorTwin {
   /// Registers a function to be called when new data is produced.
   void on (SensorTwinEvent event, SensorTwinEventCallback callback) {
     _callbacks[event] = callback;
+  }
+
+
+  Future<void> _setUpListeners () {
+    return _device.setNotifyValue(true).then((s) {
+      /* Catch updates on characteristic  */
+    }).catchError((e) {
+      print(e);
+    }).whenComplete(() {
+
+      _device.value.listen((value) {
+        String message = String.fromCharCodes(value);
+
+        if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
+          _callbacks[SensorTwinEvent.live_data](message);
+        } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
+          _callbacks[SensorTwinEvent.history_data](message);
+        }
+      });
+    });
+  }
+
+  void start () async {
+    await _setUpListeners();
+    await synchronizeClock();
+    launchDataLiveTransmission();
   }
 }

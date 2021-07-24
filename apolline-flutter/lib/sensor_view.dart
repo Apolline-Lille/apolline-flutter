@@ -69,9 +69,8 @@ class _SensorViewState extends State<SensorView> {
   }
 
   /* Called when data is received from the sensor */
-  void _handleCharacteristicUpdate(List<int> value) {
-    String s = String.fromCharCodes(value);
-    buf += s;
+  void _handleSensorUpdate(String message) {
+    buf += message;
 
     if (buf.contains('\n')) {
       print("Got full line: " + buf);
@@ -131,27 +130,6 @@ class _SensorViewState extends State<SensorView> {
     });
   }
 
-  ///
-  ///
-  void handleNotification(BluetoothCharacteristic c) {
-    subData = c.value.listen((value) {
-      if (connectType == ConnexionType.Disconnect) {
-        //tester si on est dans le cas d'une reconnexion
-        connectType = ConnexionType.Normal;
-        showSnackbar("Capteur reconnecté !");
-      }
-
-      _handleCharacteristicUpdate(value);
-    });
-
-    /* Now we tell the sensor to start sending data by sending char 'c' (?) */
-    timer = Timer(Duration(seconds: 5), () async {
-      //updateState("Starting up streaming");
-      await this._sensor.synchronizeClock();
-      this._sensor.launchDataLiveTransmission();
-    });
-  }
-
 
   void handleServiceDiscovered(BluetoothService service) {
     if (service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID) {
@@ -169,17 +147,9 @@ class _SensorViewState extends State<SensorView> {
           /* Building sensor instance */
           this._sensor = SensorTwin(device: c);
           this._sensor.on(SensorTwinEvent.live_data, (data) {
-            print('new live data:\n$data');
+            _handleSensorUpdate(data);
           });
-
-
-          c.setNotifyValue(true).then((s) {
-            /* Catch updates on characteristic  */
-          }).catchError((e) {
-            print(e);
-          }).whenComplete(() {
-            handleNotification(c);
-          });
+          this._sensor.start();
         }
       }
     }
