@@ -32,7 +32,7 @@ class SensorTwin {
     if (_isSendingData) return null;
     _isSendingData = true;
 
-    return _device.write([0x63]).then((s) {
+    return _device.write([0x63, 0]).then((s) {
       print("Requested streaming start");
     }).catchError((e) {
       print(e);
