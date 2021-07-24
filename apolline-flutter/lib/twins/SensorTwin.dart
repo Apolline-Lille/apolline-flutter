@@ -19,7 +19,6 @@ import 'package:flutter_blue/flutter_blue.dart';
 /// To access these data, one can subscribe to data events using the "on" method.
 ///
 class SensorTwin {
-  String _uuid;
   BluetoothCharacteristic _device;
   bool _isSendingData;
   bool _isSendingHistory;
