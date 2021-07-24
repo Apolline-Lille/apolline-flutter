@@ -14,6 +14,7 @@ class SensorTwin {
     this._device = device;
     this._isSendingData = false;
     this._isSendingHistory = false;
+    this._callbacks = Map();
   }
 
 
@@ -66,5 +67,7 @@ class SensorTwin {
 
 
   /// Registers a function to be called when new data is produced.
-  void on (SensorTwinEvent event, SensorTwinEventCallback callback) {}
+  void on (SensorTwinEvent event, SensorTwinEventCallback callback) {
+    _callbacks[event] = callback;
+  }
 }

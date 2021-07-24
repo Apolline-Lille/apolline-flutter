@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwin.dart';
+import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/position.dart';
 import 'package:apollineflutter/services/location_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -167,6 +168,9 @@ class _SensorViewState extends State<SensorView> {
 
           /* Building sensor instance */
           this._sensor = SensorTwin(device: c);
+          this._sensor.on(SensorTwinEvent.live_data, (data) {
+            print('new live data:\n$data');
+          });
 
 
           c.setNotifyValue(true).then((s) {
