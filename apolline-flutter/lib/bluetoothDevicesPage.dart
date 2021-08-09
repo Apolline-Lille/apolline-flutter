@@ -1,4 +1,4 @@
-import 'package:apollineflutter/sensor.dart';
+import 'package:apollineflutter/sensor_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
