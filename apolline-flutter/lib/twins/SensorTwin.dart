@@ -54,12 +54,18 @@ class SensorTwin {
 
   /// Stops sending data.
   /// Does nothing if data transmission is not in progress.
-  Future<void> stopDataLiveTransmission () {}
+  /// TODO implement
+  Future<void> stopDataLiveTransmission () {
+    return null;
+  }
 
 
   /// Starts sending data stored on the SD card.
   /// Does nothing is history transmission is already in progress.
-  Future<void> launchHistoryTransmission () {}
+  /// TODO implement
+  Future<void> launchHistoryTransmission () {
+    return null;
+  }
 
 
   /// Synchronises internal clock with phone's time.
