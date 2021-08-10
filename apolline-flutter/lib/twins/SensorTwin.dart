@@ -100,6 +100,10 @@ class SensorTwin {
   Future<void> _setUpListeners () {
     _device.state.listen((state) {
       switch(state) {
+        case BluetoothDeviceState.connected:
+          if (_callbacks.containsKey(SensorTwinEvent.sensor_connected))
+            _callbacks[SensorTwinEvent.sensor_connected]("connected");
+          break;
         case BluetoothDeviceState.disconnected:
           if (_callbacks.containsKey(SensorTwinEvent.sensor_disconnected))
             _callbacks[SensorTwinEvent.sensor_disconnected]("disconnected");

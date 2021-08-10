@@ -162,6 +162,16 @@ class _SensorViewState extends State<SensorView> {
     this._sensor.on(SensorTwinEvent.live_data, (data) {
       _handleSensorUpdate(data);
     });
+    this._sensor.on(SensorTwinEvent.sensor_connected, (_) {
+      print("--------------------connected--------------");
+      if (connectType == ConnexionType.Disconnect && !isConnected) {
+        print("-------------------connectedExécute---------");
+        setState(() {
+          showErrorAction = false;
+        });
+        handleDeviceConnect(widget.device);
+      }
+    });
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) {
       print("----------------disconnected----------------");
       buf = "";
@@ -198,14 +208,6 @@ class _SensorViewState extends State<SensorView> {
     );
   }
 
-  ///
-  ///Function to be executed after a connection
-  void postConnect() {
-    setState(() {
-      showErrorAction = false;
-    });
-    handleDeviceConnect(widget.device);
-  }
 
   ///use for prevent when setState call after dispose methode.
   @override
@@ -233,12 +235,6 @@ class _SensorViewState extends State<SensorView> {
     this.subBluetoothState = widget.device.state.listen((state) {
       if (state == BluetoothDeviceState.disconnecting) {
         /*TODO: detectecter quand cela arrive */
-      } else if (state == BluetoothDeviceState.connected) {
-        print("--------------------connected--------------");
-        if (connectType == ConnexionType.Disconnect && !isConnected) {
-          print("-------------------connectedExécute---------");
-          postConnect();
-        }
       } else {
         print("--------------------connecting------------");
       }
