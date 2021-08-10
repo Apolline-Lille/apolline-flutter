@@ -19,22 +19,24 @@ import 'package:flutter_blue/flutter_blue.dart';
 /// To access these data, one can subscribe to data events using the "on" method.
 ///
 class SensorTwin {
+  String _name;
   BluetoothCharacteristic _characteristic;
   bool _isSendingData;
   bool _isSendingHistory;
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
 
-  SensorTwin({@required BluetoothCharacteristic characteristic}) {
+  SensorTwin({@required BluetoothCharacteristic characteristic, @required String name}) {
     this._characteristic = characteristic;
+    this._name = name;
     this._isSendingData = false;
     this._isSendingHistory = false;
     this._callbacks = Map();
   }
 
 
-  String get uuid {
-    return this._characteristic.uuid.toString();
+  String get name {
+    return this._name;
   }
 
 

@@ -96,7 +96,7 @@ class _SensorViewState extends State<SensorView> {
       List<String> values = buf.split(';');
       var position = this._currentPosition ?? Position();
 
-      var model = SensorModel(values: values, sensorName: widget.device.name, position: position);
+      var model = SensorModel(values: values, sensorName: _sensor.name, position: position);
       _dataService.update(model);
       /* insert to sqflite */
       _sqfLiteService.insertSensor(model.toJSON());
@@ -298,7 +298,7 @@ class _SensorViewState extends State<SensorView> {
       return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text(widget.device.name),
+          title: Text(_sensor != null ? _sensor.name : "Loading..."),
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
