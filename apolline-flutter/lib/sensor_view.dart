@@ -162,6 +162,17 @@ class _SensorViewState extends State<SensorView> {
     this._sensor.on(SensorTwinEvent.live_data, (data) {
       _handleSensorUpdate(data);
     });
+    this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) {
+      print("----------------disconnected----------------");
+      buf = "";
+      this.destroyStream();
+      isConnected = false;
+      connectType = ConnexionType.Disconnect; //deconnexion
+      setState(() {
+        showErrorAction = true;
+      });
+      showSnackbar("Connection perdu avec le capteur !");
+    });
     await this._sensor.init();
     await this._sensor.launchDataLiveTransmission();
     updateState("Waiting for sensor data...");
@@ -196,19 +207,6 @@ class _SensorViewState extends State<SensorView> {
     handleDeviceConnect(widget.device);
   }
 
-  ///
-  ///Function to be executed after disconnection
-  void postDisconnect() {
-    buf = "";
-    this.destroyStream();
-    isConnected = false;
-    connectType = ConnexionType.Disconnect; //deconnexion
-    setState(() {
-      showErrorAction = true;
-    });
-    showSnackbar("Connection perdu avec le capteur !");
-  }
-
   ///use for prevent when setState call after dispose methode.
   @override
   void setState(fn) {
@@ -235,9 +233,6 @@ class _SensorViewState extends State<SensorView> {
     this.subBluetoothState = widget.device.state.listen((state) {
       if (state == BluetoothDeviceState.disconnecting) {
         /*TODO: detectecter quand cela arrive */
-      } else if (state == BluetoothDeviceState.disconnected) {
-        print("--------------------disconnected--------------");
-        postDisconnect();
       } else if (state == BluetoothDeviceState.connected) {
         print("--------------------connected--------------");
         if (connectType == ConnexionType.Disconnect && !isConnected) {

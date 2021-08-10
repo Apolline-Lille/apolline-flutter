@@ -98,6 +98,17 @@ class SensorTwin {
 
   /// Redistributes sensor data to registered callbacks.
   Future<void> _setUpListeners () {
+    _device.state.listen((state) {
+      switch(state) {
+        case BluetoothDeviceState.disconnected:
+          if (_callbacks.containsKey(SensorTwinEvent.sensor_disconnected))
+            _callbacks[SensorTwinEvent.sensor_disconnected]("disconnected");
+          break;
+        default:
+          break;
+      }
+    });
+
     return _characteristic.setNotifyValue(true).then((s) {
       /* Catch updates on characteristic  */
     }).catchError((e) {
