@@ -5,7 +5,7 @@ import '../gattsample.dart';
 class SensorTwinBuilder {
   static Future<SensorTwin> buildSensor (BluetoothDevice device) async {
     return SensorTwin(
-        name: device.name,
+        device: device,
         characteristic: await _retrieveSensorCharacteristic(device)
     );
   }
