@@ -52,11 +52,6 @@ class _SensorViewState extends State<SensorView> {
 
   RealtimeDataService _dataService = locator<RealtimeDataService>();
 
-  void initializeLocation() {
-    this.subLocation = SimpleLocationService().locationStream.listen((p) {
-      this._currentPosition = p;
-    });
-  }
 
   @override
   void initState() {
@@ -66,6 +61,32 @@ class _SensorViewState extends State<SensorView> {
     //synchronisation data
     this.timerSynchro = Timer.periodic(Duration(seconds: 120), (Timer t) => synchronizeData());
   }
+
+
+  ///
+  ///
+  Future<void> initializeDevice() async {
+    print("Connecting to device");
+
+    try {
+      await widget.device.connect();
+      /* TODO: voir s'il ya possibilité de négocier le mtu */
+    } catch (e) {
+      if (e.code != "already_connected") {
+        throw e;
+      }
+    } finally {
+      listenDeviceState();
+      handleDeviceConnect(widget.device);
+    }
+  }
+
+  void initializeLocation() {
+    this.subLocation = SimpleLocationService().locationStream.listen((p) {
+      this._currentPosition = p;
+    });
+  }
+
 
   /* Called when data is received from the sensor */
   void _handleSensorUpdate(String message) {
@@ -127,6 +148,22 @@ class _SensorViewState extends State<SensorView> {
     setState(() {
       state = st;
     });
+  }
+
+
+  ///
+  ///
+  void handleDeviceConnect(BluetoothDevice d) {
+    if (!isConnected) {
+      isConnected = true;
+      updateState("Configuring device");
+      d.discoverServices().then((s) {
+        /* Discover services, and search for the Dust Sensor service */
+        s.forEach((service) {
+          handleServiceDiscovered(service);
+        });
+      });
+    }
   }
 
 
@@ -233,38 +270,6 @@ class _SensorViewState extends State<SensorView> {
     });
   }
 
-  ///
-  ///
-  void handleDeviceConnect(BluetoothDevice d) {
-    if (!isConnected) {
-      isConnected = true;
-      updateState("Configuring device");
-      d.discoverServices().then((s) {
-        /* Discover services, and search for the Dust Sensor service */
-        s.forEach((service) {
-          handleServiceDiscovered(service);
-        });
-      });
-    }
-  }
-
-  ///
-  ///
-  Future<void> initializeDevice() async {
-    print("Connecting to device");
-
-    try {
-      await widget.device.connect();
-      /* TODO: voir s'il ya possibilité de négocier le mtu */
-    } catch (e) {
-      if (e.code != "already_connected") {
-        throw e;
-      }
-    } finally {
-      listenDeviceState();
-      handleDeviceConnect(widget.device);
-    }
-  }
 
   ///
   ///detroy partiel stream when loose connection.
