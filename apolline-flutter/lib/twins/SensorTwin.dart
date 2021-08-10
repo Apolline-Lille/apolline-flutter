@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/services/influxdb_client.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -27,12 +30,21 @@ class SensorTwin {
   bool _isSendingHistory;
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
+  // use for influxDB to send data to the back
+  InfluxDBAPI _service;
+  SqfLiteService _sqfLiteService;
+  Duration _synchronizationTiming;
+  Timer _syncTimer;
 
-  SensorTwin({@required BluetoothDevice device}) {
+
+  SensorTwin({@required BluetoothDevice device, @required Duration syncTiming}) {
     this._device = device;
     this._isSendingData = false;
     this._isSendingHistory = false;
     this._callbacks = Map();
+    this._service = InfluxDBAPI();
+    this._sqfLiteService = SqfLiteService();
+    this._synchronizationTiming = syncTiming;
   }
 
 
@@ -140,11 +152,45 @@ class SensorTwin {
     this._characteristic = characteristic;
   }
 
+  void _initSynchronizationTimer () {
+    this._syncTimer = Timer.periodic(_synchronizationTiming, (Timer t) => _synchronizationCallback());
+  }
+
+  /// Retrieves all data points from local database that have not been sent
+  /// to InfluxDB yet, and sends them.
+  void _synchronizationCallback () async {
+    // find not-synchronized data
+    int pagination = 160;
+    List<SensorModel> dataPoints = await _sqfLiteService.getAllSensorModelsNotSyncro();
+    if (dataPoints.length == 0) return;
+
+    // Paginating data before sending to influxDB
+    var iter = (dataPoints.length / pagination).ceil();
+    for (var i = 0; i < iter; i++) {
+      int start = i * pagination;
+      int end = (i + 1) * pagination;
+      if (1 == iter || i + 1 == iter) {
+        end = dataPoints.length;
+      }
+      var sousList = dataPoints.sublist(start, end);
+
+      // Send data to influxDB
+      await _service.write(SensorModel.sensorsFmtToInfluxData(sousList));
+      List<int> ids = [];
+      dataPoints.forEach((sousList) {
+        ids.add(sousList.id);
+      });
+      // Update local data in sqfLite
+      _sqfLiteService.updateSensorSynchronisation(ids);
+    }
+  }
+
   /// Sets up listeners and synchronises sensor clock.
   /// Must be called before starting data transmission.
   Future<void> init () async {
     await _loadUpSensorCharacteristic();
     await _setUpListeners();
     await synchronizeClock();
+    _initSynchronizationTimer();
   }
 }

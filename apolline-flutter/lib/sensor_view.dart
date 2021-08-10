@@ -41,8 +41,6 @@ class _SensorViewState extends State<SensorView> {
   Timer timerSynchro;
   ConnexionType connectType = ConnexionType.Normal;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  // use for influxDB to send data to the back
-  InfluxDBAPI _service = InfluxDBAPI();
   // use for sqfLite to save data in local
   SqfLiteService _sqfLiteService = SqfLiteService();
   Position _currentPosition;
@@ -56,8 +54,6 @@ class _SensorViewState extends State<SensorView> {
     super.initState();
     initializeDevice();
     initializeLocation();
-    //synchronisation data
-    this.timerSynchro = Timer.periodic(Duration(seconds: 120), (Timer t) => synchronizeData());
   }
 
 
@@ -109,37 +105,6 @@ class _SensorViewState extends State<SensorView> {
     }
   }
 
-  ///
-  /// Retrieves all data points from local database that have not been sent
-  /// to InfluxDB yet, and sends them.
-  ///
-  void synchronizeData() async {
-    // find not-synchronized data
-    int pagination = 160;
-    List<SensorModel> dataPoints = await _sqfLiteService.getAllSensorModelsNotSyncro();
-    if (dataPoints.length == 0) return;
-
-    // Paginating data before sending to influxDB
-    var iter = (dataPoints.length / pagination).ceil();
-    for (var i = 0; i < iter; i++) {
-      int start = i * pagination;
-      int end = (i + 1) * pagination;
-      if (1 == iter || i + 1 == iter) {
-        end = dataPoints.length;
-      }
-      var sousList = dataPoints.sublist(start, end);
-
-      // Send data to influxDB
-      await _service.write(SensorModel.sensorsFmtToInfluxData(sousList));
-      List<int> ids = [];
-      dataPoints.forEach((sousList) {
-        ids.add(sousList.id);
-      });
-      // Update local data in sqfLite
-      _sqfLiteService.updateSensorSynchronisation(ids);
-    }
-  }
-
   void updateState(String st) {
     print(st);
     setState(() {
@@ -157,7 +122,7 @@ class _SensorViewState extends State<SensorView> {
     isConnected = true;
 
     updateState("Configuring device");
-    this._sensor = SensorTwin(device: device);
+    this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
     this._sensor.on(SensorTwinEvent.live_data, (data) {
       _handleSensorUpdate(data);
     });
