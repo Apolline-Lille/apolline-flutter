@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:apollineflutter/models/sensormodel.dart';
 import 'package:apollineflutter/services/influxdb_client.dart';
+import 'package:apollineflutter/services/location_service.dart';
+import 'package:apollineflutter/services/realtime_data_service.dart';
+import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
+import 'package:apollineflutter/utils/position.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -34,7 +38,10 @@ class SensorTwin {
   InfluxDBAPI _service;
   SqfLiteService _sqfLiteService;
   Duration _synchronizationTiming;
+  RealtimeDataService _dataService = locator<RealtimeDataService>();
   Timer _syncTimer;
+
+  Position _currentPosition;
 
 
   SensorTwin({@required BluetoothDevice device, @required Duration syncTiming}) {
@@ -135,7 +142,8 @@ class SensorTwin {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
-          _callbacks[SensorTwinEvent.live_data](message);
+          SensorModel model = _handleSensorUpdate(message);
+          _callbacks[SensorTwinEvent.live_data](model);
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
           _callbacks[SensorTwinEvent.history_data](message);
         }
@@ -150,6 +158,12 @@ class SensorTwin {
     BluetoothService sensorService = services.firstWhere((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
     BluetoothCharacteristic characteristic = sensorService.characteristics.firstWhere((char) => char.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID);
     this._characteristic = characteristic;
+  }
+
+  void _initLocationService () {
+    SimpleLocationService().locationStream.listen((p) {
+      this._currentPosition = p;
+    });
   }
 
   void _initSynchronizationTimer () {
@@ -185,12 +199,27 @@ class SensorTwin {
     }
   }
 
+  /// Called when data is received from the sensor
+  SensorModel _handleSensorUpdate (String message) {
+    if (!message.contains('\n')) return null;
+    print("Got full line: " + message);
+    List<String> values = message.split(';');
+
+    var model = SensorModel(values: values, sensorName: this.name, position: _currentPosition);
+    _dataService.update(model);
+    /* insert to sqflite */
+    _sqfLiteService.insertSensor(model.toJSON());
+
+    return model;
+  }
+
   /// Sets up listeners and synchronises sensor clock.
   /// Must be called before starting data transmission.
   Future<void> init () async {
     await _loadUpSensorCharacteristic();
     await _setUpListeners();
     await synchronizeClock();
+    _initLocationService();
     _initSynchronizationTimer();
   }
 }

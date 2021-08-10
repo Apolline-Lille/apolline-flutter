@@ -1,20 +1,13 @@
 import 'dart:async';
-import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwin.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
-import 'package:apollineflutter/utils/position.dart';
-import 'package:apollineflutter/services/location_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:apollineflutter/services/influxdb_client.dart';
 import 'models/sensormodel.dart';
-import 'services/realtime_data_service.dart';
-import 'services/service_locator.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
-import 'package:apollineflutter/services/service_locator.dart';
 
 enum ConnexionType { Normal, Disconnect }
 
@@ -41,19 +34,13 @@ class _SensorViewState extends State<SensorView> {
   Timer timerSynchro;
   ConnexionType connectType = ConnexionType.Normal;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  // use for sqfLite to save data in local
-  SqfLiteService _sqfLiteService = SqfLiteService();
-  Position _currentPosition;
   SensorTwin _sensor;
-
-  RealtimeDataService _dataService = locator<RealtimeDataService>();
 
 
   @override
   void initState() {
     super.initState();
     initializeDevice();
-    initializeLocation();
   }
 
 
@@ -74,36 +61,6 @@ class _SensorViewState extends State<SensorView> {
     }
   }
 
-  void initializeLocation() {
-    this.subLocation = SimpleLocationService().locationStream.listen((p) {
-      this._currentPosition = p;
-    });
-  }
-
-
-  /* Called when data is received from the sensor */
-  void _handleSensorUpdate(String message) {
-    buf += message;
-
-    if (buf.contains('\n')) {
-      print("Got full line: " + buf);
-      List<String> values = buf.split(';');
-      var position = this._currentPosition ?? Position();
-
-      var model = SensorModel(values: values, sensorName: _sensor.name, position: position);
-      _dataService.update(model);
-      /* insert to sqflite */
-      _sqfLiteService.insertSensor(model.toJSON());
-
-      setState(() {
-        lastReceivedData = model;
-        initialized = true;
-
-        /* Perform additional handling here */
-      });
-      buf = "";
-    }
-  }
 
   void updateState(String st) {
     print(st);
@@ -123,8 +80,12 @@ class _SensorViewState extends State<SensorView> {
 
     updateState("Configuring device");
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
-    this._sensor.on(SensorTwinEvent.live_data, (data) {
-      _handleSensorUpdate(data);
+    this._sensor.on(SensorTwinEvent.live_data, (model) {
+      // _handleSensorUpdate(data);
+      setState(() {
+        lastReceivedData = model;
+        initialized = true;
+      });
     });
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) {
       print("--------------------connected--------------");

@@ -6,4 +6,4 @@ enum SensorTwinEvent {
   sensor_disconnected
 }
 
-typedef void SensorTwinEventCallback (String data);
+typedef void SensorTwinEventCallback (data);
