@@ -133,7 +133,7 @@ class SensorModel {
       : this.bdd(
             id: json['id'],
             values: json['value'].split('|'),
-            device: SensorDevice.fromNameAndUId(json['name'], json['uuid']),
+            device: SensorDevice.fromNameAndUId(json['deviceName'], json['uuid']),
             position: Position(geohash: json['geohash'], provider: json['provider'], transport: json['transport']),
             date: json['date']);
 }
