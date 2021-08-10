@@ -1,4 +1,3 @@
-import 'package:apollineflutter/models/sensor_device.dart';
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/utils/position.dart';
 
@@ -27,7 +26,7 @@ class SensorModel {
   static const int SENSOR_PM_ABOVE_2_5 = 7;
   static const int SENSOR_PM_ABOVE_5 = 8;
   static const int SENSOR_PM_ABOVE_10 = 9;
-  SensorDevice device;
+  String sensorName;
   int _date;
   int id;
   Position position;
@@ -37,14 +36,14 @@ class SensorModel {
 
   ///
   ///constructor of senorModel.
-  SensorModel({this.values, this.device, this.position}) {
+  SensorModel({this.values, this.sensorName, this.position}) {
     this._date = DateTime.now().millisecondsSinceEpoch;
   }
 
   ///
   ///constructor of senorModel with date.
   // ignore: non_constant_identifier_names
-  SensorModel.bdd({this.id, this.values, this.device, this.position, date}) {
+  SensorModel.bdd({this.id, this.values, this.sensorName, this.position, date}) {
     this._date = date;
   }
 
@@ -79,9 +78,8 @@ class SensorModel {
     var provider = this.position?.provider ?? "no";
     var geohash = this.position?.geohash ?? "no";
     var transport = this.position?.transport ?? "no";
-    var deviceName = device?.deviceName ?? "Apolline00";
     return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
-        "device=$deviceName,provider=$provider,geohash=$geohash,transport=$transport," +
+        "device=$sensorName,provider=$provider,geohash=$geohash,transport=$transport," +
         "unit=$unit value=$value ${_date * 1000000}";
   }
 
@@ -117,7 +115,7 @@ class SensorModel {
   // Format Json of sensorModel
   Map<String, dynamic> toJSON() {
     var json = Map<String, dynamic>();
-    json["deviceName"] = device?.deviceName ?? "Apolline00";
+    json["deviceName"] = sensorName;
     json["uuid"] = BlueSensorAttributes.dustSensorServiceUUID;
     json["provider"] = this.position?.provider ?? "no";
     json["geohash"] = this.position?.geohash ?? "no";
@@ -133,7 +131,7 @@ class SensorModel {
       : this.bdd(
             id: json['id'],
             values: json['value'].split('|'),
-            device: SensorDevice.fromNameAndUId(json['deviceName'], json['uuid']),
+            sensorName: json['deviceName'],
             position: Position(geohash: json['geohash'], provider: json['provider'], transport: json['transport']),
             date: json['date']);
 }

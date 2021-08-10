@@ -9,7 +9,6 @@ import 'package:apollineflutter/services/location_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:apollineflutter/models/sensor_device.dart';
 import 'package:apollineflutter/services/influxdb_client.dart';
 import 'models/sensormodel.dart';
 import 'services/realtime_data_service.dart';
@@ -77,7 +76,7 @@ class _SensorViewState extends State<SensorView> {
       List<String> values = buf.split(';');
       var position = this._currentPosition ?? Position();
 
-      var model = SensorModel(values: values, device: SensorDevice(widget.device), position: position);
+      var model = SensorModel(values: values, sensorName: widget.device.name, position: position);
       _dataService.update(model);
       /* insert to sqflite */
       _sqfLiteService.insertSensor(model.toJSON());
