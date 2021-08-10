@@ -1,8 +1,7 @@
 import 'dart:async';
-
-import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwin.dart';
+import 'package:apollineflutter/twins/SensorTwinBuilder.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/position.dart';
 import 'package:apollineflutter/services/location_service.dart';
@@ -152,28 +151,15 @@ class _SensorViewState extends State<SensorView> {
 
 
   ///
-  /// Retrieves Bluetooth information from a Bluetooth device.
-  ///
-  void handleDeviceConnect(BluetoothDevice d) async {
-    if (!isConnected) {
-      isConnected = true;
-      updateState("Configuring device");
-
-      List<BluetoothService> services = await d.discoverServices();
-      BluetoothService sensorService = services.firstWhere((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
-      BluetoothCharacteristic characteristic = sensorService.characteristics.firstWhere((char) => char.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID);
-
-      setUpSensor(characteristic);
-    }
-  }
-
-  ///
-  /// Builds up a sensor instance from a device's bluetooth characteristic.
+  /// Builds up a sensor instance from a Bluetooth device.
   /// Sets up data listeners before starting live data transfer.
   ///
-  Future<void> setUpSensor(BluetoothCharacteristic characteristic) async {
-    updateState("Setting up listeners...");
-    this._sensor = SensorTwin(device: characteristic);
+  void handleDeviceConnect(BluetoothDevice device) async {
+    if (isConnected) return;
+    isConnected = true;
+
+    updateState("Configuring device");
+    this._sensor = await SensorTwinBuilder.buildSensor(device);
     this._sensor.on(SensorTwinEvent.live_data, (data) {
       _handleSensorUpdate(data);
     });
