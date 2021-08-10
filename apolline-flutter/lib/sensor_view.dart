@@ -153,40 +153,31 @@ class _SensorViewState extends State<SensorView> {
 
   ///
   ///
-  void handleDeviceConnect(BluetoothDevice d) {
+  void handleDeviceConnect(BluetoothDevice d) async {
     if (!isConnected) {
       isConnected = true;
       updateState("Configuring device");
-      d.discoverServices().then((s) {
-        /* Discover services, and search for the Dust Sensor service */
-        s.forEach((service) {
-          handleServiceDiscovered(service);
-        });
-      });
+
+      List<BluetoothService> services = await d.discoverServices();
+      BluetoothService sensorService = services.firstWhere((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
+      BluetoothCharacteristic characteristic = sensorService.characteristics.firstWhere((char) => char.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID);
+
+      setUpSensor(characteristic);
     }
   }
 
 
-  Future<void> handleServiceDiscovered(BluetoothService service) async {
-    if (service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID) {
-      updateState("Blue Sensor Dust Sensor found - configuring characteristic");
-      var characteristics = service.characteristics;
-
-      /* Search for the Dust Sensor characteristic */
-      for (BluetoothCharacteristic c in characteristics) {
-        if (c.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID) {
-          updateState("Setting up listeners...");
-          this._sensor = SensorTwin(device: c);
-          this._sensor.on(SensorTwinEvent.live_data, (data) {
-            _handleSensorUpdate(data);
-          });
-          await this._sensor.init();
-          await this._sensor.launchDataLiveTransmission();
-          updateState("Waiting for sensor data...");
-        }
-      }
-    }
+  Future<void> setUpSensor(BluetoothCharacteristic characteristic) async {
+    updateState("Setting up listeners...");
+    this._sensor = SensorTwin(device: characteristic);
+    this._sensor.on(SensorTwinEvent.live_data, (data) {
+      _handleSensorUpdate(data);
+    });
+    await this._sensor.init();
+    await this._sensor.launchDataLiveTransmission();
+    updateState("Waiting for sensor data...");
   }
+
 
   ///
   ///Allows you to give information when you are unable to reconnect
