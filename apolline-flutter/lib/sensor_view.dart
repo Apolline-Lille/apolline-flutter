@@ -112,35 +112,35 @@ class _SensorViewState extends State<SensorView> {
     }
   }
 
-  // Synchronsation data sensor
-  void synchronizeData() {
-    // find all data not synchronisation
+  ///
+  /// Retrieves all data points from local database that have not been sent
+  /// to InfluxDB yet, and sends them.
+  ///
+  void synchronizeData() async {
+    // find not-synchronized data
     int pagination = 160;
-    _sqfLiteService.getAllSensorModelsNotSyncro().then((sensormodels) {
-      if (sensormodels.length > 0) {
-        // Pagination data before sending to influxDB
-        var iter = (sensormodels.length / pagination).ceil();
-        for (var i = 0; i < iter; i++) {
-          int start = i * pagination;
-          int end = (i + 1) * pagination;
-          if (1 == iter || i + 1 == iter) {
-            end = sensormodels.length;
-          }
-          var sousList = sensormodels.sublist(start, end);
-          //Send data to influxDB
-          _service.write(SensorModel.sensorsFmtToInfluxData(sousList)).then((_) {
-            List<int> ids = [];
-            sensormodels.forEach((sousList) {
-              ids.add(sousList.id);
-            });
-            //Update data (synchronisation) in sqfLite
-            _sqfLiteService.updateSensorSynchronisation(ids);
-          }).catchError((error) {
-            print(error);
-          });
-        }
+    List<SensorModel> dataPoints = await _sqfLiteService.getAllSensorModelsNotSyncro();
+    if (dataPoints.length == 0) return;
+
+    // Paginating data before sending to influxDB
+    var iter = (dataPoints.length / pagination).ceil();
+    for (var i = 0; i < iter; i++) {
+      int start = i * pagination;
+      int end = (i + 1) * pagination;
+      if (1 == iter || i + 1 == iter) {
+        end = dataPoints.length;
       }
-    });
+      var sousList = dataPoints.sublist(start, end);
+
+      // Send data to influxDB
+      await _service.write(SensorModel.sensorsFmtToInfluxData(sousList));
+      List<int> ids = [];
+      dataPoints.forEach((sousList) {
+        ids.add(sousList.id);
+      });
+      // Update local data in sqfLite
+      _sqfLiteService.updateSensorSynchronisation(ids);
+    }
   }
 
   void updateState(String st) {
