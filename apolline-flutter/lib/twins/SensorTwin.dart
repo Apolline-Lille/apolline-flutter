@@ -4,6 +4,8 @@ import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+import '../gattsample.dart';
+
 
 
 ///
@@ -26,8 +28,7 @@ class SensorTwin {
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
 
-  SensorTwin({@required BluetoothDevice device, @required BluetoothCharacteristic characteristic}) {
-    this._characteristic = characteristic;
+  SensorTwin({@required BluetoothDevice device}) {
     this._device = device;
     this._isSendingData = false;
     this._isSendingHistory = false;
@@ -115,10 +116,19 @@ class SensorTwin {
     });
   }
 
+  /// Filters out a Bluetooth device's services and characteristics to find the
+  /// one that will allow us to receive data from the sensor.
+  Future<void> _loadUpSensorCharacteristic () async {
+    List<BluetoothService> services = await _device.discoverServices();
+    BluetoothService sensorService = services.firstWhere((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
+    BluetoothCharacteristic characteristic = sensorService.characteristics.firstWhere((char) => char.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID);
+    this._characteristic = characteristic;
+  }
 
   /// Sets up listeners and synchronises sensor clock.
   /// Must be called before starting data transmission.
   Future<void> init () async {
+    await _loadUpSensorCharacteristic();
     await _setUpListeners();
     await synchronizeClock();
   }
