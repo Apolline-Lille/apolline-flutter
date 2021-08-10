@@ -74,7 +74,6 @@ class _SensorViewState extends State<SensorView> {
         throw e;
       }
     } finally {
-      listenDeviceState();
       handleDeviceConnect(widget.device);
     }
   }
@@ -227,18 +226,6 @@ class _SensorViewState extends State<SensorView> {
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
       // _scaffoldKey.currentState.showSnackBar(snackbar);
     }
-  }
-
-  ///
-  ///listen device state.
-  void listenDeviceState() {
-    this.subBluetoothState = widget.device.state.listen((state) {
-      if (state == BluetoothDeviceState.disconnecting) {
-        /*TODO: detectecter quand cela arrive */
-      } else {
-        print("--------------------connecting------------");
-      }
-    });
   }
 
 
