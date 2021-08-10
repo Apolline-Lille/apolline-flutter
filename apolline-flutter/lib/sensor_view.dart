@@ -38,7 +38,7 @@ class _SensorViewState extends State<SensorView> {
   List<StreamSubscription> subs = []; //used for remove listening value to sensor
   StreamSubscription subData;
   bool showErrorAction = false;
-  Timer timer, timerSynchro;
+  Timer timerSynchro;
   ConnexionType connectType = ConnexionType.Normal;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // use for influxDB to send data to the back
@@ -233,7 +233,6 @@ class _SensorViewState extends State<SensorView> {
   ///detroy partiel stream when loose connection.
   void destroyStream() {
     this.subData?.cancel();
-    this.timer?.cancel();
   }
 
   @override
