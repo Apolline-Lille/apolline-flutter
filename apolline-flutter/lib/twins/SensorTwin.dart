@@ -19,14 +19,14 @@ import 'package:flutter_blue/flutter_blue.dart';
 /// To access these data, one can subscribe to data events using the "on" method.
 ///
 class SensorTwin {
-  BluetoothCharacteristic _device;
+  BluetoothCharacteristic _characteristic;
   bool _isSendingData;
   bool _isSendingHistory;
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
 
-  SensorTwin({@required BluetoothCharacteristic device}) {
-    this._device = device;
+  SensorTwin({@required BluetoothCharacteristic characteristic}) {
+    this._characteristic = characteristic;
     this._isSendingData = false;
     this._isSendingHistory = false;
     this._callbacks = Map();
@@ -34,7 +34,7 @@ class SensorTwin {
 
 
   String get uuid {
-    return this._device.uuid.toString();
+    return this._characteristic.uuid.toString();
   }
 
 
@@ -45,7 +45,7 @@ class SensorTwin {
     if (_isSendingData) return null;
     _isSendingData = true;
 
-    return _device.write([0x63, 0]).then((s) {
+    return _characteristic.write([0x63, 0]).then((s) {
       print("Requested streaming start");
     }).catchError((e) {
       print(e);
@@ -81,7 +81,7 @@ class SensorTwin {
     // adding NULL at the end of the command
     List<int> finalCommand = new List.from(clockCommandBytes)..addAll([0x0]);
 
-    return _device.write(finalCommand)
+    return _characteristic.write(finalCommand)
         .then((value) { return value; })
         .catchError((e) { print('ERROR WHILE SYNCHRONIZING CLOCK: $e'); });
   }
@@ -95,13 +95,13 @@ class SensorTwin {
 
   /// Redistributes sensor data to registered callbacks.
   Future<void> _setUpListeners () {
-    return _device.setNotifyValue(true).then((s) {
+    return _characteristic.setNotifyValue(true).then((s) {
       /* Catch updates on characteristic  */
     }).catchError((e) {
       print(e);
     }).whenComplete(() {
 
-      _device.value.listen((value) {
+      _characteristic.value.listen((value) {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
