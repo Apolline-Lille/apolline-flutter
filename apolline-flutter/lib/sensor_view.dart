@@ -152,6 +152,7 @@ class _SensorViewState extends State<SensorView> {
 
 
   ///
+  /// Retrieves Bluetooth information from a Bluetooth device.
   ///
   void handleDeviceConnect(BluetoothDevice d) async {
     if (!isConnected) {
@@ -166,7 +167,10 @@ class _SensorViewState extends State<SensorView> {
     }
   }
 
-
+  ///
+  /// Builds up a sensor instance from a device's bluetooth characteristic.
+  /// Sets up data listeners before starting live data transfer.
+  ///
   Future<void> setUpSensor(BluetoothCharacteristic characteristic) async {
     updateState("Setting up listeners...");
     this._sensor = SensorTwin(device: characteristic);
