@@ -164,7 +164,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       MaterialPageRoute(builder: (context) => SensorView(device: device)),
     );
 
-    if (isconnected) {
+    if (isconnected != null && isconnected) {
       setState(() {
         devices.remove(id);
         pairedDevices.putIfAbsent(id, () => device);

@@ -159,6 +159,7 @@ class _SensorViewState extends State<SensorView> {
   @override
   void dispose() {
     widget.device.disconnect();
+    this._sensor?.shutdown();
     super.dispose();
   }
 
