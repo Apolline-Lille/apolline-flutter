@@ -77,6 +77,8 @@ class _SensorViewState extends State<SensorView> {
   void handleDeviceConnect(BluetoothDevice device) async {
     if (isConnected) return;
     isConnected = true;
+    if (this._sensor != null)
+      this._sensor.shutdown();
 
     updateState("Configuring device");
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
