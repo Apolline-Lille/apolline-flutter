@@ -114,27 +114,6 @@ class _SensorViewState extends State<SensorView> {
   }
 
 
-
-  ///
-  ///Allows you to give information when you are unable to reconnect
-  Future<void> showInformation() async {
-    var text = "L'appareil sensor est soit éteint ou distant," +
-        "veuillez vous assurez que l'appareil est chargé et près de votre téléphone;" +
-        " faite un retour en arrière ou fermé et réouvré l'application; " +
-        "sinon contactez l'administrateur";
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          children: [
-            Text(text),
-          ],
-        );
-      },
-    );
-  }
-
-
   ///use for prevent when setState call after dispose methode.
   @override
   void setState(fn) {
@@ -163,19 +142,6 @@ class _SensorViewState extends State<SensorView> {
     super.dispose();
   }
 
-  ///
-  ///
-  List<Widget> _buildAppBarAction() {
-    return showErrorAction
-        ? <Widget>[
-            IconButton(
-                icon: Icon(Icons.error),
-                onPressed: () {
-                  showInformation();
-                })
-          ]
-        : [];
-  }
 
   ///
   ///Called when press back button
@@ -198,7 +164,6 @@ class _SensorViewState extends State<SensorView> {
               onPressed: () {
                 Navigator.pop(context, isConnected);
               }),
-          actions: _buildAppBarAction(),
         ),
         body: Center(
           child: Column(children: <Widget>[
