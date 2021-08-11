@@ -28,7 +28,6 @@ class _SensorViewState extends State<SensorView> {
   String state = "Connecting to the device...";
   SensorModel lastReceivedData;
   bool isConnected = false;
-  bool showErrorAction = false;
   ConnexionType connectType = ConnexionType.Normal;
   SensorTwin _sensor;
 
@@ -96,9 +95,6 @@ class _SensorViewState extends State<SensorView> {
     print("--------------------connected--------------");
     if (connectType == ConnexionType.Disconnect && !isConnected) {
       print("-------------------connectedExécute---------");
-      setState(() {
-        showErrorAction = false;
-      });
       handleDeviceConnect(widget.device);
     }
   }
@@ -107,9 +103,6 @@ class _SensorViewState extends State<SensorView> {
     print("----------------disconnected----------------");
     isConnected = false;
     connectType = ConnexionType.Disconnect; //deconnexion
-    setState(() {
-      showErrorAction = true;
-    });
     showSnackbar("Connection perdu avec le capteur !");
   }
 
