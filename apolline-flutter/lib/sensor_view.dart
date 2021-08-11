@@ -78,35 +78,41 @@ class _SensorViewState extends State<SensorView> {
 
     updateState("Configuring device");
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
-    this._sensor.on(SensorTwinEvent.live_data, (model) {
-      // _handleSensorUpdate(data);
-      setState(() {
-        lastReceivedData = model;
-      });
-    });
-    this._sensor.on(SensorTwinEvent.sensor_connected, (_) {
-      print("--------------------connected--------------");
-      if (connectType == ConnexionType.Disconnect && !isConnected) {
-        print("-------------------connectedExécute---------");
-        setState(() {
-          showErrorAction = false;
-        });
-        handleDeviceConnect(widget.device);
-      }
-    });
-    this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) {
-      print("----------------disconnected----------------");
-      isConnected = false;
-      connectType = ConnexionType.Disconnect; //deconnexion
-      setState(() {
-        showErrorAction = true;
-      });
-      showSnackbar("Connection perdu avec le capteur !");
-    });
+    this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as SensorModel));
+    this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
+    this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
     await this._sensor.init();
     await this._sensor.launchDataLiveTransmission();
     updateState("Waiting for sensor data...");
   }
+
+  void _onLiveDataReceived (SensorModel model) {
+    setState(() {
+      lastReceivedData = model;
+    });
+  }
+
+  void _onSensorConnected () {
+    print("--------------------connected--------------");
+    if (connectType == ConnexionType.Disconnect && !isConnected) {
+      print("-------------------connectedExécute---------");
+      setState(() {
+        showErrorAction = false;
+      });
+      handleDeviceConnect(widget.device);
+    }
+  }
+
+  void _onSensorDisconnected () {
+    print("----------------disconnected----------------");
+    isConnected = false;
+    connectType = ConnexionType.Disconnect; //deconnexion
+    setState(() {
+      showErrorAction = true;
+    });
+    showSnackbar("Connection perdu avec le capteur !");
+  }
+
 
 
   ///
