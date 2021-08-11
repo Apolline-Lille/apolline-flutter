@@ -9,31 +9,27 @@ import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
 
+
+
 enum ConnexionType { Normal, Disconnect }
+
 
 class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
-
   final BluetoothDevice device;
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
 }
 
+
 class _SensorViewState extends State<SensorView> {
   String state = "Connecting to the device...";
-  String buf = "";
   SensorModel lastReceivedData;
-  bool initialized = false;
-  StreamSubscription subBluetoothState; //used for remove listening value to sensor
-  StreamSubscription subLocation;
   bool isConnected = false;
-  List<StreamSubscription> subs = []; //used for remove listening value to sensor
-  StreamSubscription subData;
   bool showErrorAction = false;
-  Timer timerSynchro;
   ConnexionType connectType = ConnexionType.Normal;
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   SensorTwin _sensor;
 
 
@@ -86,7 +82,6 @@ class _SensorViewState extends State<SensorView> {
       // _handleSensorUpdate(data);
       setState(() {
         lastReceivedData = model;
-        initialized = true;
       });
     });
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) {
@@ -101,8 +96,6 @@ class _SensorViewState extends State<SensorView> {
     });
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) {
       print("----------------disconnected----------------");
-      buf = "";
-      this.destroyStream();
       isConnected = false;
       connectType = ConnexionType.Disconnect; //deconnexion
       setState(() {
@@ -148,7 +141,7 @@ class _SensorViewState extends State<SensorView> {
   ///Display a snackBar
   void showSnackbar(String msg) {
     var snackbar = SnackBar(content: Text(msg));
-    if (_scaffoldKey != null && _scaffoldKey.currentState != null) {
+    if (widget.scaffoldKey != null && widget.scaffoldKey.currentState != null) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       // _scaffoldKey.currentState.hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -157,19 +150,9 @@ class _SensorViewState extends State<SensorView> {
   }
 
 
-  ///
-  ///detroy partiel stream when loose connection.
-  void destroyStream() {
-    this.subData?.cancel();
-  }
-
   @override
   void dispose() {
-    this.destroyStream();
-    this.subBluetoothState?.cancel();
-    this.subLocation?.cancel();
     widget.device.disconnect();
-    this.timerSynchro?.cancel();
     super.dispose();
   }
 
@@ -198,11 +181,11 @@ class _SensorViewState extends State<SensorView> {
   @override
   Widget build(BuildContext context) {
     /* If we are not initialized, display status info */
-    if (!initialized) {
+    if (lastReceivedData == null) {
       return Scaffold(
-        key: _scaffoldKey,
+        key: widget.scaffoldKey,
         appBar: AppBar(
-          title: Text(_sensor != null ? _sensor.name : "Loading..."),
+          title: Text(_sensor != null ? _sensor.name : "Connecting to sensor..."),
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
@@ -225,7 +208,7 @@ class _SensorViewState extends State<SensorView> {
           home: DefaultTabController(
             length: 3,
             child: Scaffold(
-                key: _scaffoldKey,
+                key: widget.scaffoldKey,
                 appBar: AppBar(
                   backgroundColor: Colors.green,
                   bottom: TabBar(
