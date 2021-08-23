@@ -189,6 +189,7 @@ class SensorTwin {
       var sousList = dataPoints.sublist(start, end);
 
       // Send data to influxDB
+      print('Sending ${sousList.length} data points to InfluxDB');
       await _service.write(SensorModel.sensorsFmtToInfluxData(sousList));
       List<int> ids = [];
       dataPoints.forEach((sousList) {
