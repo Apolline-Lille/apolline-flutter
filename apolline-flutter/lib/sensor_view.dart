@@ -96,6 +96,7 @@ class _SensorViewState extends State<SensorView> {
     if (connectType == ConnexionType.Disconnect && !isConnected) {
       print("-------------------connectedExécute---------");
       handleDeviceConnect(widget.device);
+      showSnackbar("Connexion avec le capteur rétablie.");
     }
   }
 
