@@ -67,13 +67,6 @@ class SqfLiteService {
             $columnValues TEXT NOT NULL
           )
           ''';
-
-    // String queryDate = '''
-    //       CREATE TABLE $tableDateModel (
-    //         $colId INTEGER PRIMARY KEY,
-    //         $colDate INTEGER
-    //       )
-    //       ''';
     await db.execute(querySensor);
   }
 
@@ -83,50 +76,6 @@ class SqfLiteService {
     // ignore: unused_local_variable
     var id = db.insert(dataPointTableName, model);
     return model;
-  }
-
-  // SQL save DataPointModel
-  Future<int> insertAllSensor(SensorCollection sensorCollection) async {
-    Database db = await database;
-    // ignore: unused_local_variable
-    var buffer = new StringBuffer();
-    sensorCollection.lastData.forEach((element) {
-      Map<String, dynamic> json = element.toJSON();
-      if (buffer.isNotEmpty) {
-        buffer.write(",\n");
-      }
-      buffer.write("('");
-      buffer.write(json["deviceName"]);
-      buffer.write("', '");
-      buffer.write(json["uuid"]);
-      buffer.write("', '");
-      buffer.write(json["provider"]);
-      buffer.write("', '");
-      buffer.write(json["geohash"]);
-      buffer.write("', '");
-      buffer.write(json["transport"]);
-      buffer.write("', '");
-      buffer.write(json["dateSynchro"]);
-      buffer.write("', '");
-      buffer.write(json["value"]);
-      buffer.write("')");
-    });
-    var raw = await db.rawInsert("INSERT Into $dataPointTableName ($columnDeviceName, $columnUuid, $columnProvider, $columnTransport, $columnGeohash, $columnDate, $columnValues ) "
-        " VALUES ${buffer.toString()}");
-    return raw;
-  }
-
-  // SQL get DataPointModel data by uuid
-  Future<List<DataPointModel>> getDataPointByUuid(String uuid) async {
-    Database db = await database;
-    List<DataPointModel> models = [];
-    List<Map> maps = await db.query(dataPointTableName,
-        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnValues], where: '$columnUuid = ?', whereArgs: [uuid]);
-    if (maps.length > 0) {
-      maps.forEach((map) => models.add(DataPointModel.fromJson(map)));
-      return models;
-    }
-    return models;
   }
 
   // SQL get all DataPointModel data
@@ -173,19 +122,13 @@ class SqfLiteService {
   }
 
   /// Declares a list of models as sent to the backend
-  /// (sets their $columnSynchro value with 1).
+  /// (sets their $columnSynchro value to 1).
   Future setModelsAsSynchronized(List<int> ids) async {
     Database db = await database;
     String query = "UPDATE $dataPointTableName SET $columnSynchro = 1 WHERE id IN (${List.filled(ids.length, '?').join(',')})";
     await db.execute(query, ids);
   }
 
-
-  // SQL delete all data
-  Future<int> deleteAllSensorData() async {
-    Database db = await database;
-    return await db.delete(dataPointTableName);
-  }
 
   // SQL close database
   Future close() async {
