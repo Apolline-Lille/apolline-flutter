@@ -1,8 +1,17 @@
 import 'dart:async';
 
+import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/services/influxdb_client.dart';
+import 'package:apollineflutter/services/location_service.dart';
+import 'package:apollineflutter/services/realtime_data_service.dart';
+import 'package:apollineflutter/services/service_locator.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
+import 'package:apollineflutter/utils/position.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+
+import '../gattsample.dart';
 
 
 
@@ -19,22 +28,35 @@ import 'package:flutter_blue/flutter_blue.dart';
 /// To access these data, one can subscribe to data events using the "on" method.
 ///
 class SensorTwin {
-  BluetoothCharacteristic _device;
+  BluetoothCharacteristic _characteristic;
+  BluetoothDevice _device;
   bool _isSendingData;
   bool _isSendingHistory;
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
+  // use for influxDB to send data to the back
+  InfluxDBAPI _service;
+  SqfLiteService _sqfLiteService;
+  Duration _synchronizationTiming;
+  RealtimeDataService _dataService = locator<RealtimeDataService>();
+  Timer _syncTimer;
 
-  SensorTwin({@required BluetoothCharacteristic device}) {
+  Position _currentPosition;
+
+
+  SensorTwin({@required BluetoothDevice device, @required Duration syncTiming}) {
     this._device = device;
     this._isSendingData = false;
     this._isSendingHistory = false;
     this._callbacks = Map();
+    this._service = InfluxDBAPI();
+    this._sqfLiteService = SqfLiteService();
+    this._synchronizationTiming = syncTiming;
   }
 
 
-  String get uuid {
-    return this._device.uuid.toString();
+  String get name {
+    return this._device.name;
   }
 
 
@@ -45,7 +67,7 @@ class SensorTwin {
     if (_isSendingData) return null;
     _isSendingData = true;
 
-    return _device.write([0x63, 0]).then((s) {
+    return _characteristic.write([0x63, 0]).then((s) {
       print("Requested streaming start");
     }).catchError((e) {
       print(e);
@@ -81,7 +103,7 @@ class SensorTwin {
     // adding NULL at the end of the command
     List<int> finalCommand = new List.from(clockCommandBytes)..addAll([0x0]);
 
-    return _device.write(finalCommand)
+    return _characteristic.write(finalCommand)
         .then((value) { return value; })
         .catchError((e) { print('ERROR WHILE SYNCHRONIZING CLOCK: $e'); });
   }
@@ -95,17 +117,33 @@ class SensorTwin {
 
   /// Redistributes sensor data to registered callbacks.
   Future<void> _setUpListeners () {
-    return _device.setNotifyValue(true).then((s) {
+    _device.state.listen((state) {
+      switch(state) {
+        case BluetoothDeviceState.connected:
+          if (_callbacks.containsKey(SensorTwinEvent.sensor_connected))
+            _callbacks[SensorTwinEvent.sensor_connected]("connected");
+          break;
+        case BluetoothDeviceState.disconnected:
+          if (_callbacks.containsKey(SensorTwinEvent.sensor_disconnected))
+            _callbacks[SensorTwinEvent.sensor_disconnected]("disconnected");
+          break;
+        default:
+          break;
+      }
+    });
+
+    return _characteristic.setNotifyValue(true).then((s) {
       /* Catch updates on characteristic  */
     }).catchError((e) {
       print(e);
     }).whenComplete(() {
 
-      _device.value.listen((value) {
+      _characteristic.value.listen((value) {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
-          _callbacks[SensorTwinEvent.live_data](message);
+          SensorModel model = _handleSensorUpdate(message);
+          _callbacks[SensorTwinEvent.live_data](model);
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
           _callbacks[SensorTwinEvent.history_data](message);
         }
@@ -113,11 +151,84 @@ class SensorTwin {
     });
   }
 
+  /// Filters out a Bluetooth device's services and characteristics to find the
+  /// one that will allow us to receive data from the sensor.
+  Future<void> _loadUpSensorCharacteristic () async {
+    List<BluetoothService> services = await _device.discoverServices();
+    BluetoothService sensorService = services.firstWhere((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
+    BluetoothCharacteristic characteristic = sensorService.characteristics.firstWhere((char) => char.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID);
+    this._characteristic = characteristic;
+  }
+
+  void _initLocationService () {
+    SimpleLocationService().locationStream.listen((p) {
+      this._currentPosition = p;
+    });
+  }
+
+  void _initSynchronizationTimer () {
+    this._syncTimer = Timer.periodic(_synchronizationTiming, (Timer t) => _synchronizationCallback());
+  }
+
+  /// Retrieves all data points from local database that have not been sent
+  /// to InfluxDB yet, and sends them.
+  void _synchronizationCallback () async {
+    // find not-synchronized data
+    int pagination = 160;
+    List<SensorModel> dataPoints = await _sqfLiteService.getAllSensorModelsNotSyncro();
+    if (dataPoints.length == 0) return;
+
+    // Paginating data before sending to influxDB
+    var iter = (dataPoints.length / pagination).ceil();
+    for (var i = 0; i < iter; i++) {
+      int start = i * pagination;
+      int end = (i + 1) * pagination;
+      if (1 == iter || i + 1 == iter) {
+        end = dataPoints.length;
+      }
+      var sousList = dataPoints.sublist(start, end);
+
+      // Send data to influxDB
+      await _service.write(SensorModel.sensorsFmtToInfluxData(sousList));
+      List<int> ids = [];
+      dataPoints.forEach((sousList) {
+        ids.add(sousList.id);
+      });
+      // Update local data in sqfLite
+      _sqfLiteService.updateSensorSynchronisation(ids);
+    }
+  }
+
+  /// Called when data is received from the sensor
+  SensorModel _handleSensorUpdate (String message) {
+    if (!message.contains('\n')) return null;
+    print("Got full line: " + message);
+    List<String> values = message.split(';');
+
+    var model = SensorModel(values: values, sensorName: this.name, position: _currentPosition);
+    _dataService.update(model);
+    /* insert to sqflite */
+    _sqfLiteService.insertSensor(model.toJSON());
+
+    return model;
+  }
 
   /// Sets up listeners and synchronises sensor clock.
   /// Must be called before starting data transmission.
   Future<void> init () async {
+    await _loadUpSensorCharacteristic();
     await _setUpListeners();
     await synchronizeClock();
+    _initLocationService();
+    _initSynchronizationTimer();
+  }
+
+  /// Releases resources associated with the sensor.
+  /// TODO properly close bluetooth connection
+  void shutdown () {
+    this._callbacks = Map();
+    this._syncTimer.cancel();
+    this._service.client.close();
+    this._dataService.stop();
   }
 }
