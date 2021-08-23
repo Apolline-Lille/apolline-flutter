@@ -181,15 +181,8 @@ class SqfLiteService {
   // SQL update Sensor colunm synchronisation
   Future updateSensorSynchronisation(List<int> ids) async {
     Database db = await database;
-    // ignore: unused_local_variable.
-    String inClause = ids.toString();
-    //at this point inClause will look like "[1,2,3,4,5]"
-    //replace the brackets with parentheses
-    inClause = inClause.replaceFirst("[","(");
-    inClause = inClause.replaceFirst("]",")");
-    //at this point inClause will look like "(1,2,3,4,5)"
-    String query = ''' UPDATE $tableSensorModel SET $columnSynchro = 1 WHERE id IN '''+inClause;
-    await db.execute(query);
+    String query = "UPDATE $tableSensorModel SET $columnSynchro = 1 WHERE id IN (${List.filled(ids.length, '?').join(',')})";
+    await db.execute(query, ids);
   }
 
   // SQL delete all data
