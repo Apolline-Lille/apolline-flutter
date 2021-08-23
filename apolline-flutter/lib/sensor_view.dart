@@ -17,7 +17,6 @@ enum ConnexionType { Normal, Disconnect }
 class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
   final BluetoothDevice device;
-  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
@@ -30,6 +29,7 @@ class _SensorViewState extends State<SensorView> {
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
   SensorTwin _sensor;
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 
   @override
@@ -118,13 +118,9 @@ class _SensorViewState extends State<SensorView> {
   ///
   ///Display a snackBar
   void showSnackbar(String msg) {
-    var snackbar = SnackBar(content: Text(msg));
-    if (widget.scaffoldKey != null && widget.scaffoldKey.currentState != null) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      // _scaffoldKey.currentState.hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      // _scaffoldKey.currentState.showSnackBar(snackbar);
-    }
+    var snackBar = SnackBar(content: Text(msg));
+    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
+    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
   }
 
 
@@ -149,7 +145,6 @@ class _SensorViewState extends State<SensorView> {
     /* If we are not initialized, display status info */
     if (lastReceivedData == null) {
       return Scaffold(
-        key: widget.scaffoldKey,
         appBar: AppBar(
           title: Text(_sensor != null ? _sensor.name : "Connecting to sensor..."),
           leading: IconButton(
@@ -173,7 +168,7 @@ class _SensorViewState extends State<SensorView> {
           home: DefaultTabController(
             length: 3,
             child: Scaffold(
-                key: widget.scaffoldKey,
+                key: _scaffoldMessengerKey,
                 appBar: AppBar(
                   backgroundColor: Colors.green,
                   bottom: TabBar(
