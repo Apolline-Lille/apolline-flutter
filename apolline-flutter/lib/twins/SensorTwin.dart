@@ -174,30 +174,19 @@ class SensorTwin {
   /// to InfluxDB yet, and sends them.
   void _synchronizationCallback () async {
     // find not-synchronized data
-    int pagination = 160;
     List<SensorModel> dataPoints = await _sqfLiteService.getAllSensorModelsNotSyncro();
     if (dataPoints.length == 0) return;
 
-    // Paginating data before sending to influxDB
-    var iter = (dataPoints.length / pagination).ceil();
-    for (var i = 0; i < iter; i++) {
-      int start = i * pagination;
-      int end = (i + 1) * pagination;
-      if (1 == iter || i + 1 == iter) {
-        end = dataPoints.length;
-      }
-      var sousList = dataPoints.sublist(start, end);
+    // Send data to influxDB
+    print('Sending ${dataPoints.length} data points to InfluxDB');
+    await _service.write(SensorModel.sensorsFmtToInfluxData(dataPoints));
+    List<int> ids = [];
+    dataPoints.forEach((sousList) {
+      ids.add(sousList.id);
+    });
 
-      // Send data to influxDB
-      print('Sending ${sousList.length} data points to InfluxDB');
-      await _service.write(SensorModel.sensorsFmtToInfluxData(sousList));
-      List<int> ids = [];
-      dataPoints.forEach((sousList) {
-        ids.add(sousList.id);
-      });
-      // Update local data in sqfLite
-      _sqfLiteService.updateSensorSynchronisation(ids);
-    }
+    // Update local data in sqfLite
+    _sqfLiteService.updateSensorSynchronisation(ids);
   }
 
   /// Called when data is received from the sensor
