@@ -180,12 +180,9 @@ class SensorTwin {
     // Send data to influxDB
     print('Sending ${dataPoints.length} data points to InfluxDB');
     await _service.write(SensorModel.sensorsFmtToInfluxData(dataPoints));
-    List<int> ids = [];
-    dataPoints.forEach((sousList) {
-      ids.add(sousList.id);
-    });
 
     // Update local data in sqfLite
+    List<int> ids = dataPoints.map((model) => model.id).toSet().toList();
     _sqfLiteService.updateSensorSynchronisation(ids);
   }
 
