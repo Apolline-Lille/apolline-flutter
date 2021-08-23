@@ -78,7 +78,7 @@ class SqfLiteService {
   }
 
   // SQL save DataPointModel
-  Future<Map<String, dynamic>> insertSensor(Map<String, dynamic> model) async {
+  Future<Map<String, dynamic>> addDataPoint(Map<String, dynamic> model) async {
     Database db = await database;
     // ignore: unused_local_variable
     var id = db.insert(dataPointTableName, model);

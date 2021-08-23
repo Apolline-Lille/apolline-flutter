@@ -211,7 +211,7 @@ class SensorTwin {
     var model = DataPointModel(values: values, sensorName: this.name, position: _currentPosition);
     _dataService.update(model);
     /* insert to sqflite */
-    _sqfLiteService.insertSensor(model.toJSON());
+    _sqfLiteService.addDataPoint(model.toJSON());
 
     return model;
   }
