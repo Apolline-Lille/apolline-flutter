@@ -105,7 +105,7 @@ class _SensorViewState extends State<SensorView> {
     print("----------------disconnected----------------");
     isConnected = false;
     connectType = ConnexionType.Disconnect; //deconnexion
-    showSnackbar("Connexion avec le capteur perdue.");
+    showSnackbar("Connexion avec le capteur perdue.", duration: Duration(days: 1));
   }
 
 
@@ -119,8 +119,8 @@ class _SensorViewState extends State<SensorView> {
 
   ///
   ///Display a snackBar
-  void showSnackbar(String msg) {
-    var snackBar = SnackBar(content: Text(msg));
+  void showSnackbar(String msg, {Duration duration = const Duration(seconds: 4)}) {
+    var snackBar = SnackBar(content: Text(msg), duration: duration,);
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
   }
