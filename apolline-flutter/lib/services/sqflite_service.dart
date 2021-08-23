@@ -149,14 +149,6 @@ class SqfLiteService {
     return sensdorModels;
   }
 
-  // SQL get all SensorModelNotSynchro data
-  Future<List<SensorModel>> getNotSynchronizedModels() async {
-    Database db = await database;
-    List<Map> maps = await db.query(tableSensorModel,
-        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnDate, columnValues],
-        where: '$columnSynchro == ?', whereArgs: [0]);
-    return maps.map((map) => SensorModel.fromJson(map)).toList();
-  }
 
   ///
   ///get all data after this mapfrequency [freq].
@@ -177,13 +169,25 @@ class SqfLiteService {
     return sensorModels;
   }
 
-  // SQL update Sensor colunm synchronisation
-  // TODO doc
-  Future updateSensorSynchronisation(List<int> ids) async {
+
+  /// Returns all models that have not been sent to backend yet
+  /// (materialized with $columnSynchro == 0).
+  Future<List<SensorModel>> getNotSynchronizedModels() async {
+    Database db = await database;
+    List<Map> maps = await db.query(tableSensorModel,
+        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnDate, columnValues],
+        where: '$columnSynchro == ?', whereArgs: [0]);
+    return maps.map((map) => SensorModel.fromJson(map)).toList();
+  }
+
+  /// Declares a list of models as sent to the backend
+  /// (sets their $columnSynchro value with 1).
+  Future setModelsAsSynchronized(List<int> ids) async {
     Database db = await database;
     String query = "UPDATE $tableSensorModel SET $columnSynchro = 1 WHERE id IN (${List.filled(ids.length, '?').join(',')})";
     await db.execute(query, ids);
   }
+
 
   // SQL delete all data
   Future<int> deleteAllSensorData() async {

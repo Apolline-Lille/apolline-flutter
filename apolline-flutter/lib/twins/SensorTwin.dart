@@ -198,7 +198,7 @@ class SensorTwin {
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();
-      _sqfLiteService.updateSensorSynchronisation(ids);
+      _sqfLiteService.setModelsAsSynchronized(ids);
     }
   }
 
