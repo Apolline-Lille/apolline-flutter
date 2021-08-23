@@ -92,11 +92,12 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onSensorConnected () {
-    print("--------------------connected--------------");
     if (connectType == ConnexionType.Disconnect && !isConnected) {
       print("-------------------connectedExécute---------");
       handleDeviceConnect(widget.device);
-      showSnackbar("Connexion avec le capteur rétablie.");
+    } else {
+      print("--------------------connected--------------");
+      showSnackbar("Connexion avec le capteur établie.");
     }
   }
 
@@ -146,6 +147,7 @@ class _SensorViewState extends State<SensorView> {
     /* If we are not initialized, display status info */
     if (lastReceivedData == null) {
       return Scaffold(
+        key: _scaffoldMessengerKey,
         appBar: AppBar(
           title: Text(_sensor != null ? _sensor.name : "Connecting to sensor..."),
           leading: IconButton(
