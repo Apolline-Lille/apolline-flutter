@@ -1,10 +1,10 @@
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 
 
 /// Sensore Collection used to make last data in collection 
 class SensorCollection {
   // to stock lastData
-  List<SensorModel> lastData;
+  List<DataPointModel> lastData;
 
   int get length {
     return this.lastData.length;
@@ -16,7 +16,7 @@ class SensorCollection {
   }
   
   /// Add a sensor model to lastData collection
-  void addModel(SensorModel model) {
+  void addModel(DataPointModel model) {
     this.lastData.add(model);
   }
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/influxdb_client.dart';
 import 'package:apollineflutter/services/location_service.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
@@ -142,7 +142,7 @@ class SensorTwin {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
-          SensorModel model = _handleSensorUpdate(message);
+          DataPointModel model = _handleSensorUpdate(message);
           _callbacks[SensorTwinEvent.live_data](model);
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
           _callbacks[SensorTwinEvent.history_data](message);
@@ -174,41 +174,44 @@ class SensorTwin {
   /// to InfluxDB yet, and sends them.
   void _synchronizationCallback () async {
     // find not-synchronized data
-    int pagination = 160;
-    List<SensorModel> dataPoints = await _sqfLiteService.getAllSensorModelsNotSyncro();
+    List<DataPointModel> dataPoints = await _sqfLiteService.getNotSynchronizedModels();
     if (dataPoints.length == 0) return;
 
-    // Paginating data before sending to influxDB
-    var iter = (dataPoints.length / pagination).ceil();
-    for (var i = 0; i < iter; i++) {
-      int start = i * pagination;
-      int end = (i + 1) * pagination;
-      if (1 == iter || i + 1 == iter) {
-        end = dataPoints.length;
-      }
-      var sousList = dataPoints.sublist(start, end);
+
+    // if a lot of data points have not been sent to the backend, we avoid
+    // doing a HTTP call with a giant payload; we rather use several HTTP calls
+    // each containing MAX_MODELS_COUNT models.
+    const int MAX_MODELS_COUNT = 150;
+    int modelsCount = dataPoints.length;
+    int callsCount = (modelsCount/MAX_MODELS_COUNT).ceil();
+
+    for (int i=0; i<callsCount; i++) {
+      int lowerBound = i * MAX_MODELS_COUNT;
+      int upperBound = i == callsCount - 1
+          ? modelsCount
+          : lowerBound + MAX_MODELS_COUNT;
 
       // Send data to influxDB
-      await _service.write(SensorModel.sensorsFmtToInfluxData(sousList));
-      List<int> ids = [];
-      dataPoints.forEach((sousList) {
-        ids.add(sousList.id);
-      });
+      List<DataPointModel> models = dataPoints.sublist(lowerBound, upperBound);
+      print('Sending ${models.length} data points to InfluxDB');
+      await _service.write(DataPointModel.sensorsFmtToInfluxData(models));
+
       // Update local data in sqfLite
-      _sqfLiteService.updateSensorSynchronisation(ids);
+      List<int> ids = models.map((model) => model.id).toList();
+      _sqfLiteService.setModelsAsSynchronized(ids);
     }
   }
 
   /// Called when data is received from the sensor
-  SensorModel _handleSensorUpdate (String message) {
+  DataPointModel _handleSensorUpdate (String message) {
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
     List<String> values = message.split(';');
 
-    var model = SensorModel(values: values, sensorName: this.name, position: _currentPosition);
+    var model = DataPointModel(values: values, sensorName: this.name, position: _currentPosition);
     _dataService.update(model);
     /* insert to sqflite */
-    _sqfLiteService.insertSensor(model.toJSON());
+    _sqfLiteService.addDataPoint(model.toJSON());
 
     return model;
   }

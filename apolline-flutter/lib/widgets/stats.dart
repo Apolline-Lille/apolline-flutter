@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ import 'package:mp_chart/mp/core/value_formatter/value_formatter.dart';
 // ignore: must_be_immutable
 class Stats extends StatefulWidget {
   Stats({Key key, this.dataSensor}) : super(key: key);
-  SensorModel dataSensor;
+  DataPointModel dataSensor;
   @override
   State<StatefulWidget> createState() {
     return StatsState(datas: dataSensor);
@@ -35,12 +35,12 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   StatsState({Key key, this.datas});
   RealtimeDataService _dataService = locator<RealtimeDataService>();
   // stream to listen the arrival of new data 
-  Stream<SensorModel> _dataStream = locator<RealtimeDataService>().dataStream;
+  Stream<DataPointModel> _dataStream = locator<RealtimeDataService>().dataStream;
   // a controller with the stream it controls.
-  StreamSubscription<SensorModel> _streamSubscription;
+  StreamSubscription<DataPointModel> _streamSubscription;
   // contorller for chart
   LineChartController controller;
-  SensorModel datas;
+  DataPointModel datas;
   // Line PM1
   ILineDataSet setPM1;
   // Line PM2.5
@@ -66,12 +66,12 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     _streamSubscription = _dataStream.listen((newData) {
       if (intialized) {
         _addEntry(
-            0, i0++, double.parse(newData.values[SensorModel.SENSOR_PM_1]));
+            0, i0++, double.parse(newData.values[DataPointModel.SENSOR_PM_1]));
         _addEntry(
-            1, i1++, double.parse(newData.values[SensorModel.SENSOR_PM_2_5]));
+            1, i1++, double.parse(newData.values[DataPointModel.SENSOR_PM_2_5]));
         _addEntry(
-            2, i2++, double.parse(newData.values[SensorModel.SENSOR_PM_10]));
-        _dataTimeX.add(newData.values[SensorModel.SENSOR_DATE]);
+            2, i2++, double.parse(newData.values[DataPointModel.SENSOR_PM_10]));
+        _dataTimeX.add(newData.values[DataPointModel.SENSOR_DATE]);
         setState(() {});
       }
     });
