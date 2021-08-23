@@ -76,7 +76,7 @@ class _SensorViewState extends State<SensorView> {
       this._sensor.shutdown();
 
     updateState("Configuring device");
-    this._sensor = SensorTwin(device: device, syncTiming: Duration(seconds: 12));
+    this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
     this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as SensorModel));
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());

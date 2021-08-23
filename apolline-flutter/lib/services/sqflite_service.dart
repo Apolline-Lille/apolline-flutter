@@ -177,8 +177,8 @@ class SqfLiteService {
     return sensorModels;
   }
 
-
   // SQL update Sensor colunm synchronisation
+  // TODO doc
   Future updateSensorSynchronisation(List<int> ids) async {
     Database db = await database;
     String query = "UPDATE $tableSensorModel SET $columnSynchro = 1 WHERE id IN (${List.filled(ids.length, '?').join(',')})";

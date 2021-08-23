@@ -177,13 +177,29 @@ class SensorTwin {
     List<SensorModel> dataPoints = await _sqfLiteService.getNotSynchronizedModels();
     if (dataPoints.length == 0) return;
 
-    // Send data to influxDB
-    print('Sending ${dataPoints.length} data points to InfluxDB');
-    await _service.write(SensorModel.sensorsFmtToInfluxData(dataPoints));
 
-    // Update local data in sqfLite
-    List<int> ids = dataPoints.map((model) => model.id).toSet().toList();
-    _sqfLiteService.updateSensorSynchronisation(ids);
+    // if a lot of data points have not been sent to the backend, we avoid
+    // doing a HTTP call with a giant payload; we rather use several HTTP calls
+    // each containing MAX_MODELS_COUNT models.
+    const int MAX_MODELS_COUNT = 150;
+    int modelsCount = dataPoints.length;
+    int callsCount = (modelsCount/MAX_MODELS_COUNT).ceil();
+
+    for (int i=0; i<callsCount; i++) {
+      int lowerBound = i * MAX_MODELS_COUNT;
+      int upperBound = i == callsCount - 1
+          ? modelsCount
+          : lowerBound + MAX_MODELS_COUNT;
+
+      // Send data to influxDB
+      List<SensorModel> models = dataPoints.sublist(lowerBound, upperBound);
+      print('Sending ${models.length} data points to InfluxDB');
+      await _service.write(SensorModel.sensorsFmtToInfluxData(models));
+
+      // Update local data in sqfLite
+      List<int> ids = models.map((model) => model.id).toList();
+      _sqfLiteService.updateSensorSynchronisation(ids);
+    }
   }
 
   /// Called when data is received from the sensor
