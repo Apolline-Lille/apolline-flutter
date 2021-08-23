@@ -1,11 +1,11 @@
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class Quality extends StatelessWidget {
-  final SensorModel lastReceivedData;
+  final DataPointModel lastReceivedData;
 
   Quality({Key key, this.lastReceivedData}) : super(key: key);
 
@@ -147,7 +147,7 @@ class Quality extends StatelessWidget {
                 Container(
                   child: _buildGauge(
                       "PM1", //title
-                      lastReceivedData.values[SensorModel.SENSOR_PM_1], //data
+                      lastReceivedData.values[DataPointModel.SENSOR_PM_1], //data
                       "µg/m3", //unit
                       Colors.blueGrey, //color
                       new BoxDecoration()), //box
@@ -156,7 +156,7 @@ class Quality extends StatelessWidget {
                 Container(
                   child: _buildGauge(
                       "PM2.5",
-                      lastReceivedData.values[SensorModel.SENSOR_PM_2_5],
+                      lastReceivedData.values[DataPointModel.SENSOR_PM_2_5],
                       "µg/m3",
                       Colors.blueGrey,
                       new BoxDecoration()),
@@ -165,7 +165,7 @@ class Quality extends StatelessWidget {
                 Container(
                   child: _buildGauge(
                       "PM10",
-                      lastReceivedData.values[SensorModel.SENSOR_PM_10],
+                      lastReceivedData.values[DataPointModel.SENSOR_PM_10],
                       "µg/m3",
                       Colors.blueGrey,
                       new BoxDecoration()),
@@ -174,7 +174,7 @@ class Quality extends StatelessWidget {
                 Container(
                   child: _buildGauge(
                       "TEMPERATURE",
-                      lastReceivedData.values[SensorModel.SENSOR_TEMP],
+                      lastReceivedData.values[DataPointModel.SENSOR_TEMP],
                       "°C",
                       Color(0xFFFFCD60),
                       new BoxDecoration(
@@ -186,7 +186,7 @@ class Quality extends StatelessWidget {
                 //creates BATTERY gauge
                 Container(
                     child: _buildGaugeBattery("BAT",
-                        lastReceivedData.values[SensorModel.SENSOR_VOLT]))
+                        lastReceivedData.values[DataPointModel.SENSOR_VOLT]))
               ],
             ),
           );

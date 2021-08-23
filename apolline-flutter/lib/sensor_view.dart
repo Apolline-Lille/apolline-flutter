@@ -4,7 +4,7 @@ import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'models/sensormodel.dart';
+import 'models/data_point_model.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
@@ -25,7 +25,7 @@ class SensorView extends StatefulWidget {
 
 class _SensorViewState extends State<SensorView> {
   String state = "Connecting to the device...";
-  SensorModel lastReceivedData;
+  DataPointModel lastReceivedData;
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
   SensorTwin _sensor;
@@ -77,7 +77,7 @@ class _SensorViewState extends State<SensorView> {
 
     updateState("Configuring device");
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
-    this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as SensorModel));
+    this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
     await this._sensor.init();
@@ -85,7 +85,7 @@ class _SensorViewState extends State<SensorView> {
     updateState("Waiting for sensor data...");
   }
 
-  void _onLiveDataReceived (SensorModel model) {
+  void _onLiveDataReceived (DataPointModel model) {
     setState(() {
       lastReceivedData = model;
     });

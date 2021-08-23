@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/influxdb_client.dart';
 import 'package:apollineflutter/services/location_service.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
@@ -142,7 +142,7 @@ class SensorTwin {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
-          SensorModel model = _handleSensorUpdate(message);
+          DataPointModel model = _handleSensorUpdate(message);
           _callbacks[SensorTwinEvent.live_data](model);
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
           _callbacks[SensorTwinEvent.history_data](message);
@@ -174,7 +174,7 @@ class SensorTwin {
   /// to InfluxDB yet, and sends them.
   void _synchronizationCallback () async {
     // find not-synchronized data
-    List<SensorModel> dataPoints = await _sqfLiteService.getNotSynchronizedModels();
+    List<DataPointModel> dataPoints = await _sqfLiteService.getNotSynchronizedModels();
     if (dataPoints.length == 0) return;
 
 
@@ -192,9 +192,9 @@ class SensorTwin {
           : lowerBound + MAX_MODELS_COUNT;
 
       // Send data to influxDB
-      List<SensorModel> models = dataPoints.sublist(lowerBound, upperBound);
+      List<DataPointModel> models = dataPoints.sublist(lowerBound, upperBound);
       print('Sending ${models.length} data points to InfluxDB');
-      await _service.write(SensorModel.sensorsFmtToInfluxData(models));
+      await _service.write(DataPointModel.sensorsFmtToInfluxData(models));
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();
@@ -203,12 +203,12 @@ class SensorTwin {
   }
 
   /// Called when data is received from the sensor
-  SensorModel _handleSensorUpdate (String message) {
+  DataPointModel _handleSensorUpdate (String message) {
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
     List<String> values = message.split(';');
 
-    var model = SensorModel(values: values, sensorName: this.name, position: _currentPosition);
+    var model = DataPointModel(values: values, sensorName: this.name, position: _currentPosition);
     _dataService.update(model);
     /* insert to sqflite */
     _sqfLiteService.insertSensor(model.toJSON());
