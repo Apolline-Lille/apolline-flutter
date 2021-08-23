@@ -150,16 +150,12 @@ class SqfLiteService {
   }
 
   // SQL get all SensorModelNotSynchro data
-  Future<List<SensorModel>> getAllSensorModelsNotSyncro() async {
+  Future<List<SensorModel>> getNotSynchronizedModels() async {
     Database db = await database;
-    List<SensorModel> sensdorModels = [];
     List<Map> maps = await db.query(tableSensorModel,
-        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnDate, columnValues], where: '$columnSynchro == ?', whereArgs: [0]);
-    if (maps.length > 0) {
-      maps.forEach((map) => sensdorModels.add(SensorModel.fromJson(map)));
-      return sensdorModels;
-    }
-    return sensdorModels;
+        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnDate, columnValues],
+        where: '$columnSynchro == ?', whereArgs: [0]);
+    return maps.map((map) => SensorModel.fromJson(map)).toList();
   }
 
   ///

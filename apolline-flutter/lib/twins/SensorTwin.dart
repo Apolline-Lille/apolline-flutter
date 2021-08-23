@@ -174,7 +174,7 @@ class SensorTwin {
   /// to InfluxDB yet, and sends them.
   void _synchronizationCallback () async {
     // find not-synchronized data
-    List<SensorModel> dataPoints = await _sqfLiteService.getAllSensorModelsNotSyncro();
+    List<SensorModel> dataPoints = await _sqfLiteService.getNotSynchronizedModels();
     if (dataPoints.length == 0) return;
 
     // Send data to influxDB
