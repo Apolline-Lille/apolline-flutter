@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:apollineflutter/models/sensor_collection.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
