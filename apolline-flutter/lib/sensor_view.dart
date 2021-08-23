@@ -104,7 +104,7 @@ class _SensorViewState extends State<SensorView> {
     print("----------------disconnected----------------");
     isConnected = false;
     connectType = ConnexionType.Disconnect; //deconnexion
-    showSnackbar("Connection perdu avec le capteur !");
+    showSnackbar("Connexion avec le capteur perdue.");
   }
 
 
