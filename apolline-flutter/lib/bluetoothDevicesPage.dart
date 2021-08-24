@@ -73,6 +73,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     // Start scanning
     setState(() {
       timeout = false;
+      devices = Set();
+      pairedDevices = Set();
     });
 
     widget.flutterBlue.startScan(timeout: Duration(seconds: 10)).then((val) {
