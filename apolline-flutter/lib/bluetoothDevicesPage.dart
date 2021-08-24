@@ -174,6 +174,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
   List<Widget> _buildChildrenButton() {
     const btnStyle = TextStyle(color: Colors.white);
+    Color bgColor = Theme.of(context).primaryColor;
 
     if (timeout) {
       return <Widget>[
@@ -183,7 +184,10 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     } else {
       return <Widget>[
         SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Colors.white),
+          child: Theme(
+            data: Theme.of(context).copyWith(accentColor: bgColor),
+            child: CircularProgressIndicator(backgroundColor: Colors.white),
+          ),
           width: 20,
           height: 20,
         ),
