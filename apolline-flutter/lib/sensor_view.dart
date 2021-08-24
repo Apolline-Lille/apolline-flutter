@@ -185,7 +185,7 @@ class _SensorViewState extends State<SensorView> {
                 ),
                 body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
                   Quality(lastReceivedData: lastReceivedData),
-                  Stats(dataSensor: lastReceivedData),
+                  Stats(),
                   MapSample(),
                 ])),
           ),

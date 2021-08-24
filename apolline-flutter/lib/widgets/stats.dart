@@ -23,16 +23,15 @@ import 'package:mp_chart/mp/core/value_formatter/value_formatter.dart';
 
 
 class Stats extends StatefulWidget {
-  Stats({Key key, this.dataSensor}) : super(key: key);
-  final DataPointModel dataSensor;
+  Stats({Key key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    return StatsState(datas: dataSensor);
+    return StatsState();
   }
 }
 
 class StatsState extends State<Stats> implements OnChartValueSelectedListener {
-  StatsState({Key key, this.datas});
+  StatsState({Key key});
   RealtimeDataService _dataService = locator<RealtimeDataService>();
   // stream to listen the arrival of new data 
   Stream<DataPointModel> _dataStream = locator<RealtimeDataService>().dataStream;
@@ -40,7 +39,6 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   StreamSubscription<DataPointModel> _streamSubscription;
   // contorller for chart
   LineChartController controller;
-  DataPointModel datas;
   // Line PM1
   ILineDataSet setPM1;
   // Line PM2.5
