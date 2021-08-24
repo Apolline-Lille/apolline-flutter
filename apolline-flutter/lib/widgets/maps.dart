@@ -99,6 +99,7 @@ class MapUiBodyState extends State<MapUiBody> {
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
+  SimpleLocationService _locationService;
 
   @override
   void initState() {
@@ -106,6 +107,7 @@ class MapUiBodyState extends State<MapUiBody> {
     this._circles = HashSet<Circle>();
     this.getSensorDataAfterDate();
     this.listenSensorData();
+    this._locationService = SimpleLocationService();
   }
 
   ///
@@ -126,6 +128,7 @@ class MapUiBodyState extends State<MapUiBody> {
   @override
   void dispose() {
     this._sub?.cancel();
+    this._locationService.close();
     super.dispose();
   }
 
@@ -308,7 +311,7 @@ class MapUiBodyState extends State<MapUiBody> {
   /// [controller] GoogleMapController help to do something.
   void onMapCreated(GoogleMapController controller) {
     _controller = controller;
-    SimpleLocationService().getLocation().then((position) {
+    this._locationService.getLocation().then((position) {
       if(position.geohash != "no") {
         var json = SimpleGeoHash.decode(position.geohash);
         this._kInitialPosition = CameraPosition(

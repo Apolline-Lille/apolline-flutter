@@ -41,6 +41,7 @@ class SensorTwin {
   RealtimeDataService _dataService = locator<RealtimeDataService>();
   Timer _syncTimer;
 
+  SimpleLocationService _locationService;
   Position _currentPosition;
 
 
@@ -161,7 +162,8 @@ class SensorTwin {
   }
 
   void _initLocationService () {
-    SimpleLocationService().locationStream.listen((p) {
+    this._locationService = SimpleLocationService();
+    this._locationService.locationStream.listen((p) {
       this._currentPosition = p;
     });
   }
@@ -233,5 +235,6 @@ class SensorTwin {
     this._syncTimer?.cancel();
     this._service.client?.close();
     this._dataService?.stop();
+    this._locationService.close();
   }
 }
