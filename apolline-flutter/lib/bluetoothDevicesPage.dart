@@ -18,7 +18,6 @@ class BluetoothDevicesPage extends StatefulWidget {
 
 
 class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
-  String state = "Scanning...";
   bool timeout = true;
   Map<String, BluetoothDevice> devices = {};
   Map<String, BluetoothDevice> pairedDevices = {};
@@ -98,10 +97,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         }
       }
     });
-
-    setState(() {
-      state = "Detected devices:";
-    });
   }
 
   void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
@@ -129,8 +124,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   /* Build the UI list of detected devices */
   List<Widget> _buildDevicesList() {
     List<Widget> wList = [];
-    /* Add the state label at the top */
-    //wList.add(Text(state)); // TODO: remove
     if (pairedDevices.length > 0) {
       wList.add(Text("Périphérique appairés"));
       _addWidgetDevices(pairedDevices, wList, _conditionForPaireddevices);
