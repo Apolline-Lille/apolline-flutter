@@ -229,16 +229,12 @@ class SensorTwin {
   }
 
   /// Releases resources associated with the sensor.
+  /// TODO properly close bluetooth connection
   void shutdown () {
     this._callbacks = Map();
     this._syncTimer?.cancel();
     this._service.client?.close();
     this._dataService?.stop();
     this._locationService.close();
-    try {
-      this._device.disconnect();
-    } catch (err) {
-      print("Couldn't disconnect from sensor (probably because it is not reachable).");
-    }
   }
 }

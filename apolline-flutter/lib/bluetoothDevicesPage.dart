@@ -73,8 +73,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     // Start scanning
     setState(() {
       timeout = false;
-      devices = Set();
-      pairedDevices = Set();
     });
 
     widget.flutterBlue.startScan(timeout: Duration(seconds: 10)).then((val) {
@@ -111,32 +109,34 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     });
   }
 
+  bool _conditionForDevices(List<Widget> l, BluetoothDevice d) {
+    return (!pairedDevices.contains(d)) && (!l.contains(d));
+  }
+
+  bool _conditionForPaireddevices(List<Widget> l, BluetoothDevice d) {
+    return !l.contains(d);
+  }
 
   /* Build the UI list of detected devices */
   List<Widget> _buildDevicesList() {
     List<Widget> wList = [];
-    var allDevices = Set.from(devices);
 
     if (pairedDevices.length > 0) {
       wList.add(Container(
         child: Text("Périphérique appairés"),
         margin: EdgeInsets.only(top: 10, bottom: 10)
       ));
-
-      pairedDevices.forEach((device) {
-        wList.add(DeviceCard(device: device, connectionCallback: connectToDevice));
-        allDevices.remove(device);
-      });
+      _addWidgetDevices(pairedDevices, wList, _conditionForPaireddevices);
     }
 
     wList.add(Container(
       margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
       child: Text("Appareils disponibles")
     ));
+    _addWidgetDevices(devices, wList, _conditionForDevices);
 
-    allDevices.forEach((device) {
-      wList.add(DeviceCard(device: device, connectionCallback: connectToDevice));
-    });
+    /* Add a button for each device */
+    /* TODO: filter device list */
 
     return wList;
   }
@@ -229,11 +229,9 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
           child: Container(
-            child: ListView(
-              children: _buildDevicesList(),
-              padding: EdgeInsets.all(10)
-            )
-          ))
+            child: ListView(children: _buildDevicesList()),
+            margin: EdgeInsets.all(10),
+          )),
     );
   }
 }
