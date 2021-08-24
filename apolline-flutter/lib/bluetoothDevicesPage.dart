@@ -19,8 +19,8 @@ class BluetoothDevicesPage extends StatefulWidget {
 
 class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   bool timeout = true;
-  Map<String, BluetoothDevice> devices = {};
-  Map<String, BluetoothDevice> pairedDevices = {};
+  Set<BluetoothDevice> devices = Set();
+  Set<BluetoothDevice> pairedDevices = Set();
   ///user configuration in the ui
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
@@ -83,7 +83,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     widget.flutterBlue.connectedDevices.asStream().listen((List<BluetoothDevice> ds) {
       for (BluetoothDevice device in ds) {
         setState(() {
-          pairedDevices.putIfAbsent(device.id.toString(), () => device);
+          pairedDevices.add(device);
         });
       }
     });
@@ -92,29 +92,29 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       for (ScanResult r in results) {
         if (r.device.name.length > 0) {
           setState(() {
-            devices.putIfAbsent(r.device.id.toString(), () => r.device);
+            devices.add(r.device);
           });
         }
       }
     });
   }
 
-  void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
-    devices.forEach((id, d) {
-      if (cond(l, d))
+  void _addWidgetDevices(Set<BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
+    devices.toList().forEach((device) {
+      if (cond(l, device))
         l.add(Card(
             child: ListTile(
-          title: Text(d.name),
-          subtitle: Text(id),
+          title: Text(device.name),
+          subtitle: Text(device.id.toString()),
           onTap: () {
-            connectToDevice(d, id);
+            connectToDevice(device, device.id.toString());
           },
         )));
     });
   }
 
   bool _conditionForDevices(List<Widget> l, BluetoothDevice d) {
-    return (!pairedDevices.containsValue(d)) && (!l.contains(d));
+    return (!pairedDevices.contains(d)) && (!l.contains(d));
   }
 
   bool _conditionForPaireddevices(List<Widget> l, BluetoothDevice d) {
@@ -158,7 +158,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     if (isconnected != null && isconnected) {
       setState(() {
         devices.remove(id);
-        pairedDevices.putIfAbsent(id, () => device);
+        pairedDevices.add(device);
       });
     }
   }
