@@ -229,9 +229,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
           child: Container(
-            child: ListView(children: _buildDevicesList()),
-            margin: EdgeInsets.all(10),
-          )),
+            child: ListView(
+              children: _buildDevicesList(),
+              padding: EdgeInsets.all(10)
+            )
+          ))
     );
   }
 }
