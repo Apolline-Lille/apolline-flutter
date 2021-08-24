@@ -30,7 +30,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     super.initState();
     //initializeDevice();
     this.ucS.addListener(() {
-      LocalKeyValuePersistance.saveObject("userconf", ucS.userConf.toJson());
+      LocalKeyValuePersistance.saveObject(UserConfigurationService.USER_CONF_KEY, ucS.userConf.toJson());
     });
     initializeDevice();
   }
