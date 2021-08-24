@@ -173,20 +173,22 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   }
 
   List<Widget> _buildChildrenButton() {
+    const btnStyle = TextStyle(color: Colors.white);
+
     if (timeout) {
       return <Widget>[
         // ignore: missing_required_param
-        TextButton(child: Text("Analyser")),
+        TextButton(child: Text("Analyser", style: btnStyle,)),
       ];
     } else {
       return <Widget>[
         SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Colors.blue), //TODO choisir une meilleur couleur
+          child: CircularProgressIndicator(backgroundColor: Colors.white),
           width: 20,
           height: 20,
         ),
         // ignore: missing_required_param
-        TextButton(child: Text("Arrêter")),
+        TextButton(child: Text("Arrêter", style: btnStyle)),
       ];
     }
   }
