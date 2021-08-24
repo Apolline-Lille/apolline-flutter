@@ -20,11 +20,11 @@ import 'package:mp_chart/mp/core/highlight/highlight.dart';
 import 'package:mp_chart/mp/core/utils/color_utils.dart';
 import 'package:mp_chart/mp/core/value_formatter/value_formatter.dart';
 
-// TODO fix
-// ignore: must_be_immutable
+
+
 class Stats extends StatefulWidget {
   Stats({Key key, this.dataSensor}) : super(key: key);
-  DataPointModel dataSensor;
+  final DataPointModel dataSensor;
   @override
   State<StatefulWidget> createState() {
     return StatsState(datas: dataSensor);
