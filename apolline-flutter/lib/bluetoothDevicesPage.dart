@@ -124,13 +124,21 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   /* Build the UI list of detected devices */
   List<Widget> _buildDevicesList() {
     List<Widget> wList = [];
+
     if (pairedDevices.length > 0) {
-      wList.add(Text("Périphérique appairés"));
+      wList.add(Container(
+        child: Text("Périphérique appairés"),
+        margin: EdgeInsets.only(top: 10, bottom: 10)
+      ));
       _addWidgetDevices(pairedDevices, wList, _conditionForPaireddevices);
     }
 
-    wList.add(Text("Appareils disponibles"));
+    wList.add(Container(
+      margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
+      child: Text("Appareils disponibles")
+    ));
     _addWidgetDevices(devices, wList, _conditionForDevices);
+
     /* Add a button for each device */
     /* TODO: filter device list */
 
@@ -224,7 +232,10 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: ListView(children: _buildDevicesList())),
+          child: Container(
+            child: ListView(children: _buildDevicesList()),
+            margin: EdgeInsets.all(10),
+          )),
     );
   }
 }

@@ -46,7 +46,6 @@ class _SensorViewState extends State<SensorView> {
 
     try {
       await widget.device.connect();
-      /* TODO: voir s'il ya possibilité de négocier le mtu */
     } catch (e) {
       if (e.code != "already_connected") {
         throw e;
