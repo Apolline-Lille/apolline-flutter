@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class DeviceCard extends StatefulWidget {
-  DeviceCard({this.deviceName, this.deviceId, this.connectionCallback});
-  final String deviceName;
-  final String deviceId;
-  final Function(String, String) connectionCallback;
+  DeviceCard({this.device, this.connectionCallback});
+  final BluetoothDevice device;
+  final Function(BluetoothDevice) connectionCallback;
 
   @override
   State<StatefulWidget> createState() => _DeviceCardState();
@@ -16,10 +16,10 @@ class _DeviceCardState extends State<DeviceCard> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text(widget.deviceName),
-        subtitle: Text(widget.deviceId),
+        title: Text(widget.device.name),
+        subtitle: Text(widget.device.id.toString()),
         onTap: () {
-          widget.connectionCallback(widget.deviceName, widget.deviceId;
+          widget.connectionCallback(widget.device);
         },
       )
     );

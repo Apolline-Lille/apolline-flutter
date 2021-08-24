@@ -1,4 +1,5 @@
 import 'package:apollineflutter/sensor_view.dart';
+import 'package:apollineflutter/widgets/device_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
@@ -102,14 +103,9 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   void _addWidgetDevices(Set<BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
     devices.toList().forEach((device) {
       if (cond(l, device))
-        l.add(Card(
-            child: ListTile(
-          title: Text(device.name),
-          subtitle: Text(device.id.toString()),
-          onTap: () {
-            connectToDevice(device, device.id.toString());
-          },
-        )));
+        l.add(
+            DeviceCard(device: device, connectionCallback: connectToDevice)
+        );
     });
   }
 
@@ -146,7 +142,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   }
 
   /* Handles a click on a device entry */
-  void connectToDevice(BluetoothDevice device, String id) async {
+  void connectToDevice(BluetoothDevice device) async {
     /* Stop scanning, if not already stopped */
     FlutterBlue.instance.stopScan();
     /* We selected a device - go to the device screen passing information about the selected device */
@@ -157,7 +153,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
     if (isconnected != null && isconnected) {
       setState(() {
-        devices.remove(id);
+        devices.remove(device);
         pairedDevices.add(device);
       });
     }
