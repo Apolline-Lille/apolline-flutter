@@ -36,7 +36,7 @@ class _DeviceCardState extends State<DeviceCard> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _isDeviceDustSensor(),
+      future: Future.value(true), //_isDeviceDustSensor(), TODO implement
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         return Card(
           child: ListTile(
