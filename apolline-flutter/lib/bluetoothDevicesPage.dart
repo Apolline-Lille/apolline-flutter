@@ -109,34 +109,32 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     });
   }
 
-  bool _conditionForDevices(List<Widget> l, BluetoothDevice d) {
-    return (!pairedDevices.contains(d)) && (!l.contains(d));
-  }
-
-  bool _conditionForPaireddevices(List<Widget> l, BluetoothDevice d) {
-    return !l.contains(d);
-  }
 
   /* Build the UI list of detected devices */
   List<Widget> _buildDevicesList() {
     List<Widget> wList = [];
+    var allDevices = Set.from(devices);
 
     if (pairedDevices.length > 0) {
       wList.add(Container(
         child: Text("Périphérique appairés"),
         margin: EdgeInsets.only(top: 10, bottom: 10)
       ));
-      _addWidgetDevices(pairedDevices, wList, _conditionForPaireddevices);
+
+      pairedDevices.forEach((device) {
+        wList.add(DeviceCard(device: device, connectionCallback: connectToDevice));
+        allDevices.remove(device);
+      });
     }
 
     wList.add(Container(
       margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
       child: Text("Appareils disponibles")
     ));
-    _addWidgetDevices(devices, wList, _conditionForDevices);
 
-    /* Add a button for each device */
-    /* TODO: filter device list */
+    allDevices.forEach((device) {
+      wList.add(DeviceCard(device: device, connectionCallback: connectToDevice));
+    });
 
     return wList;
   }
