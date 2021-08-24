@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'package:apollineflutter/models/sensor_collection.dart';
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,7 +13,7 @@ class SqfLiteService {
   // Increment this version when you need to change the schema.
   static final _databaseVersion = 1;
   // database table sensor and column names
-  static final tableSensorModel = 'SensorModel';
+  static final dataPointTableName = 'DataPointModel';
   static final columnId = 'id';
   static final columnDeviceName = 'deviceName';
   static final columnUuid = 'uuid';
@@ -25,10 +24,6 @@ class SqfLiteService {
   static final columnSynchro = 'synchronisation';
   static final columnValues = 'value';
 
-  // database table date and column names
-  // static final tableDateModel = 'DateSynchronisation';
-  // static final colId = 'id';
-  // static final colDate = 'DateSynchro';
 
   // Make this a singleton class.
   SqfLiteService._privateConstructor();
@@ -59,7 +54,7 @@ class SqfLiteService {
   // SQL string to create the database
   Future _onCreate(Database db, int version) async {
     String querySensor = '''
-          CREATE TABLE $tableSensorModel (
+          CREATE TABLE $dataPointTableName (
             $columnId INTEGER PRIMARY KEY,
             $columnDeviceName TEXT NOT NULL,
             $columnUuid TEXT NOT NULL,
@@ -71,101 +66,34 @@ class SqfLiteService {
             $columnValues TEXT NOT NULL
           )
           ''';
-
-    // String queryDate = '''
-    //       CREATE TABLE $tableDateModel (
-    //         $colId INTEGER PRIMARY KEY,
-    //         $colDate INTEGER
-    //       )
-    //       ''';
     await db.execute(querySensor);
   }
 
-  // SQL save SensorModel
-  Future<Map<String, dynamic>> insertSensor(Map<String, dynamic> sensormodel) async {
+  // SQL save DataPointModel
+  Future<Map<String, dynamic>> addDataPoint(Map<String, dynamic> model) async {
     Database db = await database;
     // ignore: unused_local_variable
-    var id = db.insert(tableSensorModel, sensormodel);
-    return sensormodel;
+    var id = db.insert(dataPointTableName, model);
+    return model;
   }
 
-  // SQL save SensorModel
-  Future<int> insertAllSensor(SensorCollection sensorCollection) async {
+  // SQL get all DataPointModel data
+  Future<List<DataPointModel>> getAllDataPoints() async {
     Database db = await database;
-    // ignore: unused_local_variable
-    var buffer = new StringBuffer();
-    sensorCollection.lastData.forEach((element) {
-      Map<String, dynamic> json = element.toJSON();
-      if (buffer.isNotEmpty) {
-        buffer.write(",\n");
-      }
-      buffer.write("('");
-      buffer.write(json["deviceName"]);
-      buffer.write("', '");
-      buffer.write(json["uuid"]);
-      buffer.write("', '");
-      buffer.write(json["provider"]);
-      buffer.write("', '");
-      buffer.write(json["geohash"]);
-      buffer.write("', '");
-      buffer.write(json["transport"]);
-      buffer.write("', '");
-      buffer.write(json["dateSynchro"]);
-      buffer.write("', '");
-      buffer.write(json["value"]);
-      buffer.write("')");
-    });
-    // sensorCollection.lastData.forEach((element) async {
-    //   await db.insert(tableSensorModel, element.toJSON());
-    //});
-    //var id = await db.insert(tableSensorModel, sensorCollection);
-    var raw = await db.rawInsert("INSERT Into $tableSensorModel ($columnDeviceName, $columnUuid, $columnProvider, $columnTransport, $columnGeohash, $columnDate, $columnValues ) "
-        " VALUES ${buffer.toString()}");
-    return raw;
-  }
-
-  // SQL get SensorModel data by uuid
-  Future<List<SensorModel>> getSensorModelByUuid(String uuid) async {
-    Database db = await database;
-    List<SensorModel> sensdorModels = [];
-    List<Map> maps = await db.query(tableSensorModel,
-        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnValues], where: '$columnUuid = ?', whereArgs: [uuid]);
+    List<DataPointModel> models = [];
+    List<Map> maps = await db.query(dataPointTableName);
     if (maps.length > 0) {
-      maps.forEach((map) => sensdorModels.add(SensorModel.fromJson(map)));
-      return sensdorModels;
+      maps.forEach((map) => models.add(DataPointModel.fromJson(map)));
+      return models;
     }
-    return sensdorModels;
+    return models;
   }
 
-  // SQL get all SensorModel data
-  Future<List<SensorModel>> getAllSensorModels() async {
-    Database db = await database;
-    List<SensorModel> sensdorModels = [];
-    List<Map> maps = await db.query(tableSensorModel);
-    if (maps.length > 0) {
-      maps.forEach((map) => sensdorModels.add(SensorModel.fromJson(map)));
-      return sensdorModels;
-    }
-    return sensdorModels;
-  }
-
-  // SQL get all SensorModelNotSynchro data
-  Future<List<SensorModel>> getAllSensorModelsNotSyncro() async {
-    Database db = await database;
-    List<SensorModel> sensdorModels = [];
-    List<Map> maps = await db.query(tableSensorModel,
-        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnDate, columnValues], where: '$columnSynchro == ?', whereArgs: [0]);
-    if (maps.length > 0) {
-      maps.forEach((map) => sensdorModels.add(SensorModel.fromJson(map)));
-      return sensdorModels;
-    }
-    return sensdorModels;
-  }
 
   ///
   ///get all data after this mapfrequency [freq].
-  Future<List<SensorModel>> getAllSensorModelAfterDate(MapFrequency freq) async {
-    List<SensorModel> sensorModels = [];
+  Future<List<DataPointModel>> getAllDataPointsAfterDate(MapFrequency freq) async {
+    List<DataPointModel> models = [];
     var now = DateTime.now();
     List<int> freqC = [1, 5, 15, 30, 60, 180, 360, 720, 1440]; //convert to minute.
     var today = now.hour*60 + now.minute;
@@ -175,32 +103,31 @@ class SqfLiteService {
     var time = now.millisecondsSinceEpoch - 60000*freqC[freq.index];
 
     Database db = await database;
-    var jsonres = await db.query(tableSensorModel, columns: null, where: "$columnDate >= ?", whereArgs: [time]);
-    jsonres.forEach((pJson) { sensorModels.add(SensorModel.fromJson(pJson)); });
+    var jsonres = await db.query(dataPointTableName, columns: null, where: "$columnDate >= ?", whereArgs: [time]);
+    jsonres.forEach((pJson) { models.add(DataPointModel.fromJson(pJson)); });
     
-    return sensorModels;
+    return models;
   }
 
 
-  // SQL update Sensor colunm synchronisation
-  Future updateSensorSynchronisation(List<int> ids) async {
+  /// Returns all models that have not been sent to backend yet
+  /// (materialized with $columnSynchro == 0).
+  Future<List<DataPointModel>> getNotSynchronizedModels() async {
     Database db = await database;
-    // ignore: unused_local_variable.
-    String inClause = ids.toString();
-    //at this point inClause will look like "[1,2,3,4,5]"
-    //replace the brackets with parentheses
-    inClause = inClause.replaceFirst("[","(");
-    inClause = inClause.replaceFirst("]",")");
-    //at this point inClause will look like "(1,2,3,4,5)"
-    String query = ''' UPDATE $tableSensorModel SET $columnSynchro = 1 WHERE id IN '''+inClause;
-    await db.execute(query);
+    List<Map> maps = await db.query(dataPointTableName,
+        columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnDate, columnValues],
+        where: '$columnSynchro == ?', whereArgs: [0]);
+    return maps.map((map) => DataPointModel.fromJson(map)).toList();
   }
 
-  // SQL delete all data
-  Future<int> deleteAllSensorData() async {
+  /// Declares a list of models as sent to the backend
+  /// (sets their $columnSynchro value to 1).
+  Future setModelsAsSynchronized(List<int> ids) async {
     Database db = await database;
-    return await db.delete(tableSensorModel);
+    String query = "UPDATE $dataPointTableName SET $columnSynchro = 1 WHERE id IN (${List.filled(ids.length, '?').join(',')})";
+    await db.execute(query, ids);
   }
+
 
   // SQL close database
   Future close() async {

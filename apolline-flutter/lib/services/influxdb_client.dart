@@ -45,7 +45,6 @@ class InfluxDBAPI {
   Future<void> ping() async {
    return client.pingSilent("$_pingUrl"); //utilisation de /health car la v2.0 le contient déjà. actu sur v1.8.x
   }
-
 }
 
 ///Author(Issagha Barry)
@@ -72,7 +71,6 @@ class _InfluxDBClient extends http.BaseClient {
     http.Response resp;
     try{
       resp = await this.get(url);
-      print("server is running"); //TODO supprimé à la fin.
     } on SocketException catch(_) {
       throw LostConnectionException("server is unavailable");
     }

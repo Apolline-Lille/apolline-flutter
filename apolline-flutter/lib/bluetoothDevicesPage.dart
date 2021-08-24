@@ -5,30 +5,19 @@ import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 
-// TODO fix
-// ignore: must_be_immutable
+
+
 class BluetoothDevicesPage extends StatefulWidget {
   BluetoothDevicesPage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
-  FlutterBlue flutterBlue = FlutterBlue.instance;
-  bool bluetoothIsOn = false;
+  final FlutterBlue flutterBlue = FlutterBlue.instance;
 
   @override
   _BluetoothDevicesPageState createState() => _BluetoothDevicesPageState();
 }
 
+
 class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
-  String state = "Scanning...";
   bool timeout = true;
   Map<String, BluetoothDevice> devices = {};
   Map<String, BluetoothDevice> pairedDevices = {};
@@ -40,7 +29,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     super.initState();
     //initializeDevice();
     this.ucS.addListener(() {
-      LocalKeyValuePersistance.saveObject("userconf", ucS.userConf.toJson());
+      LocalKeyValuePersistance.saveObject(UserConfigurationService.USER_CONF_KEY, ucS.userConf.toJson());
     });
     initializeDevice();
   }
@@ -108,10 +97,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         }
       }
     });
-
-    setState(() {
-      state = "Detected devices:";
-    });
   }
 
   void _addWidgetDevices(Map<String, BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
@@ -139,15 +124,21 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   /* Build the UI list of detected devices */
   List<Widget> _buildDevicesList() {
     List<Widget> wList = [];
-    /* Add the state label at the top */
-    //wList.add(Text(state)); // TODO: remove
+
     if (pairedDevices.length > 0) {
-      wList.add(Text("Périphérique appairés"));
+      wList.add(Container(
+        child: Text("Périphérique appairés"),
+        margin: EdgeInsets.only(top: 10, bottom: 10)
+      ));
       _addWidgetDevices(pairedDevices, wList, _conditionForPaireddevices);
     }
 
-    wList.add(Text("Appareils disponibles"));
+    wList.add(Container(
+      margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
+      child: Text("Appareils disponibles")
+    ));
     _addWidgetDevices(devices, wList, _conditionForDevices);
+
     /* Add a button for each device */
     /* TODO: filter device list */
 
@@ -164,7 +155,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       MaterialPageRoute(builder: (context) => SensorView(device: device)),
     );
 
-    if (isconnected) {
+    if (isconnected != null && isconnected) {
       setState(() {
         devices.remove(id);
         pairedDevices.putIfAbsent(id, () => device);
@@ -183,20 +174,26 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   }
 
   List<Widget> _buildChildrenButton() {
+    const btnStyle = TextStyle(color: Colors.white);
+    Color bgColor = Theme.of(context).primaryColor;
+
     if (timeout) {
       return <Widget>[
         // ignore: missing_required_param
-        TextButton(child: Text("Analyser")),
+        TextButton(child: Text("Analyser", style: btnStyle,)),
       ];
     } else {
       return <Widget>[
         SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Colors.blue), //TODO choisir une meilleur couleur
+          child: Theme(
+            data: Theme.of(context).copyWith(accentColor: bgColor),
+            child: CircularProgressIndicator(backgroundColor: Colors.white),
+          ),
           width: 20,
           height: 20,
         ),
         // ignore: missing_required_param
-        TextButton(child: Text("Arrêter")),
+        TextButton(child: Text("Arrêter", style: btnStyle)),
       ];
     }
   }
@@ -235,7 +232,10 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: ListView(children: _buildDevicesList())),
+          child: Container(
+            child: ListView(children: _buildDevicesList()),
+            margin: EdgeInsets.all(10),
+          )),
     );
   }
 }

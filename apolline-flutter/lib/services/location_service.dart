@@ -11,8 +11,6 @@ class SimpleLocationService {
   ///current position.
   Position _currentPosition;
   ///stream.
-  ///TODO close stream
-  // ignore: close_sinks
   StreamController<Position> _locationStream = StreamController<Position>.broadcast();
 
   ///
@@ -46,5 +44,9 @@ class SimpleLocationService {
     return this._currentPosition;
   }
 
-
+  /// Removes all stream listeners and close it.
+  void close () async {
+    await this._locationStream.stream.drain();
+    this._locationStream.close();
+  }
 }

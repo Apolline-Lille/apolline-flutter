@@ -1,4 +1,4 @@
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 
 
 ///Author (Issagha BARRY)
@@ -23,12 +23,12 @@ class UserConfiguration {
   
   ///variable to retrieve data up to x minute
   MapFrequency _mapSyncFrequency ;
-  ///index pm in sensor model.
+  ///index pm in data point.
   int _pmIndex;
 
   ///
   ///Constructor
-  UserConfiguration({mapSyncFrequency: MapFrequency.MAP_SYNC_1_MIN, pmIndex: SensorModel.SENSOR_PM_2_5}) {
+  UserConfiguration({mapSyncFrequency: MapFrequency.MAP_SYNC_1_MIN, pmIndex: DataPointModel.SENSOR_PM_2_5}) {
     this._mapSyncFrequency = mapSyncFrequency;
     this._pmIndex = pmIndex;
   }

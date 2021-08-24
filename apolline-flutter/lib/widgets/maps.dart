@@ -11,7 +11,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:apollineflutter/configuration_key_name.dart';
 import 'package:apollineflutter/models/user_configuration.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
-import 'package:apollineflutter/models/sensormodel.dart';
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/location_service.dart';
 
 
@@ -33,9 +33,9 @@ class MapUiBody extends StatefulWidget {
 
 class MapUiBodyState extends State<MapUiBody> {
   
-  ///the min value of pm order in sensormodel.
+  ///the min value of pm order in data point.
   var minPmValues = GlobalConfiguration().get(ApollineConf.MINPMVALUES) ?? [];
-  ///the max value of pm order in sensormodel.
+  ///the max value of pm order in data point.
   var maxPmValues = GlobalConfiguration().get(ApollineConf.MAXPMVALUES) ?? [];
   ///user configuration in the ui
   UserConfigurationService ucS = locator<UserConfigurationService>();
@@ -46,7 +46,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///help for close subscription
   StreamSubscription _sub;
   ///help to listen data
-  Stream<SensorModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
+  Stream<DataPointModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
   /// the label for time.
   List<String> mapTimeLabel = [
     "last minute",
@@ -99,6 +99,7 @@ class MapUiBodyState extends State<MapUiBody> {
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
+  SimpleLocationService _locationService;
 
   @override
   void initState() {
@@ -106,6 +107,7 @@ class MapUiBodyState extends State<MapUiBody> {
     this._circles = HashSet<Circle>();
     this.getSensorDataAfterDate();
     this.listenSensorData();
+    this._locationService = SimpleLocationService();
   }
 
   ///
@@ -126,6 +128,7 @@ class MapUiBodyState extends State<MapUiBody> {
   @override
   void dispose() {
     this._sub?.cancel();
+    this._locationService.close();
     super.dispose();
   }
 
@@ -238,13 +241,11 @@ class MapUiBodyState extends State<MapUiBody> {
           children: [
             FloatingActionButton.extended(
               label: Text("Time"),
-              onPressed: () { this.chooseTimeFrequency(context); },
-              backgroundColor: Colors.green, //TODO trouver le moyen de factoriser dans ThemeData
+              onPressed: () { this.chooseTimeFrequency(context); }
             ),
             FloatingActionButton.extended(
               label: Text("PM"),
-              onPressed: () { this.choosePm(context); },
-              backgroundColor: Colors.green, //TODO trouver le moyen de factoriser dans ThemeData
+              onPressed: () { this.choosePm(context); }
             )
           ],
         ),
@@ -277,7 +278,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///add circle to model.
   ///[pModel] model
-  void addCircle(SensorModel pModel) {
+  void addCircle(DataPointModel pModel) {
     var json = SimpleGeoHash.decode(pModel.position.geohash);
     this._circles.add(
       Circle(
@@ -293,7 +294,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///update data after change time of pm choice.
   void getSensorDataAfterDate() {
-    this._sqliteService.getAllSensorModelAfterDate(this.ucS.userConf.mapSyncFrequency).then((res) {
+    this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.mapSyncFrequency).then((res) {
       this._circles.clear(); //clean last content.
       for(var i = 0; i < res.length; i++) {
         this.addCircle(res[i]);
@@ -308,7 +309,7 @@ class MapUiBodyState extends State<MapUiBody> {
   /// [controller] GoogleMapController help to do something.
   void onMapCreated(GoogleMapController controller) {
     _controller = controller;
-    SimpleLocationService().getLocation().then((position) {
+    this._locationService.getLocation().then((position) {
       if(position.geohash != "no") {
         var json = SimpleGeoHash.decode(position.geohash);
         this._kInitialPosition = CameraPosition(

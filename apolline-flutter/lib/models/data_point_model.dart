@@ -1,4 +1,3 @@
-import 'package:apollineflutter/models/sensor_device.dart';
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/utils/position.dart';
 
@@ -12,8 +11,11 @@ class Units {
   static const String TEMPERATURE_KELVIN = "°K";
 }
 
-//sensorModel contient les values, la position et le device
-class SensorModel {
+
+///
+/// This class represents data reported by a sensor.
+///
+class DataPointModel {
   static const int SENSOR_DATE = 0;
   static const int SENSOR_PM_1 = 1;
   static const int SENSOR_PM_2_5 = 2;
@@ -27,7 +29,7 @@ class SensorModel {
   static const int SENSOR_PM_ABOVE_2_5 = 7;
   static const int SENSOR_PM_ABOVE_5 = 8;
   static const int SENSOR_PM_ABOVE_10 = 9;
-  SensorDevice device;
+  String sensorName;
   int _date;
   int id;
   Position position;
@@ -35,16 +37,11 @@ class SensorModel {
   /* Values received, parsed through a comma-separated string */
   List<String> values = [];
 
-  ///
-  ///constructor of senorModel.
-  SensorModel({this.values, this.device, this.position}) {
+  DataPointModel({this.values, this.sensorName, this.position}) {
     this._date = DateTime.now().millisecondsSinceEpoch;
   }
 
-  ///
-  ///constructor of senorModel with date.
-  // ignore: non_constant_identifier_names
-  SensorModel.bdd({this.id, this.values, this.device, this.position, date}) {
+  DataPointModel.bdd({this.id, this.values, this.sensorName, this.position, date}) {
     this._date = date;
   }
 
@@ -79,9 +76,8 @@ class SensorModel {
     var provider = this.position?.provider ?? "no";
     var geohash = this.position?.geohash ?? "no";
     var transport = this.position?.transport ?? "no";
-    var deviceName = device?.deviceName ?? "Apolline00";
     return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
-        "device=$deviceName,provider=$provider,geohash=$geohash,transport=$transport," +
+        "device=$sensorName,provider=$provider,geohash=$geohash,transport=$transport," +
         "unit=$unit value=$value ${_date * 1000000}";
   }
 
@@ -106,7 +102,7 @@ class SensorModel {
   }
 
   ///Format data to write many sensorData into influxdb.
-  static String sensorsFmtToInfluxData(List<SensorModel> lastData) {
+  static String sensorsFmtToInfluxData(List<DataPointModel> lastData) {
     var result = "";
     for(var i = 0; i < lastData.length; i++ ) {
       result += "${lastData[i].fmtToInfluxData()}\n";
@@ -114,10 +110,9 @@ class SensorModel {
     return result;
   }
 
-  // Format Json of sensorModel
   Map<String, dynamic> toJSON() {
     var json = Map<String, dynamic>();
-    json["deviceName"] = device?.deviceName ?? "Apolline00";
+    json["deviceName"] = sensorName;
     json["uuid"] = BlueSensorAttributes.dustSensorServiceUUID;
     json["provider"] = this.position?.provider ?? "no";
     json["geohash"] = this.position?.geohash ?? "no";
@@ -129,11 +124,11 @@ class SensorModel {
 
   // ignore: non_constant_identifier_names
   // create object from Json
-  SensorModel.fromJson(Map<String, dynamic> json)
+  DataPointModel.fromJson(Map<String, dynamic> json)
       : this.bdd(
             id: json['id'],
             values: json['value'].split('|'),
-            device: SensorDevice.fromNameAndUId(json['deviceName'], json['uuid']),
+            sensorName: json['deviceName'],
             position: Position(geohash: json['geohash'], provider: json['provider'], transport: json['transport']),
             date: json['date']);
 }
