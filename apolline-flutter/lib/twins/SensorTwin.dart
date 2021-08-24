@@ -230,8 +230,8 @@ class SensorTwin {
   /// TODO properly close bluetooth connection
   void shutdown () {
     this._callbacks = Map();
-    this._syncTimer.cancel();
-    this._service.client.close();
-    this._dataService.stop();
+    this._syncTimer?.cancel();
+    this._service.client?.close();
+    this._dataService?.stop();
   }
 }
