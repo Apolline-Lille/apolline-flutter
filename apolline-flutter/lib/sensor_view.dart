@@ -167,28 +167,26 @@ class _SensorViewState extends State<SensorView> {
       /* We got data : display them */
       return WillPopScope(
         onWillPop: _onWillPop,
-        child: MaterialApp(
-          home: DefaultTabController(
-            length: 3,
-            child: Scaffold(
-                key: _scaffoldMessengerKey,
-                appBar: AppBar(
-                  backgroundColor: Colors.green,
-                  bottom: TabBar(
-                    tabs: [
-                      Tab(icon: Icon(Icons.home)),
-                      Tab(icon: Icon(Icons.insert_chart)),
-                      Tab(icon: Icon(Icons.map)),
-                    ],
-                  ),
-                  title: Text('Apolline'),
+        child: DefaultTabController(
+          length: 3,
+          child: Scaffold(
+              key: _scaffoldMessengerKey,
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).primaryColor,
+                bottom: TabBar(
+                  tabs: [
+                    Tab(icon: Icon(Icons.home)),
+                    Tab(icon: Icon(Icons.insert_chart)),
+                    Tab(icon: Icon(Icons.map)),
+                  ],
                 ),
-                body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
-                  Quality(lastReceivedData: lastReceivedData),
-                  Stats(),
-                  MapSample(),
-                ])),
-          ),
+                title: Text('Apolline'),
+              ),
+              body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
+                Quality(lastReceivedData: lastReceivedData),
+                Stats(),
+                MapSample(),
+              ])),
         ),
       );
     }

@@ -241,13 +241,11 @@ class MapUiBodyState extends State<MapUiBody> {
           children: [
             FloatingActionButton.extended(
               label: Text("Time"),
-              onPressed: () { this.chooseTimeFrequency(context); },
-              backgroundColor: Colors.green, //TODO trouver le moyen de factoriser dans ThemeData
+              onPressed: () { this.chooseTimeFrequency(context); }
             ),
             FloatingActionButton.extended(
               label: Text("PM"),
-              onPressed: () { this.choosePm(context); },
-              backgroundColor: Colors.green, //TODO trouver le moyen de factoriser dans ThemeData
+              onPressed: () { this.choosePm(context); }
             )
           ],
         ),

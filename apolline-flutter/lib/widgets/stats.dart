@@ -113,8 +113,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
         child: FloatingActionButton(
           onPressed: _togglePulsar,
           child: Icon(
-            _dataService.isRunning ? Icons.pause : Icons.play_arrow,
-            color: Color.fromARGB(0xff, 0x17, 0x0b, 0x0f),
+            _dataService.isRunning ? Icons.pause : Icons.play_arrow
           ),
         ),
       ),
