@@ -176,7 +176,7 @@ class _SensorViewState extends State<SensorView> {
     } else {
       /* We got data : display them */
       return WillPopScope(
-        onWillPop: () => _onWillPop(DeviceConnectionStatus.CONNECTED),
+        onWillPop: () => _onWillPop(DeviceConnectionStatusHelper.fromConnectionStatus(isConnected)),
         child: DefaultTabController(
           length: 3,
           child: Scaffold(
