@@ -70,6 +70,12 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
   /* Starts BLE detection */
   void _performDetection() {
+    setState(() {
+      pairedDevices = Set();
+      devices = Set();
+    });
+
+
     // Start scanning
     setState(() {
       timeout = false;
