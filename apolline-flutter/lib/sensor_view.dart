@@ -195,7 +195,7 @@ class _SensorViewState extends State<SensorView> {
                     Tab(icon: Icon(Icons.map)),
                   ],
                 ),
-                title: Text('Apolline'),
+                title: Text(_sensor != null ? _sensor.name : "Connecting to sensor..."),
               ),
               body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
                 Quality(lastReceivedData: lastReceivedData),
