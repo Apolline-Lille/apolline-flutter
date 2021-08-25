@@ -133,6 +133,13 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       });
     }
 
+    if (pairedDevices.length == 0 && devices.length == 0) {
+      wList.add(Container(
+          margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
+          child: Text("Aucun appareil Bluetooth détecté.")
+      ));
+    }
+
     return wList;
   }
 
