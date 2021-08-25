@@ -4,6 +4,7 @@ import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'models/data_point_model.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
@@ -48,6 +49,7 @@ class _SensorViewState extends State<SensorView> {
     try {
       await widget.device.connect().timeout(Duration(seconds: 2), onTimeout: () {
         isConnectedToDevice = false;
+        Fluttertoast.showToast(msg: "Impossible de se connecter à cet appareil.");
         this._onWillPop();
       });
     } catch (e) {
