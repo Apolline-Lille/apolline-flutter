@@ -48,7 +48,7 @@ class _SensorViewState extends State<SensorView> {
     bool isConnectedToDevice = true;
 
     try {
-      await widget.device.connect().timeout(Duration(seconds: 2), onTimeout: () {
+      await widget.device.connect().timeout(Duration(seconds: 3), onTimeout: () {
         isConnectedToDevice = false;
         Fluttertoast.showToast(msg: "Impossible de se connecter à cet appareil.");
         this._onWillPop(DeviceConnectionStatus.UNABLE_TO_CONNECT);
