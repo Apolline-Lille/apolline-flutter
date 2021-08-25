@@ -23,6 +23,7 @@ class _DeviceCardState extends State<DeviceCard> {
           widget.connectionCallback(widget.device);
         },
         enabled: widget.enabled,
+        trailing: widget.enabled ? null : Icon(Icons.bluetooth_disabled_outlined),
       )
     );
   }
