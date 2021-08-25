@@ -23,6 +23,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   bool timeout = true;
   Set<BluetoothDevice> devices = Set();
   Set<BluetoothDevice> pairedDevices = Set();
+  Set<BluetoothDevice> unConnectableDevices = Set();
   ///user configuration in the ui
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
@@ -74,6 +75,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     setState(() {
       pairedDevices = Set();
       devices = Set();
+      unConnectableDevices = Set();
     });
 
 
@@ -121,7 +123,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
       pairedDevices.forEach((device) {
         wList.add(
-            DeviceCard(device: device, connectionCallback: connectToDevice)
+            DeviceCard(
+                device: device,
+                connectionCallback: connectToDevice,
+                enabled: !unConnectableDevices.contains(device)
+            )
         );
         devices.remove(device);
       });
@@ -135,7 +141,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
       devices.forEach((device) {
         wList.add(
-            DeviceCard(device: device, connectionCallback: connectToDevice)
+            DeviceCard(
+              device: device,
+              connectionCallback: connectToDevice,
+              enabled: !unConnectableDevices.contains(device)
+            )
         );
       });
     }
@@ -174,7 +184,9 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         });
         break;
       case DeviceConnectionStatus.UNABLE_TO_CONNECT:
-        print("pas pu me co, déso");
+        setState(() {
+          unConnectableDevices.add(device);
+        });
         break;
     }
   }
