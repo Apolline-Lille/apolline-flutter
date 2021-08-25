@@ -43,15 +43,20 @@ class _SensorViewState extends State<SensorView> {
   ///
   Future<void> initializeDevice() async {
     print("Connecting to device");
+    bool isConnectedToDevice = true;
 
     try {
-      await widget.device.connect();
+      await widget.device.connect().timeout(Duration(seconds: 2), onTimeout: () {
+        isConnectedToDevice = false;
+        this._onWillPop();
+      });
     } catch (e) {
       if (e.code != "already_connected") {
         throw e;
       }
     } finally {
-      handleDeviceConnect(widget.device);
+      if (isConnectedToDevice)
+        handleDeviceConnect(widget.device);
     }
   }
 
