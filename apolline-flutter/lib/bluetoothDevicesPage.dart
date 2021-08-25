@@ -85,6 +85,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       for (BluetoothDevice device in ds) {
         setState(() {
           pairedDevices.add(device);
+          devices.remove(device);
         });
       }
     });
@@ -100,22 +101,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     });
   }
 
-  void _addWidgetDevices(Set<BluetoothDevice> devices, List<Widget> l, Function(List<Widget>, BluetoothDevice) cond) {
-    devices.toList().forEach((device) {
-      if (cond(l, device))
-        l.add(
-            DeviceCard(device: device, connectionCallback: connectToDevice)
-        );
-    });
-  }
-
-  bool _conditionForDevices(List<Widget> l, BluetoothDevice d) {
-    return (!pairedDevices.contains(d)) && (!l.contains(d));
-  }
-
-  bool _conditionForPaireddevices(List<Widget> l, BluetoothDevice d) {
-    return !l.contains(d);
-  }
 
   /* Build the UI list of detected devices */
   List<Widget> _buildDevicesList() {
@@ -126,17 +111,27 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         child: Text("Périphérique appairés"),
         margin: EdgeInsets.only(top: 10, bottom: 10)
       ));
-      _addWidgetDevices(pairedDevices, wList, _conditionForPaireddevices);
+
+      pairedDevices.forEach((device) {
+        wList.add(
+            DeviceCard(device: device, connectionCallback: connectToDevice)
+        );
+        devices.remove(device);
+      });
     }
 
-    wList.add(Container(
-      margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
-      child: Text("Appareils disponibles")
-    ));
-    _addWidgetDevices(devices, wList, _conditionForDevices);
+    if (devices.length > 0) {
+      wList.add(Container(
+        margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
+        child: Text("Appareils disponibles")
+      ));
 
-    /* Add a button for each device */
-    /* TODO: filter device list */
+      devices.forEach((device) {
+        wList.add(
+            DeviceCard(device: device, connectionCallback: connectToDevice)
+        );
+      });
+    }
 
     return wList;
   }
