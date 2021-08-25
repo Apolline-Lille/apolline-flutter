@@ -234,7 +234,7 @@ class SensorTwin {
     this._syncTimer?.cancel();
     this._service.client?.close();
     this._dataService?.stop();
-    this._locationService.close();
+    this._locationService?.close();
     try {
       this._device.disconnect();
     } catch (err) {
