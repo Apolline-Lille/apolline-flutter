@@ -50,8 +50,10 @@ class _SensorViewState extends State<SensorView> {
     try {
       await widget.device.connect().timeout(Duration(seconds: 3), onTimeout: () {
         isConnectedToDevice = false;
-        Fluttertoast.showToast(msg: "Impossible de se connecter à cet appareil.");
-        this._onWillPop(DeviceConnectionStatus.UNABLE_TO_CONNECT);
+        if (_scaffoldMessengerKey.currentContext != null) {
+          Fluttertoast.showToast(msg: "Impossible de se connecter à cet appareil.");
+          this._onWillPop(DeviceConnectionStatus.UNABLE_TO_CONNECT);
+        }
       });
     } catch (e) {
       if (e.code != "already_connected") {
@@ -146,8 +148,11 @@ class _SensorViewState extends State<SensorView> {
   ///
   ///Called when press back button
   Future<bool> _onWillPop(DeviceConnectionStatus status) async {
-    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
-    Navigator.pop(context, status);
+    if (_scaffoldMessengerKey.currentContext != null) {
+      ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
+      Navigator.pop(context, status);
+    }
+
     return false;
   }
 
