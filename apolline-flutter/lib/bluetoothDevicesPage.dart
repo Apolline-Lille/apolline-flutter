@@ -1,4 +1,5 @@
 import 'package:apollineflutter/sensor_view.dart';
+import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/widgets/device_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -22,6 +23,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   bool timeout = true;
   Set<BluetoothDevice> devices = Set();
   Set<BluetoothDevice> pairedDevices = Set();
+  Set<BluetoothDevice> unConnectableDevices = Set();
   ///user configuration in the ui
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
@@ -73,6 +75,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     setState(() {
       pairedDevices = Set();
       devices = Set();
+      unConnectableDevices = Set();
     });
 
 
@@ -120,7 +123,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
       pairedDevices.forEach((device) {
         wList.add(
-            DeviceCard(device: device, connectionCallback: connectToDevice)
+            DeviceCard(
+                device: device,
+                connectionCallback: connectToDevice,
+                enabled: !unConnectableDevices.contains(device)
+            )
         );
         devices.remove(device);
       });
@@ -134,7 +141,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
       devices.forEach((device) {
         wList.add(
-            DeviceCard(device: device, connectionCallback: connectToDevice)
+            DeviceCard(
+              device: device,
+              connectionCallback: connectToDevice,
+              enabled: !unConnectableDevices.contains(device)
+            )
         );
       });
     }
@@ -154,22 +165,29 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     /* Stop scanning, if not already stopped */
     FlutterBlue.instance.stopScan();
     /* We selected a device - go to the device screen passing information about the selected device */
-    var isconnected = await Navigator.push(
+    DeviceConnectionStatus status = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SensorView(device: device)),
     );
 
-    if (isconnected == null) return;
-    if (isconnected) {
-      setState(() {
-        devices.remove(device);
-        pairedDevices.add(device);
-      });
-    } else {
-      setState(() {
-        devices.remove(device);
-        pairedDevices.remove(device);
-      });
+    switch (status) {
+      case DeviceConnectionStatus.CONNECTED:
+        setState(() {
+          devices.remove(device);
+          pairedDevices.add(device);
+        });
+        break;
+      case DeviceConnectionStatus.DISCONNECTED:
+        setState(() {
+          devices.remove(device);
+          pairedDevices.remove(device);
+        });
+        break;
+      case DeviceConnectionStatus.UNABLE_TO_CONNECT:
+        setState(() {
+          unConnectableDevices.add(device);
+        });
+        break;
     }
   }
 

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:apollineflutter/twins/SensorTwin.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
+import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'models/data_point_model.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
@@ -43,15 +45,23 @@ class _SensorViewState extends State<SensorView> {
   ///
   Future<void> initializeDevice() async {
     print("Connecting to device");
+    bool isConnectedToDevice = true;
 
     try {
-      await widget.device.connect();
+      await widget.device.connect().timeout(Duration(seconds: 3), onTimeout: () {
+        isConnectedToDevice = false;
+        if (_scaffoldMessengerKey.currentContext != null) {
+          Fluttertoast.showToast(msg: "Impossible de se connecter à cet appareil.");
+          this._onWillPop(DeviceConnectionStatus.UNABLE_TO_CONNECT);
+        }
+      });
     } catch (e) {
       if (e.code != "already_connected") {
         throw e;
       }
     } finally {
-      handleDeviceConnect(widget.device);
+      if (isConnectedToDevice)
+        handleDeviceConnect(widget.device);
     }
   }
 
@@ -137,8 +147,12 @@ class _SensorViewState extends State<SensorView> {
 
   ///
   ///Called when press back button
-  Future<bool> _onWillPop() async {
-    Navigator.pop(context, isConnected);
+  Future<bool> _onWillPop(DeviceConnectionStatus status) async {
+    if (_scaffoldMessengerKey.currentContext != null) {
+      ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
+      Navigator.pop(context, status);
+    }
+
     return false;
   }
 
@@ -154,7 +168,7 @@ class _SensorViewState extends State<SensorView> {
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pop(context, isConnected);
+                _onWillPop(DeviceConnectionStatusHelper.fromConnectionStatus(isConnected));
               }),
         ),
         body: Center(
@@ -167,7 +181,7 @@ class _SensorViewState extends State<SensorView> {
     } else {
       /* We got data : display them */
       return WillPopScope(
-        onWillPop: _onWillPop,
+        onWillPop: () => _onWillPop(DeviceConnectionStatusHelper.fromConnectionStatus(isConnected)),
         child: DefaultTabController(
           length: 3,
           child: Scaffold(
@@ -181,7 +195,7 @@ class _SensorViewState extends State<SensorView> {
                     Tab(icon: Icon(Icons.map)),
                   ],
                 ),
-                title: Text('Apolline'),
+                title: Text(_sensor != null ? _sensor.name : "Connecting to sensor..."),
               ),
               body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
                 Quality(lastReceivedData: lastReceivedData),
