@@ -146,6 +146,7 @@ class _SensorViewState extends State<SensorView> {
   ///
   ///Called when press back button
   Future<bool> _onWillPop(DeviceConnectionStatus status) async {
+    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
     Navigator.pop(context, status);
     return false;
   }
