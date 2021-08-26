@@ -96,7 +96,12 @@ class _SensorViewState extends State<SensorView> {
     await this._sensor.launchDataLiveTransmission();
     updateState("Waiting for sensor data...");
 
-    FlutterBackground.enableBackgroundExecution();
+    activateBackgroundExecution();
+  }
+
+  void activateBackgroundExecution () async {
+    if (await FlutterBackground.hasPermissions)
+      FlutterBackground.enableBackgroundExecution();
   }
 
   void _onLiveDataReceived (DataPointModel model) {
