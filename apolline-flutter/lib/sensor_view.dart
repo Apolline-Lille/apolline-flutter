@@ -104,6 +104,11 @@ class _SensorViewState extends State<SensorView> {
       FlutterBackground.enableBackgroundExecution();
   }
 
+  void disableBackgroundExecution () {
+    if (FlutterBackground.isBackgroundExecutionEnabled)
+      FlutterBackground.disableBackgroundExecution();
+  }
+
   void _onLiveDataReceived (DataPointModel model) {
     setState(() {
       lastReceivedData = model;
@@ -149,6 +154,7 @@ class _SensorViewState extends State<SensorView> {
   void dispose() {
     widget.device.disconnect();
     this._sensor?.shutdown();
+    disableBackgroundExecution();
     super.dispose();
   }
 
@@ -161,6 +167,7 @@ class _SensorViewState extends State<SensorView> {
       Navigator.pop(context, status);
     }
 
+    disableBackgroundExecution();
     return false;
   }
 
