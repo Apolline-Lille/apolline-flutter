@@ -4,6 +4,7 @@ import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'models/data_point_model.dart';
@@ -94,6 +95,8 @@ class _SensorViewState extends State<SensorView> {
     await this._sensor.init();
     await this._sensor.launchDataLiveTransmission();
     updateState("Waiting for sensor data...");
+
+    FlutterBackground.enableBackgroundExecution();
   }
 
   void _onLiveDataReceived (DataPointModel model) {
