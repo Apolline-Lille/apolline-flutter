@@ -11,15 +11,15 @@
     "analysisButton": {
       "analyse": "Scan",
       "cancel": "Cancel"
-    },
-    "connectionMessages":  {
-      "connecting": "Connecting to the device...",
-      "configuring": "Configuring device...",
-      "waiting": "Waiting for sensor data...",
-      "connected": "Sensor connected.",
-      "disconnected": "Sensor disconnected.",
-      "failed": "Unable to connect to this device."
     }
+  },
+  "connectionMessages":  {
+    "connecting": "Connecting to the device...",
+    "configuring": "Configuring device...",
+    "waiting": "Waiting for sensor data...",
+    "connected": "Sensor connected.",
+    "disconnected": "Sensor disconnected.",
+    "failed": "Unable to connect to this device."
   },
   "temperature": "TEMPERATURE"
 }

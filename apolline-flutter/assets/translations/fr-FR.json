@@ -11,15 +11,15 @@
     "analysisButton": {
       "analyse": "Scanner",
       "cancel": "Annuler"
-    },
-    "connectionMessages":  {
-      "connecting": "Connection au périphérique...",
-      "configuring": "Configuration du périphérique...",
-      "waiting": "En attente de données...",
-      "connected": "Connexion avec le capteur établie.",
-      "disconnected": "Connexion avec le capteur perdue.",
-      "failed": "Impossible de se connecter à ce périphérique."
     }
+  },
+  "connectionMessages":  {
+    "connecting": "Connection au périphérique...",
+    "configuring": "Configuration du périphérique...",
+    "waiting": "En attente de données...",
+    "connected": "Connexion avec le capteur établie.",
+    "disconnected": "Connexion avec le capteur perdue.",
+    "failed": "Impossible de se connecter à ce périphérique."
   },
   "temperature": "TEMPÉRATURE"
 }
