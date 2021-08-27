@@ -21,5 +21,35 @@
     "disconnected": "Connexion avec le capteur perdue.",
     "failed": "Impossible de se connecter à ce périphérique."
   },
-  "temperature": "TEMPÉRATURE"
+  "temperature": "TEMPÉRATURE",
+  "mapView": {
+    "timeFilters": {
+      "lastMin": "Dernière minute",
+      "last5Mins": "Dernières 5 minutes",
+      "last15Mins": "Dernières 15 minutes",
+      "last30Mins": "Dernières 30 minutes",
+      "lastHour": "Dernière heure",
+      "last3Hours": "Dernières 3 heures",
+      "last6Hours": "Dernières 6 heures",
+      "last12Hours": "Dernières 12 heures",
+      "last24Hours": "Dernières 24 heures",
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette semaine"
+    },
+    "sizeFilters": {
+      "PM1": "PM1",
+      "PM25": "PM2.5",
+      "PM10": "PM10",
+      "abovePM03": "PM plus grandes que 0.3 µm",
+      "abovePM05": "PM plus grandes que 0.5 µm",
+      "abovePM1": "PM plus grandes que 1 µm",
+      "abovePM25": "PM plus grandes que 2.5 µm",
+      "abovePM5": "PM plus grandes que 5 µm",
+      "abovePM10": "PM plus grandes que 10 µm"
+    },
+    "filters": {
+      "time": "Par temps",
+      "size": "Par taille"
+    }
+  }
 }

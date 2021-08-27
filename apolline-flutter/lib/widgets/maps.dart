@@ -13,6 +13,7 @@ import 'package:apollineflutter/models/user_configuration.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/location_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 class MapSample extends StatelessWidget {
@@ -49,30 +50,29 @@ class MapUiBodyState extends State<MapUiBody> {
   Stream<DataPointModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
   /// the label for time.
   List<String> mapTimeLabel = [
-    "last minute",
-    "last 5 minutes",
-    "last 15 minutes",
-    "last 30 minutes",
-    "last 1 hour",
-    "last 3 hours",
-    "last 6 hours",
-    "last 12 hours",
-    "last 24 hours",
-    "Today",
-    "This week"
-
+    "mapView.timeFilters.lastMin".tr(),
+    "mapView.timeFilters.last5Mins".tr(),
+    "mapView.timeFilters.last15Mins".tr(),
+    "mapView.timeFilters.last30Mins".tr(),
+    "mapView.timeFilters.lastHour".tr(),
+    "mapView.timeFilters.last3Hours".tr(),
+    "mapView.timeFilters.last6Hours".tr(),
+    "mapView.timeFilters.last12Hours".tr(),
+    "mapView.timeFilters.last24Hours".tr(),
+    "mapView.timeFilters.today".tr(),
+    "mapView.timeFilters.thisWeek".tr()
   ];
   /// the label of pm
   List<String> pmLabels= [
-    "PM 1",
-    "PM 2_5",
-    "PM 10",
-    "PM_ABOVE 0_3",
-    "PM_ABOVE 0_5",
-    "PM_ABOVE 1",
-    "PM_ABOVE 2_5",
-    "PM_ABOVE 5",
-    "PM_ABOVE 10",
+    "mapView.sizeFilters.PM1".tr(),
+    "mapView.sizeFilters.PM25".tr(),
+    "mapView.sizeFilters.PM10".tr(),
+    "mapView.sizeFilters.abovePM03".tr(),
+    "mapView.sizeFilters.abovePM05".tr(),
+    "mapView.sizeFilters.abovePM1".tr(),
+    "mapView.sizeFilters.abovePM25".tr(),
+    "mapView.sizeFilters.abovePM5".tr(),
+    "mapView.sizeFilters.abovePM10".tr()
   ];
   ///the index of each pm in model.
   List<int> indexPmValueInModel = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -240,11 +240,11 @@ class MapUiBodyState extends State<MapUiBody> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             FloatingActionButton.extended(
-              label: Text("Time"),
+              label: Text("mapView.filters.time").tr(),
               onPressed: () { this.chooseTimeFrequency(context); }
             ),
             FloatingActionButton.extended(
-              label: Text("PM"),
+              label: Text("mapView.filters.time").tr(),
               onPressed: () { this.choosePm(context); }
             )
           ],
