@@ -11,6 +11,14 @@
     "analysisButton": {
       "analyse": "Scanner",
       "cancel": "Annuler"
+    },
+    "connectionMessages":  {
+      "connecting": "Connection au périphérique...",
+      "configuring": "Configuration du capteur...",
+      "waiting": "En attente de données...",
+      "connected": "Connexion avec le capteur établie.",
+      "disconnected": "Connexion avec le capteur perdue.",
+      "failed": "Impossible de se connecter à cet appareil."
     }
   }
 }

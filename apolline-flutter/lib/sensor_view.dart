@@ -10,7 +10,7 @@ import 'models/data_point_model.dart';
 import 'widgets/maps.dart';
 import 'widgets/quality.dart';
 import 'widgets/stats.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 
 
 enum ConnexionType { Normal, Disconnect }
@@ -26,7 +26,7 @@ class SensorView extends StatefulWidget {
 
 
 class _SensorViewState extends State<SensorView> {
-  String state = "Connecting to the device...";
+  String state = "connectionMessages.connecting".tr();
   DataPointModel lastReceivedData;
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
@@ -51,7 +51,7 @@ class _SensorViewState extends State<SensorView> {
       await widget.device.connect().timeout(Duration(seconds: 3), onTimeout: () {
         isConnectedToDevice = false;
         if (_scaffoldMessengerKey.currentContext != null) {
-          Fluttertoast.showToast(msg: "Impossible de se connecter à cet appareil.");
+          Fluttertoast.showToast(msg: "connectionMessages.failed".tr());
           this._onWillPop(DeviceConnectionStatus.UNABLE_TO_CONNECT);
         }
       });
@@ -86,14 +86,14 @@ class _SensorViewState extends State<SensorView> {
       await widget.device.connect();
     }
 
-    updateState("Configuring device");
+    updateState("connectionMessages.configuring".tr());
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
     this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
     await this._sensor.init();
     await this._sensor.launchDataLiveTransmission();
-    updateState("Waiting for sensor data...");
+    updateState("connectionMessages.waiting".tr());
   }
 
   void _onLiveDataReceived (DataPointModel model) {
@@ -108,7 +108,7 @@ class _SensorViewState extends State<SensorView> {
       handleDeviceConnect(widget.device);
     } else {
       print("--------------------connected--------------");
-      showSnackBar("Connexion avec le capteur établie.");
+      showSnackBar("connectionMessages.connected".tr());
     }
   }
 
@@ -116,7 +116,7 @@ class _SensorViewState extends State<SensorView> {
     print("----------------disconnected----------------");
     isConnected = false;
     connectType = ConnexionType.Disconnect; //deconnexion
-    showSnackBar("Connexion avec le capteur perdue.", duration: Duration(days: 1));
+    showSnackBar("connectionMessages.disconnected".tr(), duration: Duration(days: 1));
   }
 
 
@@ -164,7 +164,7 @@ class _SensorViewState extends State<SensorView> {
       return Scaffold(
         key: _scaffoldMessengerKey,
         appBar: AppBar(
-          title: Text(_sensor != null ? _sensor.name : "Connecting to sensor..."),
+          title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
@@ -195,7 +195,7 @@ class _SensorViewState extends State<SensorView> {
                     Tab(icon: Icon(Icons.map)),
                   ],
                 ),
-                title: Text(_sensor != null ? _sensor.name : "Connecting to sensor..."),
+                title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
               ),
               body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
                 Quality(lastReceivedData: lastReceivedData),
