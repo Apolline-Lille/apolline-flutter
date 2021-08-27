@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 
 class Quality extends StatelessWidget {
   final DataPointModel lastReceivedData;
@@ -173,7 +175,7 @@ class Quality extends StatelessWidget {
                 //creates TEMPERATURE gauge
                 Container(
                   child: _buildGauge(
-                      "TEMPERATURE",
+                      "temperature".tr(),
                       lastReceivedData.values[DataPointModel.SENSOR_TEMP],
                       "°C",
                       Color(0xFFFFCD60),

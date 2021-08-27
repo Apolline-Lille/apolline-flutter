@@ -20,5 +20,6 @@
       "disconnected": "Connexion avec le capteur perdue.",
       "failed": "Impossible de se connecter à ce périphérique."
     }
-  }
+  },
+  "temperature": "TEMPÉRATURE"
 }

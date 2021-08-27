@@ -20,5 +20,6 @@
       "disconnected": "Sensor disconnected.",
       "failed": "Unable to connect to this device."
     }
-  }
+  },
+  "temperature": "TEMPERATURE"
 }
