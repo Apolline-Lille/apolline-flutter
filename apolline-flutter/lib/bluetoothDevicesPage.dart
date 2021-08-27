@@ -7,6 +7,7 @@ import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 
@@ -60,8 +61,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     );
 
     AlertDialog alert = AlertDialog(
-      title: Text("Alert"),
-      content: Text("Activez votre bluetooth pour détecter des appareils"),
+      title: Text("devicesView.bluetoothPopUp.title").tr(),
+      content: Text("devicesView.bluetoothPopUp.message").tr(),
       actions: [okbtn],
     );
 
@@ -118,7 +119,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
     if (pairedDevices.length > 0) {
       wList.add(Container(
-        child: Text("Périphérique appairés"),
+        child: Text("devicesView.pairedDevicesLabel").tr(),
         margin: EdgeInsets.only(top: 10, bottom: 10)
       ));
 
@@ -137,7 +138,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     if (devices.length > 0) {
       wList.add(Container(
         margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
-        child: Text("Appareils disponibles")
+        child: Text("devicesView.availableDevicesLabel").tr()
       ));
 
       devices.forEach((device) {
@@ -154,7 +155,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     if (pairedDevices.length == 0 && devices.length == 0) {
       wList.add(Container(
           margin: EdgeInsets.only(top: pairedDevices.length > 0 ? 30 : 10, bottom: 10),
-          child: Text("Aucun appareil Bluetooth détecté.")
+          child: Text("devicesView.noDevicesLabel").tr()
       ));
     }
 
@@ -213,7 +214,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     if (timeout) {
       return <Widget>[
         // ignore: missing_required_param
-        TextButton(child: Text("Analyser", style: btnStyle,)),
+        TextButton(child: Text("devicesView.analysisButton.analyse", style: btnStyle,).tr()),
       ];
     } else {
       return <Widget>[
@@ -226,7 +227,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           height: 20,
         ),
         // ignore: missing_required_param
-        TextButton(child: Text("Arrêter", style: btnStyle)),
+        TextButton(child: Text("devicesView.analysisButton.cancel", style: btnStyle).tr()),
       ];
     }
   }

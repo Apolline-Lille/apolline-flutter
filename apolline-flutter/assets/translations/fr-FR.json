@@ -1,5 +1,16 @@
 {
   "devicesView": {
-    "title": "Apolline - Capteurs"
+    "title": "Apolline - Capteurs",
+    "bluetoothPopUp": {
+      "title": "Bluetooth désactivé",
+      "message": "Activez votre bluetooth et votre géolocalisation pour détecter des appareils."
+    },
+    "pairedDevicesLabel": "Périphériques appairés",
+    "availableDevicesLabel": "Appareils disponibles",
+    "noDevicesLabel": "Aucun appareil Bluetooth détecté.",
+    "analysisButton": {
+      "analyse": "Scanner",
+      "cancel": "Annuler"
+    }
   }
 }
