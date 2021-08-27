@@ -13,6 +13,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:apollineflutter/configuration_key_name.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 
@@ -30,6 +31,7 @@ class PMMapView extends StatefulWidget {
 
   State<StatefulWidget> createState() => _PMMapViewState();
 }
+
 
 
 class _PMMapViewState extends State<PMMapView> {
@@ -161,12 +163,12 @@ class _PMMapViewState extends State<PMMapView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             FloatingActionButton.extended(
-              label: Text("Time"),
+              label: Text("mapView.filters.time").tr(),
               icon: Icon(Icons.access_time),
               onPressed: () { this.chooseTimeFilter(context); }
             ),
             FloatingActionButton.extended(
-              label: Text("PM"),
+              label: Text("mapView.filters.time"),
               icon: Icon(Icons.cloud_outlined),
               onPressed: () { this.choosePm(context); }
             )
