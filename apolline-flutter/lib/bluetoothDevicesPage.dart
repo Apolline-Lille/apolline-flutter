@@ -184,6 +184,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         });
         break;
       case DeviceConnectionStatus.UNABLE_TO_CONNECT:
+      case DeviceConnectionStatus.INCOMPATIBLE:
         setState(() {
           unConnectableDevices.add(device);
         });

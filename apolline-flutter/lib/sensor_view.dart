@@ -94,7 +94,7 @@ class _SensorViewState extends State<SensorView> {
     bool initResult = await this._sensor.init();
     if (!initResult) {
       Fluttertoast.showToast(msg: "Ce périphérique n'est pas compatible avec l'application.");
-      this._onWillPop(DeviceConnectionStatus.UNABLE_TO_CONNECT);
+      this._onWillPop(DeviceConnectionStatus.INCOMPATIBLE);
       return;
     }
     await this._sensor.launchDataLiveTransmission();
