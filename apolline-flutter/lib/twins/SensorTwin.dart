@@ -156,7 +156,12 @@ class SensorTwin {
   /// one that will allow us to receive data from the sensor.
   Future<void> _loadUpSensorCharacteristic () async {
     List<BluetoothService> services = await _device.discoverServices();
-    BluetoothService sensorService = services.firstWhere((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
+    Iterable<BluetoothService> sensorServices = services.where((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
+    if (sensorServices.length == 0) {
+      print('bruh');
+      return;
+    }
+    BluetoothService sensorService = sensorServices.first;
     BluetoothCharacteristic characteristic = sensorService.characteristics.firstWhere((char) => char.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID);
     this._characteristic = characteristic;
   }
