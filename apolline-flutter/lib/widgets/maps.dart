@@ -295,12 +295,13 @@ class MapUiBodyState extends State<MapUiBody> {
   ///update data after change time of pm choice.
   void getSensorDataAfterDate() {
     this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.mapSyncFrequency).then((res) {
-      this._circles.clear(); //clean last content.
-      for(var i = 0; i < res.length; i++) {
-        this.addCircle(res[i]);
-      }
-      
-      this.setState(() {});
+      setState(() {
+        this._circles.clear(); //clean last content.
+        res.map((point) {
+          if (point.position.geohash != "no")
+            this.addCircle(point);
+        });
+      });
     });
   }
 
