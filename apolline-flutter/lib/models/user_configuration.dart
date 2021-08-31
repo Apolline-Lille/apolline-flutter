@@ -1,4 +1,5 @@
 import 'package:apollineflutter/models/data_point_model.dart';
+import 'package:apollineflutter/services/user_configuration_service.dart';
 
 
 ///Author (Issagha BARRY)
@@ -25,6 +26,8 @@ class UserConfiguration {
   TimeFilter _timeFilter ;
   ///index pm in data point.
   int _pmIndex;
+  ///time filter json key
+  static const String TIME_FILTER_KEY = "timeFilterValue";
 
   ///
   ///Constructor
@@ -36,7 +39,7 @@ class UserConfiguration {
   ///
   ///Constructor from json
   UserConfiguration.fromJson(Map json) {
-    this._timeFilter = TimeFilter.values[json['mapSyncFreq']];
+    this._timeFilter = TimeFilter.values[json[UserConfiguration.TIME_FILTER_KEY]];
     this._pmIndex = json['pmIndex'];
   }
 
@@ -44,7 +47,7 @@ class UserConfiguration {
   ///formate class to json.
   Map<String, dynamic> toJson() {
     return {
-      "mapSyncFreq": this.timeFilter.index,
+      UserConfiguration.TIME_FILTER_KEY: this.timeFilter.index,
       "pmIndex": this._pmIndex
     };
   }
