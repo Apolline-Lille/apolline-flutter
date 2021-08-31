@@ -43,6 +43,9 @@ extension TimeFilterUtils on TimeFilter {
       case TimeFilter.MAP_SYNC_THIS_WEEK:
         DateTime now = DateTime.now();
         return (now.weekday - 1) * 24 * 60 + this._getMinutesForToday();
+
+      default:
+        throw RangeError("TimeFilter enum has incorrect value.");
     }
   }
 }
