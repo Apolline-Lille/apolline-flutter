@@ -244,6 +244,12 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   }
 
   Widget _buildAppVersion () {
+    const labelStyle = TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey
+    );
+
     return Align(
       alignment: Alignment.bottomRight,
       child: Container(
@@ -252,23 +258,9 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
             future: PackageInfo.fromPlatform(),
             builder: (context, data) {
               if (!data.hasData) {
-                return Text(
-                  "Loading...",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey
-                  ),
-                );
+                return Text("Loading...", style: labelStyle);
               } else {
-                return Text(
-                  "v${data.data.version}",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey
-                  ),
-                );
+                return Text("v${data.data.version}", style: labelStyle);
               }
             },
           )
