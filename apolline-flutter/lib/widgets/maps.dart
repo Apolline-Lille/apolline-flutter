@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:apollineflutter/utils/time_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:apollineflutter/services/service_locator.dart';
@@ -9,7 +10,6 @@ import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:apollineflutter/configuration_key_name.dart';
-import 'package:apollineflutter/models/user_configuration.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/location_service.dart';
