@@ -6,6 +6,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 
 
@@ -247,13 +248,29 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       alignment: Alignment.bottomRight,
       child: Container(
           margin: EdgeInsets.all(10),
-          child: Text(
-            "v1.0.0+1",
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey
-            ),
+          child: FutureBuilder(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, data) {
+              if (!data.hasData) {
+                return Text(
+                  "Loading...",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey
+                  ),
+                );
+              } else {
+                return Text(
+                  "v${data.data.version}",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey
+                  ),
+                );
+              }
+            },
           )
       ),
     );
