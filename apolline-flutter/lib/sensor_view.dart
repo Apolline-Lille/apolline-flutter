@@ -91,7 +91,12 @@ class _SensorViewState extends State<SensorView> {
     this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
-    await this._sensor.init();
+    bool initResult = await this._sensor.init();
+    if (!initResult) {
+      Fluttertoast.showToast(msg: "Ce périphérique n'est pas compatible avec l'application.");
+      this._onWillPop(DeviceConnectionStatus.INCOMPATIBLE);
+      return;
+    }
     await this._sensor.launchDataLiveTransmission();
     updateState("Waiting for sensor data...");
   }

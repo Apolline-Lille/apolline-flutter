@@ -1,7 +1,8 @@
 enum DeviceConnectionStatus {
   CONNECTED,
   DISCONNECTED,
-  UNABLE_TO_CONNECT
+  INCOMPATIBLE,
+  UNABLE_TO_CONNECT,
 }
 
 class DeviceConnectionStatusHelper {
