@@ -22,6 +22,9 @@
     "failed": "Impossible de se connecter à ce périphérique."
   },
   "temperature": "TEMPÉRATURE",
+  "statsView": {
+    "noData": "Pas de données disponibles."
+  },
   "mapView": {
     "timeFilters": {
       "lastMin": "Dernière minute",

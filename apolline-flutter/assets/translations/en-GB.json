@@ -22,6 +22,9 @@
     "failed": "Unable to connect to this device."
   },
   "temperature": "TEMPERATURE",
+  "statsView": {
+    "noData": "No chart data available."
+  },
   "mapView": {
     "timeFilters": {
       "lastMin": "Last minute",
