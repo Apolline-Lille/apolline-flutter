@@ -70,7 +70,7 @@ class _InfluxDBClient extends http.BaseClient {
   void pingSilent(String url) async {
     http.Response resp;
     try{
-      resp = await this.get(url);
+      resp = await this.get(Uri(host: url));
     } on SocketException catch(_) {
       throw LostConnectionException("server is unavailable");
     }

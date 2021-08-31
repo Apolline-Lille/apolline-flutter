@@ -35,8 +35,8 @@ dependencies:
       path: mp_chart
   google_maps_flutter: ^2.0.6
   flutter_launcher_icons: ^0.9.0
-  http: ^0.12.2
-  global_configuration: ^1.6.0
+  http: ^0.13.3
+  global_configuration: ^2.0.0-nullsafety.1
   # hash localisation
   geohash: ^0.2.1
   path_provider: ^2.0.2
@@ -44,7 +44,7 @@ dependencies:
   geolocator: ^7.3.0
   sqflite: ^2.0.0+3
   shared_preferences: ^2.0.6
-  package_info_plus: ^0.0.1
+  package_info_plus: ^1.0.6
 
 
 
