@@ -95,15 +95,9 @@ class SqfLiteService {
   ///get all data included in [filter] value.
   Future<List<DataPointModel>> getAllDataPointsAfterDate(TimeFilter filter) async {
     List<DataPointModel> models = [];
-    var now = DateTime.now();
-    List<int> freqC = [1, 5, 15, 30, 60, 180, 360, 720, 1440]; //convert to minute.
-    var today = now.hour*60 + now.minute;
-    var thisweek = (now.weekday - 1) * 24 * 60 + today;
-    freqC.add(today);
-    freqC.add(thisweek);
-    var time = now.millisecondsSinceEpoch - 60000*freqC[filter.index];
-
+    var time = DateTime.now().millisecondsSinceEpoch - 60000*filter.toMinutes();
     Database db = await database;
+
     var jsonres = await db.query(dataPointTableName, columns: null, where: "$columnDate >= ?", whereArgs: [time]);
     jsonres.forEach((pJson) { models.add(DataPointModel.fromJson(pJson)); });
     
