@@ -260,7 +260,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
               if (!data.hasData) {
                 return Text("Loading...", style: labelStyle);
               } else {
-                return Text("v${data.data.version}", style: labelStyle);
+                String label = data.data.version;
+                var buildNumber = data.data.buildNumber;
+                if (buildNumber != null && data.data.buildNumber != 0)
+                  label += "+${data.data.buildNumber}";
+                return Text("v$label", style: labelStyle);
               }
             },
           )
