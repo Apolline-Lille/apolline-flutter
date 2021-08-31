@@ -183,13 +183,13 @@ class MapUiBodyState extends State<MapUiBody> {
   }
 
   ///
-  ///select for time frequency
+  ///select for time
   ///[ctx] the context of app
-  Future<void> chooseTimeFrequency(BuildContext ctx) async{
+  Future<void> chooseTimeFilter(BuildContext ctx) async{
     var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, mapTimeLabel, MapFrequency.values, uConf.mapSyncFrequency);
+    var val = await this.dialog(ctx, mapTimeLabel, TimeFilter.values, uConf.timeFilter);
     if(val != null) {
-      uConf.mapSyncFrequency = val;
+      uConf.timeFilter = val;
       this.ucS.update(); //notify the settings page that something has changed.
       this.getSensorDataAfterDate();
     }
@@ -241,7 +241,7 @@ class MapUiBodyState extends State<MapUiBody> {
           children: [
             FloatingActionButton.extended(
               label: Text("Time"),
-              onPressed: () { this.chooseTimeFrequency(context); }
+              onPressed: () { this.chooseTimeFilter(context); }
             ),
             FloatingActionButton.extended(
               label: Text("PM"),
@@ -294,7 +294,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///update data after change time of pm choice.
   void getSensorDataAfterDate() {
-    this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.mapSyncFrequency).then((res) {
+    this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.timeFilter).then((res) {
       setState(() {
         this._circles.clear(); //clean last content.
         res.map((point) {

@@ -91,8 +91,8 @@ class SqfLiteService {
 
 
   ///
-  ///get all data after this mapfrequency [freq].
-  Future<List<DataPointModel>> getAllDataPointsAfterDate(MapFrequency freq) async {
+  ///get all data included in [filter] value.
+  Future<List<DataPointModel>> getAllDataPointsAfterDate(TimeFilter filter) async {
     List<DataPointModel> models = [];
     var now = DateTime.now();
     List<int> freqC = [1, 5, 15, 30, 60, 180, 360, 720, 1440]; //convert to minute.
@@ -100,7 +100,7 @@ class SqfLiteService {
     var thisweek = (now.weekday - 1) * 24 * 60 + today;
     freqC.add(today);
     freqC.add(thisweek);
-    var time = now.millisecondsSinceEpoch - 60000*freqC[freq.index];
+    var time = now.millisecondsSinceEpoch - 60000*freqC[filter.index];
 
     Database db = await database;
     var jsonres = await db.query(dataPointTableName, columns: null, where: "$columnDate >= ?", whereArgs: [time]);

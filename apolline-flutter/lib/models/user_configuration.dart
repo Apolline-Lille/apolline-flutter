@@ -3,7 +3,7 @@ import 'package:apollineflutter/models/data_point_model.dart';
 
 ///Author (Issagha BARRY)
 ///
-enum MapFrequency {
+enum TimeFilter {
   MAP_SYNC_1_MIN,
   MAP_SYNC_5_MIN,
   MAP_SYNC_15_MIN,
@@ -22,21 +22,21 @@ enum MapFrequency {
 class UserConfiguration {
   
   ///variable to retrieve data up to x minute
-  MapFrequency _mapSyncFrequency ;
+  TimeFilter _timeFilter ;
   ///index pm in data point.
   int _pmIndex;
 
   ///
   ///Constructor
-  UserConfiguration({mapSyncFrequency: MapFrequency.MAP_SYNC_1_MIN, pmIndex: DataPointModel.SENSOR_PM_2_5}) {
-    this._mapSyncFrequency = mapSyncFrequency;
+  UserConfiguration({timeFilter: TimeFilter.MAP_SYNC_1_MIN, pmIndex: DataPointModel.SENSOR_PM_2_5}) {
+    this._timeFilter = timeFilter;
     this._pmIndex = pmIndex;
   }
 
   ///
   ///Constructor from json
   UserConfiguration.fromJson(Map json) {
-    this._mapSyncFrequency = MapFrequency.values[json['mapSyncFreq']];
+    this._timeFilter = TimeFilter.values[json['mapSyncFreq']];
     this._pmIndex = json['pmIndex'];
   }
 
@@ -44,15 +44,15 @@ class UserConfiguration {
   ///formate class to json.
   Map<String, dynamic> toJson() {
     return {
-      "mapSyncFreq": this.mapSyncFrequency.index,
+      "mapSyncFreq": this.timeFilter.index,
       "pmIndex": this._pmIndex
     };
   }
 
   ///
   ///getteur map
-  MapFrequency get mapSyncFrequency {
-    return this._mapSyncFrequency;
+  TimeFilter get timeFilter {
+    return this._timeFilter;
   }
 
   ///
@@ -69,8 +69,8 @@ class UserConfiguration {
 
   ///
   ///Setteur
-  set mapSyncFrequency(MapFrequency frequency) {
-    this._mapSyncFrequency = frequency;
+  set timeFilter(TimeFilter filter) {
+    this._timeFilter = filter;
   }
 
 }
