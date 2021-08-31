@@ -6,6 +6,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 
 
@@ -157,6 +158,9 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       ));
     }
 
+    //for (var i=0; i<100; i++)
+      //wList.add(Card(child: ListTile(title: Text("bonsoir"), subtitle: Text("Hello there"),)));
+
     return wList;
   }
 
@@ -239,6 +243,35 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     return wList;
   }
 
+  Widget _buildAppVersion () {
+    const labelStyle = TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey
+    );
+
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Container(
+          margin: EdgeInsets.all(10),
+          child: FutureBuilder(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, data) {
+              if (!data.hasData) {
+                return Text("Loading...", style: labelStyle);
+              } else {
+                String label = data.data.version;
+                var buildNumber = data.data.buildNumber;
+                if (buildNumber != null && data.data.buildNumber != 0)
+                  label += "+${data.data.buildNumber}";
+                return Text("v$label", style: labelStyle);
+              }
+            },
+          )
+      ),
+    );
+  }
+
   /* UI update only */
   @override
   Widget build(BuildContext context) {
@@ -261,12 +294,18 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: Container(
-            child: ListView(
-              children: _buildDevicesList(),
-              padding: EdgeInsets.all(10)
-            )
-          ))
+          child: Stack(
+            children: [
+              Container(
+                    child: ListView(
+                    children: _buildDevicesList(),
+                    padding: EdgeInsets.all(10)
+                )
+              ),
+              this._buildAppVersion()
+            ],
+          )
+      )
     );
   }
 }
