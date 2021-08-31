@@ -244,7 +244,7 @@ class MapUiBodyState extends State<MapUiBody> {
               onPressed: () { this.chooseTimeFrequency(context); }
             ),
             FloatingActionButton.extended(
-              label: Text("mapView.filters.time").tr(),
+              label: Text("mapView.filters.size").tr(),
               onPressed: () { this.choosePm(context); }
             )
           ],
