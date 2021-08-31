@@ -157,6 +157,9 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       ));
     }
 
+    //for (var i=0; i<100; i++)
+      //wList.add(Card(child: ListTile(title: Text("bonsoir"), subtitle: Text("Hello there"),)));
+
     return wList;
   }
 
@@ -239,6 +242,23 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     return wList;
   }
 
+  Widget _buildAppVersion () {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Container(
+          margin: EdgeInsets.all(10),
+          child: Text(
+            "v1.0.0+1",
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey
+            ),
+          )
+      ),
+    );
+  }
+
   /* UI update only */
   @override
   Widget build(BuildContext context) {
@@ -261,12 +281,18 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: Container(
-            child: ListView(
-              children: _buildDevicesList(),
-              padding: EdgeInsets.all(10)
-            )
-          ))
+          child: Stack(
+            children: [
+              Container(
+                    child: ListView(
+                    children: _buildDevicesList(),
+                    padding: EdgeInsets.all(10)
+                )
+              ),
+              this._buildAppVersion()
+            ],
+          )
+      )
     );
   }
 }
