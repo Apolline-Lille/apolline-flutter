@@ -9,8 +9,8 @@ class UserConfiguration {
   
   ///variable to retrieve data up to x minute
   TimeFilter _timeFilter ;
-  ///index pm in data point.
-  int _pmIndex;
+  ///which PM data to display
+  PMFilter _pmFilter;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
@@ -18,16 +18,16 @@ class UserConfiguration {
 
   ///
   ///Constructor
-  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmIndex: DataPointModel.SENSOR_PM_2_5}) {
+  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmFilter: DataPointModel.SENSOR_PM_2_5}) {
     this._timeFilter = timeFilter;
-    this._pmIndex = pmIndex;
+    this._pmFilter = pmFilter;
   }
 
   ///
   ///Constructor from json
   UserConfiguration.fromJson(Map json) {
     this._timeFilter = TimeFilter.values[json[UserConfiguration.TIME_FILTER_KEY]];
-    this._pmIndex = PMFilter.values[json[UserConfiguration.PM_FILTER_KEY]].getRowIndex();
+    this._pmFilter = PMFilter.values[json[UserConfiguration.PM_FILTER_KEY]];
   }
 
   ///
@@ -35,7 +35,7 @@ class UserConfiguration {
   Map<String, dynamic> toJson() {
     return {
       UserConfiguration.TIME_FILTER_KEY: this.timeFilter.index,
-      UserConfiguration.PM_FILTER_KEY: this._pmIndex
+      UserConfiguration.PM_FILTER_KEY: this._pmFilter.index
     };
   }
 
@@ -48,13 +48,13 @@ class UserConfiguration {
   ///
   ///gette index pm
   int get pmIndex {
-    return this._pmIndex;
+    return this._pmFilter.getRowIndex();
   }
 
   ///
   ///setteur
   set pmIndex(int index) {
-    this._pmIndex = index;
+    this._pmFilter = PMFilter.values[index-1];
   }
 
   ///
@@ -62,5 +62,4 @@ class UserConfiguration {
   set timeFilter(TimeFilter filter) {
     this._timeFilter = filter;
   }
-
 }
