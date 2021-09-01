@@ -1,3 +1,4 @@
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:flutter/cupertino.dart';
 
 
@@ -31,15 +32,15 @@ class _PMFilterValues {
 
 extension PMFilterUtils on PMFilter {
   static final Map<PMFilter, _PMFilterValues> _values = {
-    PMFilter.PM_1: _PMFilterValues(label: "PM_1", dataRowIndex: 1),
-    PMFilter.PM_2_5: _PMFilterValues(label: "PM_2_5", dataRowIndex: 2),
-    PMFilter.PM_10: _PMFilterValues(label: "PM_10", dataRowIndex: 3),
-    PMFilter.PM_ABOVE_0_3: _PMFilterValues(label: "PM_ABOVE_0_3", dataRowIndex: 4),
-    PMFilter.PM_ABOVE_0_5: _PMFilterValues(label: "PM_ABOVE_0_5", dataRowIndex: 5),
-    PMFilter.PM_ABOVE_1: _PMFilterValues(label: "PM_ABOVE_1", dataRowIndex: 6),
-    PMFilter.PM_ABOVE_2_5: _PMFilterValues(label: "PM_ABOVE_2_5", dataRowIndex: 7),
-    PMFilter.PM_ABOVE_5: _PMFilterValues(label: "PM_ABOVE_5", dataRowIndex: 8),
-    PMFilter.PM_ABOVE_10: _PMFilterValues(label: "PM_ABOVE_10", dataRowIndex: 9)
+    PMFilter.PM_1: _PMFilterValues(label: "PM_1", dataRowIndex: DataPointModel.SENSOR_PM_1),
+    PMFilter.PM_2_5: _PMFilterValues(label: "PM_2_5", dataRowIndex: DataPointModel.SENSOR_PM_2_5),
+    PMFilter.PM_10: _PMFilterValues(label: "PM_10", dataRowIndex: DataPointModel.SENSOR_PM_10),
+    PMFilter.PM_ABOVE_0_3: _PMFilterValues(label: "PM_ABOVE_0_3", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_3),
+    PMFilter.PM_ABOVE_0_5: _PMFilterValues(label: "PM_ABOVE_0_5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_5),
+    PMFilter.PM_ABOVE_1: _PMFilterValues(label: "PM_ABOVE_1", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_1),
+    PMFilter.PM_ABOVE_2_5: _PMFilterValues(label: "PM_ABOVE_2_5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_2_5),
+    PMFilter.PM_ABOVE_5: _PMFilterValues(label: "PM_ABOVE_5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_5),
+    PMFilter.PM_ABOVE_10: _PMFilterValues(label: "PM_ABOVE_10", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_10)
   };
 
 
