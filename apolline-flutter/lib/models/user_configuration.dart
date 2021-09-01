@@ -1,4 +1,5 @@
 import 'package:apollineflutter/models/data_point_model.dart';
+import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 
 
@@ -10,8 +11,10 @@ class UserConfiguration {
   TimeFilter _timeFilter ;
   ///index pm in data point.
   int _pmIndex;
-  ///time filter json key
+
+  ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
+  static const String PM_FILTER_KEY = "pmFilterValue";
 
   ///
   ///Constructor
@@ -24,7 +27,7 @@ class UserConfiguration {
   ///Constructor from json
   UserConfiguration.fromJson(Map json) {
     this._timeFilter = TimeFilter.values[json[UserConfiguration.TIME_FILTER_KEY]];
-    this._pmIndex = json['pmIndex'];
+    this._pmIndex = PMFilter.values[json[UserConfiguration.PM_FILTER_KEY]].getRowIndex();
   }
 
   ///
@@ -32,7 +35,7 @@ class UserConfiguration {
   Map<String, dynamic> toJson() {
     return {
       UserConfiguration.TIME_FILTER_KEY: this.timeFilter.index,
-      "pmIndex": this._pmIndex
+      UserConfiguration.PM_FILTER_KEY: this._pmIndex
     };
   }
 
