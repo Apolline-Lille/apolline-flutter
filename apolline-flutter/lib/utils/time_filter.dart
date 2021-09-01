@@ -1,5 +1,10 @@
 import 'package:flutter/foundation.dart';
 
+
+///
+/// TimeFilter allows users to select all data points gathered before a given date.
+/// Each filter has a label and a method to obtain corresponding minutes count.
+///
 enum TimeFilter {
   LAST_MIN,
   LAST_5_MIN,
