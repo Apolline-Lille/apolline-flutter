@@ -42,7 +42,10 @@ extension PMFilterUtils on PMFilter {
     PMFilter.PM_ABOVE_10: _PMFilterValues(label: "PM_ABOVE_10", dataRowIndex: 9)
   };
 
+
   int getRowIndex () {
+    if (PMFilterUtils._values[this] == null)
+      throw RangeError("This PMFilter has no associated row index.");
     return PMFilterUtils._values[this].dataRowIndex;
   }
 
