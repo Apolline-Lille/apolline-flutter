@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum TimeFilter {
   MAP_SYNC_1_MIN,
   MAP_SYNC_5_MIN,
@@ -15,7 +17,7 @@ enum TimeFilter {
 class TimeFilterValues {
   String label;
   int Function() toMinutes;
-  TimeFilterValues({this.label, this.toMinutes});
+  TimeFilterValues({@required this.label, @required this.toMinutes});
 }
 
 extension TimeFilterUtils on TimeFilter {
