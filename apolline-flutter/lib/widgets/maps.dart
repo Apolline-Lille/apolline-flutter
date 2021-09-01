@@ -138,7 +138,6 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[labels] the label
   ///[values] all value 
   List<Widget> frequencyRadio(BuildContext context, List<String> labels, List<dynamic> values, dynamic current) {
-    
     List<Widget> renders = [];
     for(var i = 0; i < labels.length; i++) {
       renders.add(
@@ -151,6 +150,7 @@ class MapUiBodyState extends State<MapUiBody> {
               Navigator.pop(context, values[i]);
             },
           ),
+          onTap: () => Navigator.pop(context, values[i]),
         ),
       );
     }
