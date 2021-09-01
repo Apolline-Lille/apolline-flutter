@@ -13,6 +13,20 @@ enum TimeFilter {
 }
 
 extension TimeFilterUtils on TimeFilter {
+  static List<String> _labels = [
+    "last minute",
+    "last 5 minutes",
+    "last 15 minutes",
+    "last 30 minutes",
+    "last 1 hour",
+    "last 3 hours",
+    "last 6 hours",
+    "last 12 hours",
+    "last 24 hours",
+    "Today",
+    "This week"
+  ];
+
   int _getMinutesForToday () {
     DateTime now = DateTime.now();
     return now.hour*60 + now.minute;
@@ -47,5 +61,11 @@ extension TimeFilterUtils on TimeFilter {
       default:
         throw RangeError("TimeFilter enum has incorrect value.");
     }
+  }
+
+  static List<String> getLabels () {
+    if (TimeFilterUtils._labels.length != TimeFilter.values.length)
+      throw RangeError("There isn't as many labels as TimeFilter values.");
+    return TimeFilterUtils._labels;
   }
 }

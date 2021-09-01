@@ -47,21 +47,6 @@ class MapUiBodyState extends State<MapUiBody> {
   StreamSubscription _sub;
   ///help to listen data
   Stream<DataPointModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
-  /// the label for time.
-  List<String> mapTimeLabel = [
-    "last minute",
-    "last 5 minutes",
-    "last 15 minutes",
-    "last 30 minutes",
-    "last 1 hour",
-    "last 3 hours",
-    "last 6 hours",
-    "last 12 hours",
-    "last 24 hours",
-    "Today",
-    "This week"
-
-  ];
   /// the label of pm
   List<String> pmLabels= [
     "PM 1",
@@ -187,7 +172,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[ctx] the context of app
   Future<void> chooseTimeFilter(BuildContext ctx) async{
     var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, mapTimeLabel, TimeFilter.values, uConf.timeFilter);
+    var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter);
     if(val != null) {
       uConf.timeFilter = val;
       this.ucS.update(); //notify the settings page that something has changed.
