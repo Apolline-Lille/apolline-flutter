@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart';
 
 enum TimeFilter {
-  MAP_SYNC_1_MIN,
-  MAP_SYNC_5_MIN,
-  MAP_SYNC_15_MIN,
-  MAP_SYNC_30_MIN,
-  MAP_SYNC_1_HOUR,
-  MAP_SYNC_3_HOUR,
-  MAP_SYNC_6_HOUR,
-  MAP_SYNC_12_HOUR,
-  MAP_SYNC_24_HOUR,
-  MAP_SYNC_TODAY,
-  MAP_SYNC_THIS_WEEK,
+  LAST_MIN,
+  LAST_5_MIN,
+  LAST_15_MIN,
+  LAST_30_MIN,
+  LAST_HOUR,
+  LAST_3_HOURS,
+  LAST_6_HOURS,
+  LAST_12_HOURS,
+  LAST_24_HOURS,
+  TODAY,
+  THIS_WEEK,
 }
 
 class TimeFilterValues {
@@ -22,20 +22,20 @@ class TimeFilterValues {
 
 extension TimeFilterUtils on TimeFilter {
   static final Map<TimeFilter, TimeFilterValues> _values = {
-    TimeFilter.MAP_SYNC_1_MIN: TimeFilterValues(label: "last minute", toMinutes: () => 1),
-    TimeFilter.MAP_SYNC_5_MIN: TimeFilterValues(label: "last 5 minutes", toMinutes: () => 5),
-    TimeFilter.MAP_SYNC_15_MIN: TimeFilterValues(label: "last 15 minutes", toMinutes: () => 15),
-    TimeFilter.MAP_SYNC_30_MIN: TimeFilterValues(label: "last 30 minutes", toMinutes: () => 30),
-    TimeFilter.MAP_SYNC_1_HOUR: TimeFilterValues(label: "last 1 hour", toMinutes: () => 60),
-    TimeFilter.MAP_SYNC_3_HOUR: TimeFilterValues(label: "last 3 hours", toMinutes: () => 180),
-    TimeFilter.MAP_SYNC_6_HOUR: TimeFilterValues(label: "last 6 hours", toMinutes: () => 360),
-    TimeFilter.MAP_SYNC_12_HOUR: TimeFilterValues(label: "last 12 hours", toMinutes: () => 720),
-    TimeFilter.MAP_SYNC_24_HOUR: TimeFilterValues(label: "last 24 hours", toMinutes: () => 1440),
-    TimeFilter.MAP_SYNC_TODAY: TimeFilterValues(label: "today", toMinutes: () {
+    TimeFilter.LAST_MIN: TimeFilterValues(label: "last minute", toMinutes: () => 1),
+    TimeFilter.LAST_5_MIN: TimeFilterValues(label: "last 5 minutes", toMinutes: () => 5),
+    TimeFilter.LAST_15_MIN: TimeFilterValues(label: "last 15 minutes", toMinutes: () => 15),
+    TimeFilter.LAST_30_MIN: TimeFilterValues(label: "last 30 minutes", toMinutes: () => 30),
+    TimeFilter.LAST_HOUR: TimeFilterValues(label: "last 1 hour", toMinutes: () => 60),
+    TimeFilter.LAST_3_HOURS: TimeFilterValues(label: "last 3 hours", toMinutes: () => 180),
+    TimeFilter.LAST_6_HOURS: TimeFilterValues(label: "last 6 hours", toMinutes: () => 360),
+    TimeFilter.LAST_12_HOURS: TimeFilterValues(label: "last 12 hours", toMinutes: () => 720),
+    TimeFilter.LAST_24_HOURS: TimeFilterValues(label: "last 24 hours", toMinutes: () => 1440),
+    TimeFilter.TODAY: TimeFilterValues(label: "today", toMinutes: () {
         DateTime now = DateTime.now();
         return now.hour*60 + now.minute;
       }),
-    TimeFilter.MAP_SYNC_THIS_WEEK: TimeFilterValues(label: "This week",
+    TimeFilter.THIS_WEEK: TimeFilterValues(label: "This week",
       toMinutes: () {
         DateTime now = DateTime.now();
         int minutesForToday = now.hour*60 + now.minute;

@@ -15,7 +15,7 @@ class UserConfiguration {
 
   ///
   ///Constructor
-  UserConfiguration({timeFilter: TimeFilter.MAP_SYNC_1_MIN, pmIndex: DataPointModel.SENSOR_PM_2_5}) {
+  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmIndex: DataPointModel.SENSOR_PM_2_5}) {
     this._timeFilter = timeFilter;
     this._pmIndex = pmIndex;
   }
