@@ -208,7 +208,7 @@ class MapUiBodyState extends State<MapUiBody> {
     var max = index >= 0 && index < this.maxPmValues.length ? this.maxPmValues[index] : 1;
     if(pmValue < min) {
       return Color.fromRGBO(170, 255, 0, .1); //vert
-    } else if(pmValue > min && pmValue < max) {
+    } else if(pmValue >= min && pmValue <= max) {
       return Color.fromRGBO(255, 143, 0, .1); //orange
     } else {
       return Color.fromRGBO(255, 15, 0, .1); //rouge
