@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -47,20 +48,6 @@ class MapUiBodyState extends State<MapUiBody> {
   StreamSubscription _sub;
   ///help to listen data
   Stream<DataPointModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
-  /// the label of pm
-  List<String> pmLabels= [
-    "PM 1",
-    "PM 2_5",
-    "PM 10",
-    "PM_ABOVE 0_3",
-    "PM_ABOVE 0_5",
-    "PM_ABOVE 1",
-    "PM_ABOVE 2_5",
-    "PM_ABOVE 5",
-    "PM_ABOVE 10",
-  ];
-  ///the index of each pm in model.
-  List<int> indexPmValueInModel = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   
   MapUiBodyState();
 
@@ -185,7 +172,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
     var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, pmLabels, indexPmValueInModel, uConf.pmIndex);
+    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilterUtils.getDataRowIndexes(), uConf.pmIndex);
     if(val != null) {
       uConf.pmIndex = val;
       this.ucS.update();
@@ -247,7 +234,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///Get the color fonction of pm25 value
   Color getColorOfPM25(double pmValue) {
-    var index = this.indexPmValueInModel.indexOf(this.ucS.userConf.pmIndex);
+    var index =  PMFilterUtils.getDataRowIndexes().indexOf(this.ucS.userConf.pmIndex);
 
     var min = index >= 0 && index < this.minPmValues.length ? this.minPmValues[index] : 0;
     var max = index >= 0 && index < this.maxPmValues.length ? this.maxPmValues[index] : 1;
