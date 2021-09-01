@@ -45,6 +45,8 @@ extension TimeFilterUtils on TimeFilter {
 
 
   int toMinutes () {
+    if (TimeFilterUtils._values[this] == null)
+      throw RangeError("This TimeFilter has no value.");
     return TimeFilterUtils._values[this].toMinutes();
   }
 
