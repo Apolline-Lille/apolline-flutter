@@ -56,20 +56,6 @@ class MapUiBodyState extends State<MapUiBody> {
     zoom: 11.0,
   );
 
-  bool _compassEnabled = true;
-  bool _mapToolbarEnabled = true;
-  CameraTargetBounds _cameraTargetBounds = CameraTargetBounds.unbounded;
-  MinMaxZoomPreference _minMaxZoomPreference = MinMaxZoomPreference.unbounded;
-  MapType _mapType = MapType.normal;
-  bool _rotateGesturesEnabled = true;
-  bool _scrollGesturesEnabled = true;
-  bool _tiltGesturesEnabled = true;
-  bool _zoomControlsEnabled = false;
-  bool _zoomGesturesEnabled = true;
-  bool _indoorViewEnabled = true;
-  bool _myLocationEnabled = true;
-  bool _myTrafficEnabled = false;
-  bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
   SimpleLocationService _locationService;
 
@@ -184,20 +170,9 @@ class MapUiBodyState extends State<MapUiBody> {
     final GoogleMap googleMap = GoogleMap(
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
-      compassEnabled: _compassEnabled,
-      mapToolbarEnabled: _mapToolbarEnabled,
-      cameraTargetBounds: _cameraTargetBounds,
-      minMaxZoomPreference: _minMaxZoomPreference,
-      mapType: _mapType,
-      rotateGesturesEnabled: _rotateGesturesEnabled,
-      scrollGesturesEnabled: _scrollGesturesEnabled,
-      tiltGesturesEnabled: _tiltGesturesEnabled,
-      zoomGesturesEnabled: _zoomGesturesEnabled,
-      zoomControlsEnabled: _zoomControlsEnabled,
-      indoorViewEnabled: _indoorViewEnabled,
-      myLocationEnabled: _myLocationEnabled,
-      myLocationButtonEnabled: _myLocationButtonEnabled,
-      trafficEnabled: _myTrafficEnabled,
+      zoomControlsEnabled: false,
+      indoorViewEnabled: true,
+      myLocationEnabled: true,
       circles: this._circles,
     );
 
