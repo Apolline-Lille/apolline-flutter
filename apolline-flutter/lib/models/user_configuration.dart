@@ -8,7 +8,7 @@ import 'package:apollineflutter/utils/time_filter.dart';
 class UserConfiguration {
   
   ///variable to retrieve data up to x minute
-  TimeFilter _timeFilter ;
+  TimeFilter _timeFilter;
   ///which PM data to display
   PMFilter _pmFilter;
 
@@ -46,15 +46,15 @@ class UserConfiguration {
   }
 
   ///
-  ///gette index pm
-  int get pmIndex {
-    return this._pmFilter.getRowIndex();
+  ///get pm filter
+  PMFilter get pmFilter {
+    return this._pmFilter;
   }
 
   ///
   ///setteur
-  set pmIndex(int index) {
-    this._pmFilter = PMFilter.values[index-1];
+  set pmFilter(PMFilter filter) {
+    this._pmFilter = filter;
   }
 
   ///

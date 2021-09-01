@@ -172,9 +172,9 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
     var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilterUtils.getDataRowIndexes(), uConf.pmIndex);
+    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter);
     if(val != null) {
-      uConf.pmIndex = val;
+      uConf.pmFilter = val;
       this.ucS.update();
       this.getSensorDataAfterDate();
     }
@@ -234,7 +234,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///Get the color fonction of pm25 value
   Color getColorOfPM25(double pmValue) {
-    var index =  PMFilterUtils.getDataRowIndexes().indexOf(this.ucS.userConf.pmIndex);
+    var index = this.ucS.userConf.pmFilter.getRowIndex();
 
     var min = index >= 0 && index < this.minPmValues.length ? this.minPmValues[index] : 0;
     var max = index >= 0 && index < this.maxPmValues.length ? this.maxPmValues[index] : 1;
@@ -258,7 +258,7 @@ class MapUiBodyState extends State<MapUiBody> {
         center: LatLng(json["latitude"], json["longitude"]),
         radius: 10,
         strokeWidth: 0,
-        fillColor: this.getColorOfPM25(double.parse(pModel.values[this.ucS.userConf.pmIndex]))
+        fillColor: this.getColorOfPM25(double.parse(pModel.values[this.ucS.userConf.pmFilter.getRowIndex()]))
       )
     );
   }
