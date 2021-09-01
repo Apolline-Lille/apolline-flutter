@@ -1,5 +1,16 @@
 import 'package:flutter/cupertino.dart';
 
+
+///
+/// PMFilter allows users to select which particulate matters category to
+/// display on the map.
+///
+/// Each filter has a label and its index in the data row.
+///
+/// For example, with the following received data:
+///   > 2021_9_1_14_1_24;2;4;5;373;147;59;0;0;0;109.349998;0.000000;0.00;3.02
+/// PM_1 value is 2 (index = 1), PM_2_5 value is 4 (index = 2) etc.
+///
 enum PMFilter {
   PM_1,
   PM_2_5,
