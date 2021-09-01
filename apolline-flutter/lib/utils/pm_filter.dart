@@ -49,8 +49,4 @@ extension PMFilterUtils on PMFilter {
   static List<String> getLabels () {
     return PMFilter.values.map((filter) => PMFilterUtils._values[filter].label).toList();
   }
-
-  static List<int> getDataRowIndexes () {
-    return PMFilter.values.map((filter) => PMFilterUtils._values[filter].dataRowIndex).toList();
-  }
 }
