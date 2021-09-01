@@ -93,7 +93,6 @@ class MapUiBodyState extends State<MapUiBody> {
           this.setState(() { });
         }
       }
-      
     });
   }
 
@@ -199,7 +198,6 @@ class MapUiBodyState extends State<MapUiBody> {
       myLocationEnabled: _myLocationEnabled,
       myLocationButtonEnabled: _myLocationButtonEnabled,
       trafficEnabled: _myTrafficEnabled,
-      onCameraMove: _updateCameraPosition,
       circles: this._circles,
     );
 
@@ -225,11 +223,6 @@ class MapUiBodyState extends State<MapUiBody> {
     );
   }
 
-  ///
-  ///Call when cameraPosition update
-  void _updateCameraPosition(CameraPosition position) {
-    //_position = position;
-  }
 
   ///
   ///Get the color fonction of pm25 value
@@ -289,7 +282,6 @@ class MapUiBodyState extends State<MapUiBody> {
           target: LatLng(json["latitude"], json["longitude"]),
           zoom: 18.0,
         );
-        
       }
       this._controller.animateCamera(CameraUpdate.newCameraPosition(this._kInitialPosition));
     });
