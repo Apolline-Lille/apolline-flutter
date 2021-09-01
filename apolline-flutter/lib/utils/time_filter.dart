@@ -12,60 +12,41 @@ enum TimeFilter {
   MAP_SYNC_THIS_WEEK,
 }
 
-extension TimeFilterUtils on TimeFilter {
-  static List<String> _labels = [
-    "last minute",
-    "last 5 minutes",
-    "last 15 minutes",
-    "last 30 minutes",
-    "last 1 hour",
-    "last 3 hours",
-    "last 6 hours",
-    "last 12 hours",
-    "last 24 hours",
-    "Today",
-    "This week"
-  ];
+class TimeFilterValues {
+  String label;
+  int Function() toMinutes;
+  TimeFilterValues({this.label, this.toMinutes});
+}
 
-  int _getMinutesForToday () {
-    DateTime now = DateTime.now();
-    return now.hour*60 + now.minute;
-  }
+extension TimeFilterUtils on TimeFilter {
+  static final Map<TimeFilter, TimeFilterValues> _values = {
+    TimeFilter.MAP_SYNC_1_MIN: TimeFilterValues(label: "last minute", toMinutes: () => 1),
+    TimeFilter.MAP_SYNC_5_MIN: TimeFilterValues(label: "last 5 minutes", toMinutes: () => 5),
+    TimeFilter.MAP_SYNC_15_MIN: TimeFilterValues(label: "last 15 minutes", toMinutes: () => 15),
+    TimeFilter.MAP_SYNC_30_MIN: TimeFilterValues(label: "last 30 minutes", toMinutes: () => 30),
+    TimeFilter.MAP_SYNC_1_HOUR: TimeFilterValues(label: "last 1 hour", toMinutes: () => 60),
+    TimeFilter.MAP_SYNC_3_HOUR: TimeFilterValues(label: "last 3 hours", toMinutes: () => 180),
+    TimeFilter.MAP_SYNC_6_HOUR: TimeFilterValues(label: "last 6 hours", toMinutes: () => 360),
+    TimeFilter.MAP_SYNC_12_HOUR: TimeFilterValues(label: "last 12 hours", toMinutes: () => 720),
+    TimeFilter.MAP_SYNC_24_HOUR: TimeFilterValues(label: "last 24 hours", toMinutes: () => 1440),
+    TimeFilter.MAP_SYNC_TODAY: TimeFilterValues(label: "today", toMinutes: () {
+        DateTime now = DateTime.now();
+        return now.hour*60 + now.minute;
+      }),
+    TimeFilter.MAP_SYNC_THIS_WEEK: TimeFilterValues(label: "This week",
+      toMinutes: () {
+        DateTime now = DateTime.now();
+        int minutesForToday = now.hour*60 + now.minute;
+        return (now.weekday - 1) * 24 * 60 + minutesForToday;
+      })
+  };
+
 
   int toMinutes () {
-    switch (this) {
-      case TimeFilter.MAP_SYNC_1_MIN:
-        return 1;
-      case TimeFilter.MAP_SYNC_5_MIN:
-        return 5;
-      case TimeFilter.MAP_SYNC_15_MIN:
-        return 15;
-      case TimeFilter.MAP_SYNC_30_MIN:
-        return 30;
-      case TimeFilter.MAP_SYNC_1_HOUR:
-        return 60;
-      case TimeFilter.MAP_SYNC_3_HOUR:
-        return 180;
-      case TimeFilter.MAP_SYNC_6_HOUR:
-        return 360;
-      case TimeFilter.MAP_SYNC_12_HOUR:
-        return 720;
-      case TimeFilter.MAP_SYNC_24_HOUR:
-        return 1440;
-      case TimeFilter.MAP_SYNC_TODAY:
-        return this._getMinutesForToday();
-      case TimeFilter.MAP_SYNC_THIS_WEEK:
-        DateTime now = DateTime.now();
-        return (now.weekday - 1) * 24 * 60 + this._getMinutesForToday();
-
-      default:
-        throw RangeError("TimeFilter enum has incorrect value.");
-    }
+    return TimeFilterUtils._values[this].toMinutes();
   }
 
   static List<String> getLabels () {
-    if (TimeFilterUtils._labels.length != TimeFilter.values.length)
-      throw RangeError("There isn't as many labels as TimeFilter values.");
-    return TimeFilterUtils._labels;
+    return TimeFilter.values.map((filter) => TimeFilterUtils._values[filter].label).toList();
   }
 }
