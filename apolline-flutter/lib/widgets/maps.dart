@@ -13,7 +13,6 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:apollineflutter/configuration_key_name.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
-import 'package:apollineflutter/services/location_service.dart';
 
 
 class MapSample extends StatelessWidget {
@@ -48,16 +47,8 @@ class MapUiBodyState extends State<MapUiBody> {
   StreamSubscription _sub;
   ///help to listen data
   Stream<DataPointModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
-  
+
   MapUiBodyState();
-
-  CameraPosition _kInitialPosition = CameraPosition(
-    target: LatLng(50.6333, 3.0667),
-    zoom: 11.0,
-  );
-
-  GoogleMapController _controller;
-  SimpleLocationService _locationService;
 
   @override
   void initState() {
@@ -65,7 +56,6 @@ class MapUiBodyState extends State<MapUiBody> {
     this._circles = HashSet<Circle>();
     this.getSensorDataAfterDate();
     this.listenSensorData();
-    this._locationService = SimpleLocationService();
   }
 
   ///
@@ -85,7 +75,6 @@ class MapUiBodyState extends State<MapUiBody> {
   @override
   void dispose() {
     this._sub?.cancel();
-    this._locationService.close();
     super.dispose();
   }
 
@@ -170,7 +159,10 @@ class MapUiBodyState extends State<MapUiBody> {
   Widget build(BuildContext context) {
     final GoogleMap googleMap = GoogleMap(
       onMapCreated: onMapCreated,
-      initialCameraPosition: _kInitialPosition,
+      initialCameraPosition: CameraPosition(
+        target: LatLng(50.6333, 3.0667),
+        zoom: 11.0,
+      ),
       zoomControlsEnabled: false,
       indoorViewEnabled: true,
       myLocationEnabled: true,
@@ -254,17 +246,21 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   /// Call when map is create.
   /// [controller] GoogleMapController help to do something.
-  void onMapCreated(GoogleMapController controller) {
-    _controller = controller;
-    this._locationService.getLocation().then((position) {
-      if(position.geohash != "no") {
-        var json = SimpleGeoHash.decode(position.geohash);
-        this._kInitialPosition = CameraPosition(
-          target: LatLng(json["latitude"], json["longitude"]),
-          zoom: 18.0,
+  void onMapCreated(GoogleMapController controller) async {
+    List<DataPointModel> points = await this._sqliteService.getAllDataPoints();
+    DataPointModel lastPointWithPosition = points.length == 0
+        ? null
+        : points.lastWhere((point) => point.position.geohash != "no");
+    CameraPosition pos = lastPointWithPosition == null
+        ? CameraPosition(target: LatLng(0, 0), zoom: 18.0)
+        : CameraPosition(
+          target: LatLng(
+              SimpleGeoHash.decode(lastPointWithPosition.position.geohash)['latitude'],
+              SimpleGeoHash.decode(lastPointWithPosition.position.geohash)['longitude']
+          ),
+          zoom: 18.0
         );
-      }
-      this._controller.animateCamera(CameraUpdate.newCameraPosition(this._kInitialPosition));
-    });
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(pos));
   }
 }
