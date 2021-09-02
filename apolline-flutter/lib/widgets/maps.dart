@@ -186,10 +186,12 @@ class MapUiBodyState extends State<MapUiBody> {
           children: [
             FloatingActionButton.extended(
               label: Text("Time"),
+              icon: Icon(Icons.access_time),
               onPressed: () { this.chooseTimeFilter(context); }
             ),
             FloatingActionButton.extended(
               label: Text("PM"),
+              icon: Icon(Icons.cloud_outlined),
               onPressed: () { this.choosePm(context); }
             )
           ],
