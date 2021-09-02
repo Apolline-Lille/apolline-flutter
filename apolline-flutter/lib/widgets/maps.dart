@@ -168,7 +168,7 @@ class _PMMapViewState extends State<PMMapView> {
               onPressed: () { this.chooseTimeFilter(context); }
             ),
             FloatingActionButton.extended(
-              label: Text("mapView.filters.size"),
+              label: Text("mapView.filters.size").tr(),
               icon: Icon(Icons.cloud_outlined),
               onPressed: () { this.choosePm(context); }
             )
