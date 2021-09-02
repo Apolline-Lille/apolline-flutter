@@ -54,7 +54,7 @@ class MapUiBodyState extends State<MapUiBody> {
   void initState() {
     super.initState();
     this._circles = HashSet<Circle>();
-    this.getSensorDataAfterDate();
+    this.updateCirclesFromData();
     this.listenSensorData();
   }
 
@@ -138,7 +138,7 @@ class MapUiBodyState extends State<MapUiBody> {
     if(val != null) {
       uConf.timeFilter = val;
       this.ucS.update(); //notify the settings page that something has changed.
-      this.getSensorDataAfterDate();
+      this.updateCirclesFromData();
     }
   }
 
@@ -151,7 +151,7 @@ class MapUiBodyState extends State<MapUiBody> {
     if(val != null) {
       uConf.pmFilter = val;
       this.ucS.update();
-      this.getSensorDataAfterDate();
+      this.updateCirclesFromData();
     }
   }
 
@@ -196,11 +196,11 @@ class MapUiBodyState extends State<MapUiBody> {
 
   ///
   ///Get the color fonction of pm25 value
-  Color getColorOfPM25(double pmValue) {
+  Color getPMCircleColor(double pmValue) {
     var index = this.ucS.userConf.pmFilter.getRowIndex();
-
     var min = index >= 0 && index < this.minPmValues.length ? this.minPmValues[index] : 0;
     var max = index >= 0 && index < this.maxPmValues.length ? this.maxPmValues[index] : 1;
+
     if(pmValue < min) {
       return Color.fromRGBO(170, 255, 0, .1); //vert
     } else if(pmValue >= min && pmValue <= max) {
@@ -221,14 +221,14 @@ class MapUiBodyState extends State<MapUiBody> {
         center: LatLng(json["latitude"], json["longitude"]),
         radius: 10,
         strokeWidth: 0,
-        fillColor: this.getColorOfPM25(double.parse(pModel.values[this.ucS.userConf.pmFilter.getRowIndex()]))
+        fillColor: this.getPMCircleColor(double.parse(pModel.values[this.ucS.userConf.pmFilter.getRowIndex()]))
       )
     );
   }
 
   ///
   ///update data after change time of pm choice.
-  void getSensorDataAfterDate() async {
+  void updateCirclesFromData() async {
     List<DataPointModel> models = await this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.timeFilter);
     print("Got ${models.length} results for ${this.ucS.userConf.timeFilter} with filter=${this.ucS.userConf.pmFilter}.");
     List<DataPointModel> circleModels = models.where((model) => model.position.geohash != 'no').toList();
