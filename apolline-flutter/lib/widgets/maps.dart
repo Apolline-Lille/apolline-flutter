@@ -236,12 +236,12 @@ class MapUiBodyState extends State<MapUiBody> {
   void getSensorDataAfterDate() async {
     List<DataPointModel> models = await this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.timeFilter);
     print("Got ${models.length} results for ${this.ucS.userConf.timeFilter} with filter=${this.ucS.userConf.pmFilter}.");
+    List<DataPointModel> circleModels = models.where((model) => model.position.geohash != 'no').toList();
 
     setState(() {
       this._circles.clear(); //clean last content.
-      models.map((point) {
-        if (point.position.geohash != "no")
-          this.addCircle(point);
+      circleModels.forEach((model) {
+        addCircle(model);
       });
     });
 
