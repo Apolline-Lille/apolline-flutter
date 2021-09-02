@@ -233,16 +233,19 @@ class MapUiBodyState extends State<MapUiBody> {
 
   ///
   ///update data after change time of pm choice.
-  void getSensorDataAfterDate() {
-    this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.timeFilter).then((res) {
-      setState(() {
-        this._circles.clear(); //clean last content.
-        res.map((point) {
-          if (point.position.geohash != "no")
-            this.addCircle(point);
-        });
+  void getSensorDataAfterDate() async {
+    List<DataPointModel> models = await this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.timeFilter);
+    print("Got ${models.length} results for ${this.ucS.userConf.timeFilter} with filter=${this.ucS.userConf.pmFilter}.");
+
+    setState(() {
+      this._circles.clear(); //clean last content.
+      models.map((point) {
+        if (point.position.geohash != "no")
+          this.addCircle(point);
       });
     });
+
+    print("${this._circles.length} circles added.");
   }
 
   ///
