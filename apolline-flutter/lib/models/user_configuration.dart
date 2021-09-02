@@ -18,7 +18,7 @@ class UserConfiguration {
 
   ///
   ///Constructor
-  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmFilter: DataPointModel.SENSOR_PM_2_5}) {
+  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmFilter: PMFilter.PM_2_5}) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;
   }
