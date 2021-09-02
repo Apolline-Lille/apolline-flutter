@@ -120,12 +120,13 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[labels] label in the select
   ///[values] the values corresponding to labels
   ///[current] the current value of select
-  Future<dynamic> dialog(BuildContext ctx, List<String> labels, List<dynamic> values, dynamic current) async{
+  Future<dynamic> dialog(BuildContext ctx, List<String> labels, List<dynamic> values, dynamic current, String title) async{
     var val = await showDialog(
       context: ctx,
       builder: (BuildContext context) {
         return AlertDialog(
-          contentPadding: EdgeInsets.only(left:0),
+          title: Text(title),
+          contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
           content: Container(
             height: 300,
             width: 300,
@@ -144,7 +145,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[ctx] the context of app
   Future<void> chooseTimeFilter(BuildContext ctx) async{
     var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter);
+    var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter, "Filter data by time range");
     if(val != null) {
       uConf.timeFilter = val;
       this.ucS.update(); //notify the settings page that something has changed.
@@ -157,7 +158,7 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
     var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter);
+    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter, 'Filter data by particle size');
     if(val != null) {
       uConf.pmFilter = val;
       this.ucS.update();
