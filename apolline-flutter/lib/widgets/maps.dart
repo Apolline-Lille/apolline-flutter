@@ -15,53 +15,36 @@ import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
 
 
-class MapSample extends StatelessWidget {
-  MapSample() : super();
 
-  @override
-  Widget build(BuildContext context) {
-    return const MapUiBody();
-  }
-}
-
-class MapUiBody extends StatefulWidget {
-  const MapUiBody();
-
-  @override
-  State<StatefulWidget> createState() => MapUiBodyState();
-}
-
-class MapUiBodyState extends State<MapUiBody> {
-  
+class PMMapView extends StatefulWidget {
   ///the min value of pm order in data point.
-  var minPmValues = GlobalConfiguration().get(ApollineConf.MINPMVALUES) ?? [];
+  final minPmValues = GlobalConfiguration().get(ApollineConf.MINPMVALUES) ?? [];
   ///the max value of pm order in data point.
-  var maxPmValues = GlobalConfiguration().get(ApollineConf.MAXPMVALUES) ?? [];
+  final maxPmValues = GlobalConfiguration().get(ApollineConf.MAXPMVALUES) ?? [];
   ///user configuration in the ui
-  UserConfigurationService ucS = locator<UserConfigurationService>();
+  final UserConfigurationService ucS = locator<UserConfigurationService>();
   ///instance to manage database
-  SqfLiteService _sqliteService = SqfLiteService();
+  final SqfLiteService sqliteService = SqfLiteService();
+  ///help to listen data
+  final Stream<DataPointModel> sensorDataStream = locator<RealtimeDataService>().dataStream;
+
+  State<StatefulWidget> createState() => _PMMapViewState();
+}
+
+
+class _PMMapViewState extends State<PMMapView> {
   ///circle to put in map
   Set<Circle> _circles;
   ///help for close subscription
   StreamSubscription _sub;
-  ///help to listen data
-  Stream<DataPointModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
-
-  MapUiBodyState();
 
   @override
   void initState() {
     super.initState();
     this._circles = HashSet<Circle>();
     this.updateCirclesFromData();
-    this.listenSensorData();
-  }
 
-  ///
-  ///Listen sensor data.
-  void listenSensorData() {
-    this._sub = this._sensorDataStream.listen((pModel) {
+    this._sub = widget.sensorDataStream.listen((pModel) {
       if(pModel.position.geohash != "no") {
         this.addCircle(pModel);
         //manage the rendering frequency.
@@ -133,11 +116,11 @@ class MapUiBodyState extends State<MapUiBody> {
   ///select for time
   ///[ctx] the context of app
   Future<void> chooseTimeFilter(BuildContext ctx) async{
-    var uConf = this.ucS.userConf;
+    var uConf = widget.ucS.userConf;
     var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter, "Filter data by time range");
     if(val != null) {
       uConf.timeFilter = val;
-      this.ucS.update(); //notify the settings page that something has changed.
+      widget.ucS.update(); //notify the settings page that something has changed.
       this.updateCirclesFromData();
     }
   }
@@ -146,11 +129,11 @@ class MapUiBodyState extends State<MapUiBody> {
   ///select for choose pm.
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
-    var uConf = this.ucS.userConf;
+    var uConf = widget.ucS.userConf;
     var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter, 'Filter data by particle size');
     if(val != null) {
       uConf.pmFilter = val;
-      this.ucS.update();
+      widget.ucS.update();
       this.updateCirclesFromData();
     }
   }
@@ -197,9 +180,9 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///Get the color fonction of pm25 value
   Color getPMCircleColor(double pmValue) {
-    var index = this.ucS.userConf.pmFilter.getRowIndex();
-    var min = index >= 0 && index < this.minPmValues.length ? this.minPmValues[index] : 0;
-    var max = index >= 0 && index < this.maxPmValues.length ? this.maxPmValues[index] : 1;
+    var index = widget.ucS.userConf.pmFilter.getRowIndex();
+    var min = index >= 0 && index < widget.minPmValues.length ? widget.minPmValues[index] : 0;
+    var max = index >= 0 && index < widget.maxPmValues.length ? widget.maxPmValues[index] : 1;
 
     if(pmValue < min) {
       return Color.fromRGBO(170, 255, 0, .1); //vert
@@ -221,7 +204,7 @@ class MapUiBodyState extends State<MapUiBody> {
         center: LatLng(json["latitude"], json["longitude"]),
         radius: 10,
         strokeWidth: 0,
-        fillColor: this.getPMCircleColor(double.parse(pModel.values[this.ucS.userConf.pmFilter.getRowIndex()]))
+        fillColor: this.getPMCircleColor(double.parse(pModel.values[widget.ucS.userConf.pmFilter.getRowIndex()]))
       )
     );
   }
@@ -229,8 +212,8 @@ class MapUiBodyState extends State<MapUiBody> {
   ///
   ///update data after change time of pm choice.
   void updateCirclesFromData() async {
-    List<DataPointModel> models = await this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.timeFilter);
-    print("Got ${models.length} results for ${this.ucS.userConf.timeFilter} with filter=${this.ucS.userConf.pmFilter}.");
+    List<DataPointModel> models = await widget.sqliteService.getAllDataPointsAfterDate(widget.ucS.userConf.timeFilter);
+    print("Got ${models.length} results for ${widget.ucS.userConf.timeFilter} with filter=${widget.ucS.userConf.pmFilter}.");
     List<DataPointModel> circleModels = models.where((model) => model.position.geohash != 'no').toList();
 
     setState(() {
@@ -247,7 +230,7 @@ class MapUiBodyState extends State<MapUiBody> {
   /// Call when map is create.
   /// [controller] GoogleMapController help to do something.
   void onMapCreated(GoogleMapController controller) async {
-    List<DataPointModel> points = await this._sqliteService.getAllDataPoints();
+    List<DataPointModel> points = await widget.sqliteService.getAllDataPoints();
     DataPointModel lastPointWithPosition = points.length == 0
         ? null
         : points.lastWhere((point) => point.position.geohash != "no");
