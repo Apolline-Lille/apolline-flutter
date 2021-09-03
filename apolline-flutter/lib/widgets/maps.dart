@@ -236,7 +236,7 @@ class _PMMapViewState extends State<PMMapView> {
     List<DataPointModel> points = await widget.sqliteService.getAllDataPoints();
     DataPointModel lastPointWithPosition = points.length == 0
         ? null
-        : points.lastWhere((point) => point.position.geohash != "no");
+        : points.lastWhere((point) => point.position.geohash != "no", orElse: () => null);
     CameraPosition pos = lastPointWithPosition == null
         ? CameraPosition(target: LatLng(0, 0), zoom: 18.0)
         : CameraPosition(
