@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 ///
@@ -27,20 +28,20 @@ class _TimeFilterValues {
 
 extension TimeFilterUtils on TimeFilter {
   static final Map<TimeFilter, _TimeFilterValues> _values = {
-    TimeFilter.LAST_MIN: _TimeFilterValues(label: "last minute", toMinutes: () => 1),
-    TimeFilter.LAST_5_MIN: _TimeFilterValues(label: "last 5 minutes", toMinutes: () => 5),
-    TimeFilter.LAST_15_MIN: _TimeFilterValues(label: "last 15 minutes", toMinutes: () => 15),
-    TimeFilter.LAST_30_MIN: _TimeFilterValues(label: "last 30 minutes", toMinutes: () => 30),
-    TimeFilter.LAST_HOUR: _TimeFilterValues(label: "last 1 hour", toMinutes: () => 60),
-    TimeFilter.LAST_3_HOURS: _TimeFilterValues(label: "last 3 hours", toMinutes: () => 180),
-    TimeFilter.LAST_6_HOURS: _TimeFilterValues(label: "last 6 hours", toMinutes: () => 360),
-    TimeFilter.LAST_12_HOURS: _TimeFilterValues(label: "last 12 hours", toMinutes: () => 720),
-    TimeFilter.LAST_24_HOURS: _TimeFilterValues(label: "last 24 hours", toMinutes: () => 1440),
-    TimeFilter.TODAY: _TimeFilterValues(label: "today", toMinutes: () {
+    TimeFilter.LAST_MIN: _TimeFilterValues(label: "mapView.timeFilters.lastMin", toMinutes: () => 1),
+    TimeFilter.LAST_5_MIN: _TimeFilterValues(label: "mapView.timeFilters.last5Mins", toMinutes: () => 5),
+    TimeFilter.LAST_15_MIN: _TimeFilterValues(label: "mapView.timeFilters.last15Mins", toMinutes: () => 15),
+    TimeFilter.LAST_30_MIN: _TimeFilterValues(label: "mapView.timeFilters.last30Mins", toMinutes: () => 30),
+    TimeFilter.LAST_HOUR: _TimeFilterValues(label: "mapView.timeFilters.lastHour", toMinutes: () => 60),
+    TimeFilter.LAST_3_HOURS: _TimeFilterValues(label: "mapView.timeFilters.last3Hours", toMinutes: () => 180),
+    TimeFilter.LAST_6_HOURS: _TimeFilterValues(label: "mapView.timeFilters.last6Hours", toMinutes: () => 360),
+    TimeFilter.LAST_12_HOURS: _TimeFilterValues(label: "mapView.timeFilters.last12Hours", toMinutes: () => 720),
+    TimeFilter.LAST_24_HOURS: _TimeFilterValues(label: "mapView.timeFilters.last24Hours", toMinutes: () => 1440),
+    TimeFilter.TODAY: _TimeFilterValues(label: "mapView.timeFilters.today", toMinutes: () {
         DateTime now = DateTime.now();
         return now.hour*60 + now.minute;
       }),
-    TimeFilter.THIS_WEEK: _TimeFilterValues(label: "This week",
+    TimeFilter.THIS_WEEK: _TimeFilterValues(label: "mapView.timeFilters.thisWeek",
       toMinutes: () {
         DateTime now = DateTime.now();
         int minutesForToday = now.hour*60 + now.minute;
@@ -56,6 +57,6 @@ extension TimeFilterUtils on TimeFilter {
   }
 
   static List<String> getLabels () {
-    return TimeFilter.values.map((filter) => TimeFilterUtils._values[filter].label).toList();
+    return TimeFilter.values.map((filter) => TimeFilterUtils._values[filter].label.tr()).toList();
   }
 }
