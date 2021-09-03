@@ -52,7 +52,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///Afficher un message pour activer le bluetooth
   void showDialogBluetooth() {
     Widget okbtn = TextButton(
-      child: Text("ok"),
+      child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
       },
