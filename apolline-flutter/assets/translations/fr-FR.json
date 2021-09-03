@@ -19,7 +19,8 @@
     "waiting": "En attente de données...",
     "connected": "Connexion avec le capteur établie.",
     "disconnected": "Connexion avec le capteur perdue.",
-    "failed": "Impossible de se connecter à ce périphérique."
+    "failed": "Impossible de se connecter à ce périphérique.",
+    "incompatible": "Ce périphérique n'est pas compatible avec l'application."
   },
   "temperature": "TEMPÉRATURE",
   "statsView": {

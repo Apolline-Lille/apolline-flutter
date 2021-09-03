@@ -19,7 +19,8 @@
     "waiting": "Waiting for sensor data...",
     "connected": "Sensor connected.",
     "disconnected": "Sensor disconnected.",
-    "failed": "Unable to connect to this device."
+    "failed": "Unable to connect to this device.",
+    "incompatible": "This device is not compatible."
   },
   "temperature": "TEMPERATURE",
   "statsView": {
