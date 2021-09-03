@@ -1,9 +1,8 @@
-name: Release CI
+name: Development release CI
 on:
   push:
     branches:
       - develop
-      - master
 env:
   FLUTTER_VERSION: '2.0.3'
 
@@ -89,7 +88,7 @@ jobs:
         with:
           artifacts: "apolline-flutter/build/app/outputs/apk/release/app-release.apk"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: android-latest
+          tag: android-dev-release
           allowUpdates: true
           body: This is the latest Android version of the Apolline application (created on ${{ steps.date.outputs.date }}).
 
@@ -144,6 +143,6 @@ jobs:
         with:
           artifacts: "Apolline-iOS.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ios-latest
+          tag: ios-dev-release
           allowUpdates: true
           body: This is the latest iOS version of the Apolline application (created on ${{ steps.date.outputs.date }}).
