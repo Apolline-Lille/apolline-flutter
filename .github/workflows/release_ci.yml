@@ -1,0 +1,48 @@
+name: Release CI
+on:
+  push:
+    branches:
+      - master
+env:
+  FLUTTER_VERSION: '2.0.3'
+
+jobs:
+  deploy-android:
+    name: "Build and deploy Android bundle to store"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2.1.0
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Generate configuration file
+        env:
+          APOLLINE_API_URL: ${{ secrets.APOLLINE_API_URL }}
+          APOLLINE_PASSWORD: ${{ secrets.APOLLINE_PASSWORD }}
+          APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
+          APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
+        run: dart scripts/configuration_generation.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: apolline-flutter
+
+      - name: Build Apolline bundle
+        run: flutter build appbundle
+        working-directory: apolline-flutter
+
+      - name: Deploy bundle to Play store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: ${{ SERVICE_ACCOUNT_JSON }}
+          packageName: com.science.apollineflutter
+          releaseFiles: app/build/outputs/bundle/release/*.aab
+          track: production
