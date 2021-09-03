@@ -1,0 +1,61 @@
+{
+  "devicesView": {
+    "title": "Apolline - Sensors",
+    "bluetoothPopUp": {
+      "title": "Bluetooth is disabled",
+      "message": "Activate both Bluetooth and geolocation to detect devices."
+    },
+    "pairedDevicesLabel": "Paired devices",
+    "availableDevicesLabel": "Available devices",
+    "noDevicesLabel": "No Bluetooth device detected.",
+    "analysisButton": {
+      "analyse": "Scan",
+      "cancel": "Cancel"
+    }
+  },
+  "connectionMessages":  {
+    "connecting": "Connecting to the device...",
+    "configuring": "Configuring device...",
+    "waiting": "Waiting for sensor data...",
+    "connected": "Sensor connected.",
+    "disconnected": "Sensor disconnected.",
+    "failed": "Unable to connect to this device.",
+    "incompatible": "This device is not compatible."
+  },
+  "temperature": "TEMPERATURE",
+  "statsView": {
+    "noData": "No chart data available."
+  },
+  "mapView": {
+    "timeFilters": {
+      "title": "Filter data by time range",
+      "lastMin": "Last minute",
+      "last5Mins": "Last 5 minutes",
+      "last15Mins": "Last 15 minutes",
+      "last30Mins": "Last 30 minutes",
+      "lastHour": "Last hour",
+      "last3Hours": "Last 3 hours",
+      "last6Hours": "Last 6 hours",
+      "last12Hours": "Last 12 hours",
+      "last24Hours": "Last 24 hours",
+      "today": "Today",
+      "thisWeek": "This week"
+    },
+    "sizeFilters": {
+      "title": "Filter data by particle size",
+      "PM1": "PM1",
+      "PM25": "PM2.5",
+      "PM10": "PM10",
+      "abovePM03": "PM above 0.3 µm",
+      "abovePM05": "PM above 0.5 µm",
+      "abovePM1": "PM above 1 µm",
+      "abovePM25": "PM above 2.5 µm",
+      "abovePM5": "PM above 5 µm",
+      "abovePM10": "PM above 10 µm"
+    },
+    "filters": {
+      "time": "Per time",
+      "size": "Per PM size"
+    }
+  }
+}
