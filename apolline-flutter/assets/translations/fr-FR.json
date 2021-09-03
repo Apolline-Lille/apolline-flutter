@@ -27,6 +27,7 @@
   },
   "mapView": {
     "timeFilters": {
+      "title": "Filtrer par ancienneté",
       "lastMin": "Dernière minute",
       "last5Mins": "Dernières 5 minutes",
       "last15Mins": "Dernières 15 minutes",
@@ -40,6 +41,7 @@
       "thisWeek": "Cette semaine"
     },
     "sizeFilters": {
+      "title": "Filtrer par taille de particule",
       "PM1": "PM1",
       "PM25": "PM2.5",
       "PM10": "PM10",

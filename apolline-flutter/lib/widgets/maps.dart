@@ -94,12 +94,13 @@ class _PMMapViewState extends State<PMMapView> {
   ///[labels] label in the select
   ///[values] the values corresponding to labels
   ///[current] the current value of select
-  Future<dynamic> dialog(BuildContext ctx, List<String> labels, List<dynamic> values, dynamic current, String title) async{
+  ///[titleKey] title translation key
+  Future<dynamic> dialog(BuildContext ctx, List<String> labels, List<dynamic> values, dynamic current, String titleKey) async{
     var val = await showDialog(
       context: ctx,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
+          title: Text(titleKey).tr(),
           contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
           content: Container(
             height: 300,
@@ -119,7 +120,7 @@ class _PMMapViewState extends State<PMMapView> {
   ///[ctx] the context of app
   Future<void> chooseTimeFilter(BuildContext ctx) async{
     var uConf = widget.ucS.userConf;
-    var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter, "Filter data by time range");
+    var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter, "mapView.timeFilters.title");
     if(val != null) {
       uConf.timeFilter = val;
       widget.ucS.update(); //notify the settings page that something has changed.
@@ -132,7 +133,7 @@ class _PMMapViewState extends State<PMMapView> {
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
     var uConf = widget.ucS.userConf;
-    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter, 'Filter data by particle size');
+    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter, "mapView.sizeFilters.title");
     if(val != null) {
       uConf.pmFilter = val;
       widget.ucS.update();
