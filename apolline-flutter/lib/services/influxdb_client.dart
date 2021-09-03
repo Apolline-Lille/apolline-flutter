@@ -70,7 +70,7 @@ class _InfluxDBClient extends http.BaseClient {
   void pingSilent(String url) async {
     http.Response resp;
     try{
-      resp = await this.get(url);
+      resp = await this.get(Uri.parse(url));
     } on SocketException catch(_) {
       throw LostConnectionException("server is unavailable");
     }
@@ -85,7 +85,7 @@ class _InfluxDBClient extends http.BaseClient {
   Future<void> postSilent(url, {Map headers, body, Encoding encoding}) async {
     http.Response resp;
     try{
-      resp = await this.post(url, headers: headers, body: body, encoding: encoding);
+      resp = await this.post(Uri.parse(url), headers: headers, body: body, encoding: encoding);
     } on SocketException catch(e) {
       throw LostConnectionException("server is unavailable ${e.toString()}");
     }

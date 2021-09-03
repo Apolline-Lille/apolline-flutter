@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -10,8 +11,16 @@ void main() async {
   await GlobalConfiguration().loadFromPath("assets/config_dev.json");
   setupServiceLocator();
   setupBackgroundConfig();
+  await EasyLocalization.ensureInitialized();
 
-  runApp(ApollineApp());
+  runApp(
+    EasyLocalization(
+        supportedLocales: [Locale('en', 'GB'), Locale('fr', 'FR')],
+        path: 'assets/translations',
+        fallbackLocale: Locale('en', 'GB'),
+        child: ApollineApp()
+    ),
+  );
 }
 // This acts as the landing window of the app.
 // Scans and displays Bluetooth devices in range, and allows to connect to them.
@@ -21,12 +30,15 @@ class ApollineApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       title: 'Apolline',
       theme: ThemeData(
         primaryColor: Colors.green,
         floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Colors.lightGreen)
       ),
-      home: BluetoothDevicesPage(title: 'Apolline - Sensors'),
+      home: BluetoothDevicesPage(),
     );
   }
 }

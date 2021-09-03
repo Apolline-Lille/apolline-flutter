@@ -154,11 +154,16 @@ class SensorTwin {
 
   /// Filters out a Bluetooth device's services and characteristics to find the
   /// one that will allow us to receive data from the sensor.
-  Future<void> _loadUpSensorCharacteristic () async {
+  Future<bool> _loadUpSensorCharacteristic () async {
     List<BluetoothService> services = await _device.discoverServices();
-    BluetoothService sensorService = services.firstWhere((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
+    Iterable<BluetoothService> sensorServices = services.where((service) => service.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorServiceUUID);
+    if (sensorServices.length == 0) {
+      return false;
+    }
+    BluetoothService sensorService = sensorServices.first;
     BluetoothCharacteristic characteristic = sensorService.characteristics.firstWhere((char) => char.uuid.toString().toLowerCase() == BlueSensorAttributes.dustSensorCharacteristicUUID);
     this._characteristic = characteristic;
+    return true;
   }
 
   void _initLocationService () {
@@ -220,12 +225,16 @@ class SensorTwin {
 
   /// Sets up listeners and synchronises sensor clock.
   /// Must be called before starting data transmission.
-  Future<void> init () async {
-    await _loadUpSensorCharacteristic();
+  Future<bool> init () async {
+    bool serviceFound = await _loadUpSensorCharacteristic();
+    if (!serviceFound)
+      return false;
+
     await _setUpListeners();
     await synchronizeClock();
     _initLocationService();
     _initSynchronizationTimer();
+    return true;
   }
 
   /// Releases resources associated with the sensor.

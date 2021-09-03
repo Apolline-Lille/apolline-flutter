@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/utils/time_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:apollineflutter/services/service_locator.dart';
@@ -9,111 +11,42 @@ import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:apollineflutter/configuration_key_name.dart';
-import 'package:apollineflutter/models/user_configuration.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
-import 'package:apollineflutter/services/location_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
-class MapSample extends StatelessWidget {
-  MapSample() : super();
 
-  @override
-  Widget build(BuildContext context) {
-    return const MapUiBody();
-  }
-}
-
-class MapUiBody extends StatefulWidget {
-  const MapUiBody();
-
-  @override
-  State<StatefulWidget> createState() => MapUiBodyState();
-}
-
-class MapUiBodyState extends State<MapUiBody> {
-  
+class PMMapView extends StatefulWidget {
   ///the min value of pm order in data point.
-  var minPmValues = GlobalConfiguration().get(ApollineConf.MINPMVALUES) ?? [];
+  final minPmValues = GlobalConfiguration().get(ApollineConf.MINPMVALUES) ?? [];
   ///the max value of pm order in data point.
-  var maxPmValues = GlobalConfiguration().get(ApollineConf.MAXPMVALUES) ?? [];
+  final maxPmValues = GlobalConfiguration().get(ApollineConf.MAXPMVALUES) ?? [];
   ///user configuration in the ui
-  UserConfigurationService ucS = locator<UserConfigurationService>();
+  final UserConfigurationService ucS = locator<UserConfigurationService>();
   ///instance to manage database
-  SqfLiteService _sqliteService = SqfLiteService();
+  final SqfLiteService sqliteService = SqfLiteService();
+  ///help to listen data
+  final Stream<DataPointModel> sensorDataStream = locator<RealtimeDataService>().dataStream;
+
+  State<StatefulWidget> createState() => _PMMapViewState();
+}
+
+
+
+class _PMMapViewState extends State<PMMapView> {
   ///circle to put in map
   Set<Circle> _circles;
   ///help for close subscription
   StreamSubscription _sub;
-  ///help to listen data
-  Stream<DataPointModel> _sensorDataStream = locator<RealtimeDataService>().dataStream;
-  /// the label for time.
-  List<String> mapTimeLabel = [
-    "last minute",
-    "last 5 minutes",
-    "last 15 minutes",
-    "last 30 minutes",
-    "last 1 hour",
-    "last 3 hours",
-    "last 6 hours",
-    "last 12 hours",
-    "last 24 hours",
-    "Today",
-    "This week"
-
-  ];
-  /// the label of pm
-  List<String> pmLabels= [
-    "PM 1",
-    "PM 2_5",
-    "PM 10",
-    "PM_ABOVE 0_3",
-    "PM_ABOVE 0_5",
-    "PM_ABOVE 1",
-    "PM_ABOVE 2_5",
-    "PM_ABOVE 5",
-    "PM_ABOVE 10",
-  ];
-  ///the index of each pm in model.
-  List<int> indexPmValueInModel = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  
-  MapUiBodyState();
-
-  CameraPosition _kInitialPosition = CameraPosition(
-    target: LatLng(50.6333, 3.0667),
-    zoom: 11.0,
-  );
-
-  bool _compassEnabled = true;
-  bool _mapToolbarEnabled = true;
-  CameraTargetBounds _cameraTargetBounds = CameraTargetBounds.unbounded;
-  MinMaxZoomPreference _minMaxZoomPreference = MinMaxZoomPreference.unbounded;
-  MapType _mapType = MapType.normal;
-  bool _rotateGesturesEnabled = true;
-  bool _scrollGesturesEnabled = true;
-  bool _tiltGesturesEnabled = true;
-  bool _zoomControlsEnabled = false;
-  bool _zoomGesturesEnabled = true;
-  bool _indoorViewEnabled = true;
-  bool _myLocationEnabled = true;
-  bool _myTrafficEnabled = false;
-  bool _myLocationButtonEnabled = true;
-  GoogleMapController _controller;
-  SimpleLocationService _locationService;
 
   @override
   void initState() {
     super.initState();
     this._circles = HashSet<Circle>();
-    this.getSensorDataAfterDate();
-    this.listenSensorData();
-    this._locationService = SimpleLocationService();
-  }
+    this.updateCirclesFromData();
 
-  ///
-  ///Listen sensor data.
-  void listenSensorData() {
-    this._sub = this._sensorDataStream.listen((pModel) {
+    this._sub = widget.sensorDataStream.listen((pModel) {
       if(pModel.position.geohash != "no") {
         this.addCircle(pModel);
         //manage the rendering frequency.
@@ -121,14 +54,12 @@ class MapUiBodyState extends State<MapUiBody> {
           this.setState(() { });
         }
       }
-      
     });
   }
 
   @override
   void dispose() {
     this._sub?.cancel();
-    this._locationService.close();
     super.dispose();
   }
 
@@ -138,7 +69,6 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[labels] the label
   ///[values] all value 
   List<Widget> frequencyRadio(BuildContext context, List<String> labels, List<dynamic> values, dynamic current) {
-    
     List<Widget> renders = [];
     for(var i = 0; i < labels.length; i++) {
       renders.add(
@@ -151,6 +81,7 @@ class MapUiBodyState extends State<MapUiBody> {
               Navigator.pop(context, values[i]);
             },
           ),
+          onTap: () => Navigator.pop(context, values[i]),
         ),
       );
     }
@@ -163,12 +94,14 @@ class MapUiBodyState extends State<MapUiBody> {
   ///[labels] label in the select
   ///[values] the values corresponding to labels
   ///[current] the current value of select
-  Future<dynamic> dialog(BuildContext ctx, List<String> labels, List<dynamic> values, dynamic current) async{
+  ///[titleKey] title translation key
+  Future<dynamic> dialog(BuildContext ctx, List<String> labels, List<dynamic> values, dynamic current, String titleKey) async{
     var val = await showDialog(
       context: ctx,
       builder: (BuildContext context) {
         return AlertDialog(
-          contentPadding: EdgeInsets.only(left:0),
+          title: Text(titleKey).tr(),
+          contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
           content: Container(
             height: 300,
             width: 300,
@@ -183,15 +116,15 @@ class MapUiBodyState extends State<MapUiBody> {
   }
 
   ///
-  ///select for time frequency
+  ///select for time
   ///[ctx] the context of app
-  Future<void> chooseTimeFrequency(BuildContext ctx) async{
-    var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, mapTimeLabel, MapFrequency.values, uConf.mapSyncFrequency);
+  Future<void> chooseTimeFilter(BuildContext ctx) async{
+    var uConf = widget.ucS.userConf;
+    var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter, "mapView.timeFilters.title");
     if(val != null) {
-      uConf.mapSyncFrequency = val;
-      this.ucS.update(); //notify the settings page that something has changed.
-      this.getSensorDataAfterDate();
+      uConf.timeFilter = val;
+      widget.ucS.update(); //notify the settings page that something has changed.
+      this.updateCirclesFromData();
     }
   }
 
@@ -199,12 +132,12 @@ class MapUiBodyState extends State<MapUiBody> {
   ///select for choose pm.
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
-    var uConf = this.ucS.userConf;
-    var val = await this.dialog(ctx, pmLabels, indexPmValueInModel, uConf.pmIndex);
+    var uConf = widget.ucS.userConf;
+    var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter, "mapView.sizeFilters.title");
     if(val != null) {
-      uConf.pmIndex = val;
-      this.ucS.update();
-      this.getSensorDataAfterDate();
+      uConf.pmFilter = val;
+      widget.ucS.update();
+      this.updateCirclesFromData();
     }
   }
 
@@ -212,22 +145,13 @@ class MapUiBodyState extends State<MapUiBody> {
   Widget build(BuildContext context) {
     final GoogleMap googleMap = GoogleMap(
       onMapCreated: onMapCreated,
-      initialCameraPosition: _kInitialPosition,
-      compassEnabled: _compassEnabled,
-      mapToolbarEnabled: _mapToolbarEnabled,
-      cameraTargetBounds: _cameraTargetBounds,
-      minMaxZoomPreference: _minMaxZoomPreference,
-      mapType: _mapType,
-      rotateGesturesEnabled: _rotateGesturesEnabled,
-      scrollGesturesEnabled: _scrollGesturesEnabled,
-      tiltGesturesEnabled: _tiltGesturesEnabled,
-      zoomGesturesEnabled: _zoomGesturesEnabled,
-      zoomControlsEnabled: _zoomControlsEnabled,
-      indoorViewEnabled: _indoorViewEnabled,
-      myLocationEnabled: _myLocationEnabled,
-      myLocationButtonEnabled: _myLocationButtonEnabled,
-      trafficEnabled: _myTrafficEnabled,
-      onCameraMove: _updateCameraPosition,
+      initialCameraPosition: CameraPosition(
+        target: LatLng(50.6333, 3.0667),
+        zoom: 11.0,
+      ),
+      zoomControlsEnabled: false,
+      indoorViewEnabled: true,
+      myLocationEnabled: true,
       circles: this._circles,
     );
 
@@ -240,11 +164,13 @@ class MapUiBodyState extends State<MapUiBody> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             FloatingActionButton.extended(
-              label: Text("Time"),
-              onPressed: () { this.chooseTimeFrequency(context); }
+              label: Text("mapView.filters.time").tr(),
+              icon: Icon(Icons.access_time),
+              onPressed: () { this.chooseTimeFilter(context); }
             ),
             FloatingActionButton.extended(
-              label: Text("PM"),
+              label: Text("mapView.filters.size").tr(),
+              icon: Icon(Icons.cloud_outlined),
               onPressed: () { this.choosePm(context); }
             )
           ],
@@ -253,22 +179,17 @@ class MapUiBodyState extends State<MapUiBody> {
     );
   }
 
-  ///
-  ///Call when cameraPosition update
-  void _updateCameraPosition(CameraPosition position) {
-    //_position = position;
-  }
 
   ///
   ///Get the color fonction of pm25 value
-  Color getColorOfPM25(double pmValue) {
-    var index = this.indexPmValueInModel.indexOf(this.ucS.userConf.pmIndex);
+  Color getPMCircleColor(double pmValue) {
+    var index = widget.ucS.userConf.pmFilter.getRowIndex();
+    var min = index >= 0 && index < widget.minPmValues.length ? widget.minPmValues[index] : 0;
+    var max = index >= 0 && index < widget.maxPmValues.length ? widget.maxPmValues[index] : 1;
 
-    var min = index >= 0 && index < this.minPmValues.length ? this.minPmValues[index] : 0;
-    var max = index >= 0 && index < this.maxPmValues.length ? this.maxPmValues[index] : 1;
     if(pmValue < min) {
       return Color.fromRGBO(170, 255, 0, .1); //vert
-    } else if(pmValue > min && pmValue < max) {
+    } else if(pmValue >= min && pmValue <= max) {
       return Color.fromRGBO(255, 143, 0, .1); //orange
     } else {
       return Color.fromRGBO(255, 15, 0, .1); //rouge
@@ -286,39 +207,46 @@ class MapUiBodyState extends State<MapUiBody> {
         center: LatLng(json["latitude"], json["longitude"]),
         radius: 10,
         strokeWidth: 0,
-        fillColor: this.getColorOfPM25(double.parse(pModel.values[this.ucS.userConf.pmIndex]))
+        fillColor: this.getPMCircleColor(double.parse(pModel.values[widget.ucS.userConf.pmFilter.getRowIndex()]))
       )
     );
   }
 
   ///
   ///update data after change time of pm choice.
-  void getSensorDataAfterDate() {
-    this._sqliteService.getAllDataPointsAfterDate(this.ucS.userConf.mapSyncFrequency).then((res) {
+  void updateCirclesFromData() async {
+    List<DataPointModel> models = await widget.sqliteService.getAllDataPointsAfterDate(widget.ucS.userConf.timeFilter);
+    print("Got ${models.length} results for ${widget.ucS.userConf.timeFilter} with filter=${widget.ucS.userConf.pmFilter}.");
+    List<DataPointModel> circleModels = models.where((model) => model.position.geohash != 'no').toList();
+
+    setState(() {
       this._circles.clear(); //clean last content.
-      for(var i = 0; i < res.length; i++) {
-        this.addCircle(res[i]);
-      }
-      
-      this.setState(() {});
+      circleModels.forEach((model) {
+        addCircle(model);
+      });
     });
+
+    print("${this._circles.length} circles added.");
   }
 
   ///
   /// Call when map is create.
   /// [controller] GoogleMapController help to do something.
-  void onMapCreated(GoogleMapController controller) {
-    _controller = controller;
-    this._locationService.getLocation().then((position) {
-      if(position.geohash != "no") {
-        var json = SimpleGeoHash.decode(position.geohash);
-        this._kInitialPosition = CameraPosition(
-          target: LatLng(json["latitude"], json["longitude"]),
-          zoom: 18.0,
+  void onMapCreated(GoogleMapController controller) async {
+    List<DataPointModel> points = await widget.sqliteService.getAllDataPoints();
+    DataPointModel lastPointWithPosition = points.length == 0
+        ? null
+        : points.lastWhere((point) => point.position.geohash != "no", orElse: () => null);
+    CameraPosition pos = lastPointWithPosition == null
+        ? CameraPosition(target: LatLng(0, 0), zoom: 18.0)
+        : CameraPosition(
+          target: LatLng(
+              SimpleGeoHash.decode(lastPointWithPosition.position.geohash)['latitude'],
+              SimpleGeoHash.decode(lastPointWithPosition.position.geohash)['longitude']
+          ),
+          zoom: 18.0
         );
-        
-      }
-      this._controller.animateCamera(CameraUpdate.newCameraPosition(this._kInitialPosition));
-    });
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(pos));
   }
 }
