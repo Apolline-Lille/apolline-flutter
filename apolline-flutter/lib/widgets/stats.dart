@@ -19,6 +19,7 @@ import 'package:mp_chart/mp/core/enums/x_axis_position.dart';
 import 'package:mp_chart/mp/core/highlight/highlight.dart';
 import 'package:mp_chart/mp/core/utils/color_utils.dart';
 import 'package:mp_chart/mp/core/value_formatter/value_formatter.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 
@@ -153,8 +154,8 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
             ..setAxisMaximum(
                 controller.data == null ? 0 : controller.data.xMax + 0.25);
         },
-        // noDataText:
-        //     "No chart data available. \nUse the menu to add entries and data sets!",
+        noDataText:
+             "statsView.noData".tr(),
         drawGridBackground: false,
         dragXEnabled: true,
         dragYEnabled: true,

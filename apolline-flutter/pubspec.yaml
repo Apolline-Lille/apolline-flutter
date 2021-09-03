@@ -11,7 +11,7 @@ description: Apolline sensors app
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.1
+version: 1.1.0
 publish_to: none
 
 environment:
@@ -45,6 +45,7 @@ dependencies:
   sqflite: ^2.0.0+3
   shared_preferences: ^2.0.6
   package_info_plus: ^1.0.6
+  easy_localization: ^3.0.0
 
 
 
@@ -62,6 +63,7 @@ flutter:
   assets:
     - assets/sun.png
     - assets/config_dev.json
+    - assets/translations/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

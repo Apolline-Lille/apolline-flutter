@@ -1,5 +1,6 @@
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 ///
@@ -32,15 +33,15 @@ class _PMFilterValues {
 
 extension PMFilterUtils on PMFilter {
   static final Map<PMFilter, _PMFilterValues> _values = {
-    PMFilter.PM_1: _PMFilterValues(label: "PM_1", dataRowIndex: DataPointModel.SENSOR_PM_1),
-    PMFilter.PM_2_5: _PMFilterValues(label: "PM_2_5", dataRowIndex: DataPointModel.SENSOR_PM_2_5),
-    PMFilter.PM_10: _PMFilterValues(label: "PM_10", dataRowIndex: DataPointModel.SENSOR_PM_10),
-    PMFilter.PM_ABOVE_0_3: _PMFilterValues(label: "PM_ABOVE_0_3", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_3),
-    PMFilter.PM_ABOVE_0_5: _PMFilterValues(label: "PM_ABOVE_0_5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_5),
-    PMFilter.PM_ABOVE_1: _PMFilterValues(label: "PM_ABOVE_1", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_1),
-    PMFilter.PM_ABOVE_2_5: _PMFilterValues(label: "PM_ABOVE_2_5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_2_5),
-    PMFilter.PM_ABOVE_5: _PMFilterValues(label: "PM_ABOVE_5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_5),
-    PMFilter.PM_ABOVE_10: _PMFilterValues(label: "PM_ABOVE_10", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_10)
+    PMFilter.PM_1: _PMFilterValues(label: "mapView.sizeFilters.PM1", dataRowIndex: DataPointModel.SENSOR_PM_1),
+    PMFilter.PM_2_5: _PMFilterValues(label: "mapView.sizeFilters.PM25", dataRowIndex: DataPointModel.SENSOR_PM_2_5),
+    PMFilter.PM_10: _PMFilterValues(label: "mapView.sizeFilters.PM10", dataRowIndex: DataPointModel.SENSOR_PM_10),
+    PMFilter.PM_ABOVE_0_3: _PMFilterValues(label: "mapView.sizeFilters.abovePM03", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_3),
+    PMFilter.PM_ABOVE_0_5: _PMFilterValues(label: "mapView.sizeFilters.abovePM05", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_5),
+    PMFilter.PM_ABOVE_1: _PMFilterValues(label: "mapView.sizeFilters.abovePM1", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_1),
+    PMFilter.PM_ABOVE_2_5: _PMFilterValues(label: "mapView.sizeFilters.abovePM25", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_2_5),
+    PMFilter.PM_ABOVE_5: _PMFilterValues(label: "mapView.sizeFilters.abovePM5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_5),
+    PMFilter.PM_ABOVE_10: _PMFilterValues(label: "mapView.sizeFilters.abovePM10", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_10)
   };
 
 
@@ -51,6 +52,6 @@ extension PMFilterUtils on PMFilter {
   }
 
   static List<String> getLabels () {
-    return PMFilter.values.map((filter) => PMFilterUtils._values[filter].label).toList();
+    return PMFilter.values.map((filter) => PMFilterUtils._values[filter].label.tr()).toList();
   }
 }
