@@ -12,8 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 
 class BluetoothDevicesPage extends StatefulWidget {
-  BluetoothDevicesPage({Key key, this.title}) : super(key: key);
-  final String title;
+  BluetoothDevicesPage({Key key}) : super(key: key);
   final FlutterBlue flutterBlue = FlutterBlue.instance;
 
   @override
@@ -32,7 +31,6 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   @override
   void initState() {
     super.initState();
-    //initializeDevice();
     this.ucS.addListener(() {
       LocalKeyValuePersistance.saveObject(UserConfigurationService.USER_CONF_KEY, ucS.userConf.toJson());
     });
@@ -289,7 +287,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("devicesView.title").tr(),
         actions: _buildAppBarAction(),
       ),
       body: Center(

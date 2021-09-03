@@ -36,7 +36,7 @@ class ApollineApp extends StatelessWidget {
         primaryColor: Colors.green,
         floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Colors.lightGreen)
       ),
-      home: BluetoothDevicesPage(title: "devicesView.title".tr()),
+      home: BluetoothDevicesPage(),
     );
   }
 }
