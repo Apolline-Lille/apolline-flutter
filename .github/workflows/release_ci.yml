@@ -35,7 +35,7 @@ jobs:
         run: flutter pub get
         working-directory: apolline-flutter
 
-      - name: Configure Keystore
+      - name: Configure keystore
         run: |
           echo "${{ secrets.UPLOAD_KEYSTORE }}" > upload.keystore.asc
           gpg -d --passphrase "${{ secrets.UPLOAD_KEYSTORE_PASSPHRASE }}" --batch upload.keystore.asc > app/upload-keystore.jks
