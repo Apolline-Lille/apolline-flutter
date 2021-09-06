@@ -7,6 +7,8 @@ import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:grant_and_activate/grant_and_activate.dart';
+import 'package:grant_and_activate/utils/classes.dart';
 
 
 
@@ -39,17 +41,17 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///
   ///Permet de tester si le bluetooth est activé ou pas
   Future<void> initializeDevice() async {
-    var isOn = await widget.flutterBlue.isOn;
-    if (isOn) {
+    Result result = await checkPermissionsAndActivateServices([Feature.Bluetooth, Feature.Location]);
+    if (result.allOk) {
       _performDetection();
     } else {
-      showDialogBluetooth();
+      showPermissionsDialog();
     }
   }
 
   ///
-  ///Afficher un message pour activer le bluetooth
-  void showDialogBluetooth() {
+  ///Afficher un message pour activer le bluetooth et la geoloc
+  void showPermissionsDialog() {
     Widget okbtn = TextButton(
       child: Text("OK"),
       onPressed: () {
@@ -58,8 +60,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     );
 
     AlertDialog alert = AlertDialog(
-      title: Text("devicesView.bluetoothPopUp.title").tr(),
-      content: Text("devicesView.bluetoothPopUp.message").tr(),
+      title: Text("devicesView.permissionsPopUp.title").tr(),
+      content: Text("devicesView.permissionsPopUp.message").tr(),
       actions: [okbtn],
     );
 

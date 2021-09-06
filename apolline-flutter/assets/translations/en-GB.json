@@ -1,8 +1,8 @@
 {
   "devicesView": {
     "title": "Apolline - Sensors",
-    "bluetoothPopUp": {
-      "title": "Bluetooth is disabled",
+    "permissionsPopUp": {
+      "title": "Missing permissions",
       "message": "Activate both Bluetooth and geolocation to detect devices."
     },
     "pairedDevicesLabel": "Paired devices",

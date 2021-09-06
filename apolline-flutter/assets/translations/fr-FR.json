@@ -1,8 +1,8 @@
 {
   "devicesView": {
     "title": "Apolline - Capteurs",
-    "bluetoothPopUp": {
-      "title": "Bluetooth désactivé",
+    "permissionsPopUp": {
+      "title": "Permissions insuffisantes",
       "message": "Activez le Bluetooth et la géolocalisation pour permettre la détection de périphériques."
     },
     "pairedDevicesLabel": "Périphériques appairés",
