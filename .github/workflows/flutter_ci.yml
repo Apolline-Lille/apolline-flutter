@@ -71,7 +71,7 @@ jobs:
         working-directory: apolline-flutter
 
       - name: Build Apolline APK
-        run: flutter build apk
+        run: flutter build apk --debug
         working-directory: apolline-flutter
 
       - name: Save build artefact
