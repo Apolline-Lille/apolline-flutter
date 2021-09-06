@@ -2,9 +2,14 @@
 
 Air quality measures gathering multi-platform application.
 
-## Supported sensors
+## Install
 
- - [LOA](http://www-loa.univ-lille1.fr/) sensor.
+```shell
+cd apolline-flutter
+flutter pub get
+dart scripts/configuration_generation.dart  # see backend endpoint configuration section below
+flutter run
+```
 
 ## Build instructions
 
@@ -49,6 +54,10 @@ gpg -d --passphrase "${{ secrets.UPLOAD_KEYSTORE_PASSPHRASE }}" --batch upload.k
 ```
 
 A Medium article describing the procedure can be found here: https://stefma.medium.com/how-to-store-a-android-keystore-safely-on-github-actions-f0cef9413784
+
+## Supported sensors
+
+- [LOA](http://www-loa.univ-lille1.fr/) sensor.
 
 ## Screenshots
 
