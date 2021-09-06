@@ -8,7 +8,7 @@ import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:grant_and_activate/grant_and_activate.dart';
-import 'package:grant_and_activate/utils/service.dart';
+import 'package:grant_and_activate/utils/classes.dart';
 
 
 
@@ -41,8 +41,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///
   ///Permet de tester si le bluetooth est activé ou pas
   Future<void> initializeDevice() async {
-    bool isOn = await checkPermissionsAndActivateServices([Service.Bluetooth, Service.Location]);
-    if (isOn) {
+    Result result = await checkPermissionsAndActivateServices([Feature.Bluetooth, Feature.Location]);
+    if (result.allOk) {
       _performDetection();
     } else {
       showDialogBluetooth();
