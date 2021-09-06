@@ -241,9 +241,9 @@ packages:
   grant_and_activate:
     dependency: "direct main"
     description:
-      path: "../../grant_and_activate"
-      relative: true
-    source: path
+      name: grant_and_activate
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.0.1"
   http:
     dependency: "direct main"
