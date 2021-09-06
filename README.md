@@ -9,8 +9,16 @@ Capteur pris en charge:
 ----------
 Le langage utilisé est Dart avec le framework Flutter. Qui nous permet d'avoir un seul code source pour les versions Android et Ios.
 
-## Status du projet
------------------
+## Build instructions
+
+### Backend endpoint configuration
+
+Before running the application, you MUST generate endpoint configuration by running:
+```shell script
+dart scripts/configuration_generation.dart
+```
+Then, you can set variables in the `apolline-flutter/assets/config_dev.json` file.
+
 
 ### Captures d'écrans:
 

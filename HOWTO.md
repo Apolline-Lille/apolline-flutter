@@ -12,14 +12,6 @@ flutter devices //pour vérifier si votre appareil android est reconnu
 flutter run //pour faire tourner la simulation.
 ```
 
-## Backend configuration generation
-
-Before running the application, you MUST generate endpoint configuration by running:
-```shell script
-dart scripts/configuration_generation.dart
-```
-Then, you can set variables in the `apolline-flutter/assets/config_dev.json` file.
-
 
 ## Structuration du projet
 --------------------------
