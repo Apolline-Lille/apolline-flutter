@@ -71,14 +71,14 @@ jobs:
         working-directory: apolline-flutter
 
       - name: Build Apolline APK
-        run: flutter build apk
+        run: flutter build apk --debug
         working-directory: apolline-flutter
 
       - name: Save build artefact
         uses: actions/upload-artifact@v1
         with:
           name: Apolline.apk
-          path: apolline-flutter/build/app/outputs/apk/release/app-release.apk
+          path: apolline-flutter/build/app/outputs/apk/debug/app-debug.apk
 
 
   build-iOS:
