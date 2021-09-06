@@ -45,13 +45,13 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     if (result.allOk) {
       _performDetection();
     } else {
-      showDialogBluetooth();
+      showPermissionsDialog();
     }
   }
 
   ///
-  ///Afficher un message pour activer le bluetooth
-  void showDialogBluetooth() {
+  ///Afficher un message pour activer le bluetooth et la geoloc
+  void showPermissionsDialog() {
     Widget okbtn = TextButton(
       child: Text("OK"),
       onPressed: () {
@@ -60,8 +60,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     );
 
     AlertDialog alert = AlertDialog(
-      title: Text("devicesView.bluetoothPopUp.title").tr(),
-      content: Text("devicesView.bluetoothPopUp.message").tr(),
+      title: Text("devicesView.permissionsPopUp.title").tr(),
+      content: Text("devicesView.permissionsPopUp.message").tr(),
       actions: [okbtn],
     );
 
