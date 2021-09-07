@@ -68,7 +68,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
   Widget build(BuildContext context) {
     return Container(
       padding: widget.padding,
-      child: Wrap(
+      child: ListView(
         children: _buildAllPMCards(),
       ),
     );
