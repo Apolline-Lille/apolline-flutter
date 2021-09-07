@@ -1,3 +1,5 @@
+import 'package:apollineflutter/services/service_locator.dart';
+import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,7 @@ class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
   final List<TextInputFormatter> formatters =
     [TextInputFormatter.withFunction((oldValue, newValue) => newValue.text.length > 3 ? oldValue : newValue)];
+  final UserConfigurationService ucS = locator<UserConfigurationService>();
 
   @override
   State<StatefulWidget> createState() => _SettingsPanelState();
@@ -33,6 +36,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               child: TextField(
                 keyboardType: TextInputType.number,
                 inputFormatters: widget.formatters,
+                controller: TextEditingController.fromValue(TextEditingValue(text: widget.ucS.userConf.getThresholds(indicator)[0].toString())),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "15",
@@ -48,6 +52,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               child: TextField(
                 keyboardType: TextInputType.number,
                 inputFormatters: widget.formatters,
+                controller: TextEditingController.fromValue(TextEditingValue(text: widget.ucS.userConf.getThresholds(indicator)[1].toString())),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "30",

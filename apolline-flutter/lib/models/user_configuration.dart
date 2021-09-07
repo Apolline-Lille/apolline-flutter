@@ -83,4 +83,8 @@ class UserConfiguration {
   set timeFilter(TimeFilter filter) {
     this._timeFilter = filter;
   }
+
+  List<int> getThresholds (PMFilter filter) {
+    return this._thresholdsValues[filter];
+  }
 }
