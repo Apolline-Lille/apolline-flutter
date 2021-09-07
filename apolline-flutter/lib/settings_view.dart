@@ -60,14 +60,16 @@ class _SettingsPanelState extends State<SettingsPanel> {
     );
   }
 
+  List<Widget> _buildAllPMCards () {
+    return PMFilter.values.map((value) => _buildPMCard(value)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: widget.padding,
       child: Wrap(
-        children: [
-          _buildPMCard(PMFilter.PM_1)
-        ],
+        children: _buildAllPMCards(),
       ),
     );
   }
