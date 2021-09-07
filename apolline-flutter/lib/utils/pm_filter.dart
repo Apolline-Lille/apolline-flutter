@@ -26,22 +26,22 @@ enum PMFilter {
 }
 
 class _PMFilterValues {
-  final String label;
+  final String labelKey;
   final int dataRowIndex;
-  _PMFilterValues({@required this.label, @required this.dataRowIndex});
+  _PMFilterValues({@required this.labelKey, @required this.dataRowIndex});
 }
 
 extension PMFilterUtils on PMFilter {
   static final Map<PMFilter, _PMFilterValues> _values = {
-    PMFilter.PM_1: _PMFilterValues(label: "mapView.sizeFilters.PM1", dataRowIndex: DataPointModel.SENSOR_PM_1),
-    PMFilter.PM_2_5: _PMFilterValues(label: "mapView.sizeFilters.PM25", dataRowIndex: DataPointModel.SENSOR_PM_2_5),
-    PMFilter.PM_10: _PMFilterValues(label: "mapView.sizeFilters.PM10", dataRowIndex: DataPointModel.SENSOR_PM_10),
-    PMFilter.PM_ABOVE_0_3: _PMFilterValues(label: "mapView.sizeFilters.abovePM03", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_3),
-    PMFilter.PM_ABOVE_0_5: _PMFilterValues(label: "mapView.sizeFilters.abovePM05", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_5),
-    PMFilter.PM_ABOVE_1: _PMFilterValues(label: "mapView.sizeFilters.abovePM1", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_1),
-    PMFilter.PM_ABOVE_2_5: _PMFilterValues(label: "mapView.sizeFilters.abovePM25", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_2_5),
-    PMFilter.PM_ABOVE_5: _PMFilterValues(label: "mapView.sizeFilters.abovePM5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_5),
-    PMFilter.PM_ABOVE_10: _PMFilterValues(label: "mapView.sizeFilters.abovePM10", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_10)
+    PMFilter.PM_1: _PMFilterValues(labelKey: "mapView.sizeFilters.PM1", dataRowIndex: DataPointModel.SENSOR_PM_1),
+    PMFilter.PM_2_5: _PMFilterValues(labelKey: "mapView.sizeFilters.PM25", dataRowIndex: DataPointModel.SENSOR_PM_2_5),
+    PMFilter.PM_10: _PMFilterValues(labelKey: "mapView.sizeFilters.PM10", dataRowIndex: DataPointModel.SENSOR_PM_10),
+    PMFilter.PM_ABOVE_0_3: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM03", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_3),
+    PMFilter.PM_ABOVE_0_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM05", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_5),
+    PMFilter.PM_ABOVE_1: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM1", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_1),
+    PMFilter.PM_ABOVE_2_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM25", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_2_5),
+    PMFilter.PM_ABOVE_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_5),
+    PMFilter.PM_ABOVE_10: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM10", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_10)
   };
 
 
@@ -51,13 +51,13 @@ extension PMFilterUtils on PMFilter {
     return PMFilterUtils._values[this].dataRowIndex;
   }
 
-  String getLabel () {
+  String getLabelKey () {
     if (PMFilterUtils._values[this] == null)
       throw RangeError("This PMFilter has no associated row index.");
-    return PMFilterUtils._values[this].label;
+    return PMFilterUtils._values[this].labelKey;
   }
 
   static List<String> getLabels () {
-    return PMFilter.values.map((filter) => PMFilterUtils._values[filter].label.tr()).toList();
+    return PMFilter.values.map((filter) => PMFilterUtils._values[filter].labelKey.tr()).toList();
   }
 }

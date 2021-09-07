@@ -21,7 +21,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
         children: [
           Container(
               padding: EdgeInsets.only(left: 15, top: 10, bottom: 20),
-              child: Text(indicator.getLabel().tr(), style: TextStyle(
+              child: Text(indicator.getLabelKey().tr(), style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold
               ))
