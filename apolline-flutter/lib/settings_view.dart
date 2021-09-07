@@ -17,7 +17,13 @@ class _SettingsPanelState extends State<SettingsPanel> {
           Card(
             child: Wrap(
               children: [
-                Text("PM1"),
+                Container(
+                  padding: EdgeInsets.only(left: 15, top: 10, bottom: 20),
+                  child: Text("PM1", style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ))
+                ),
                 ListTile(
                   title: Text("Warning threshold"),
                   trailing: Container(
