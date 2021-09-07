@@ -25,9 +25,9 @@ class UserConfiguration {
   UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmFilter: PMFilter.PM_2_5, Map<PMFilter, int> thresholds}) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;
-    this._thresholdsValues = {
-      PMFilter.PM_1: [10, 25]
-    };
+    this._thresholdsValues = thresholds == null || thresholds.keys.length == 0
+        ? PMFilterUtils.getThresholds()
+        : thresholds;
   }
 
   ///
@@ -38,13 +38,11 @@ class UserConfiguration {
 
     Map<String, dynamic> values = json.decode(jsonMap[UserConfiguration.THRESHOLDS_KEY]);
     Map<PMFilter, List<int>> thresholds = Map();
-    print(values);
     values.forEach((key, value) {
       thresholds.putIfAbsent(PMFilter.values[int.parse(key)], () => value.cast<int>());
     });
 
     this._thresholdsValues = thresholds;
-    print(this._thresholdsValues);
   }
 
   ///
@@ -54,7 +52,6 @@ class UserConfiguration {
     this._thresholdsValues.keys.forEach((element) {
       jsonValues[element.index.toString()] = this._thresholdsValues[element];
     });
-    print(json.encode(jsonValues));
 
     return {
       UserConfiguration.TIME_FILTER_KEY: this.timeFilter.index,

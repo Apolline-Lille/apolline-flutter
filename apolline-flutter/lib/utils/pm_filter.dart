@@ -67,4 +67,12 @@ extension PMFilterUtils on PMFilter {
   static List<String> getLabels () {
     return PMFilter.values.map((filter) => PMFilterUtils._values[filter].labelKey.tr()).toList();
   }
+
+  static Map<PMFilter, List<int>> getThresholds () {
+    Map<PMFilter, List<int>> values = Map();
+    PMFilterUtils._values.forEach((filter, fValues) {
+      values.putIfAbsent(filter, () => [fValues.warningThreshold, fValues.dangerThreshold]);
+    });
+    return values;
+  }
 }
