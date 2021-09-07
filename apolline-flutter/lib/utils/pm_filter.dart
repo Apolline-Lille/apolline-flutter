@@ -28,20 +28,27 @@ enum PMFilter {
 class _PMFilterValues {
   final String labelKey;
   final int dataRowIndex;
-  _PMFilterValues({@required this.labelKey, @required this.dataRowIndex});
+  final int warningThreshold;
+  final int dangerThreshold;
+  _PMFilterValues({
+    @required this.labelKey,
+    @required this.dataRowIndex,
+    @required this.warningThreshold,
+    @required this.dangerThreshold
+  });
 }
 
 extension PMFilterUtils on PMFilter {
   static final Map<PMFilter, _PMFilterValues> _values = {
-    PMFilter.PM_1: _PMFilterValues(labelKey: "mapView.sizeFilters.PM1", dataRowIndex: DataPointModel.SENSOR_PM_1),
-    PMFilter.PM_2_5: _PMFilterValues(labelKey: "mapView.sizeFilters.PM25", dataRowIndex: DataPointModel.SENSOR_PM_2_5),
-    PMFilter.PM_10: _PMFilterValues(labelKey: "mapView.sizeFilters.PM10", dataRowIndex: DataPointModel.SENSOR_PM_10),
-    PMFilter.PM_ABOVE_0_3: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM03", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_3),
-    PMFilter.PM_ABOVE_0_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM05", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_5),
-    PMFilter.PM_ABOVE_1: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM1", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_1),
-    PMFilter.PM_ABOVE_2_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM25", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_2_5),
-    PMFilter.PM_ABOVE_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_5),
-    PMFilter.PM_ABOVE_10: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM10", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_10)
+    PMFilter.PM_1: _PMFilterValues(labelKey: "mapView.sizeFilters.PM1", dataRowIndex: DataPointModel.SENSOR_PM_1, warningThreshold: 10, dangerThreshold: 20),
+    PMFilter.PM_2_5: _PMFilterValues(labelKey: "mapView.sizeFilters.PM25", dataRowIndex: DataPointModel.SENSOR_PM_2_5, warningThreshold: 10, dangerThreshold: 20),
+    PMFilter.PM_10: _PMFilterValues(labelKey: "mapView.sizeFilters.PM10", dataRowIndex: DataPointModel.SENSOR_PM_10, warningThreshold: 30, dangerThreshold: 50),
+    PMFilter.PM_ABOVE_0_3: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM03", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_3, warningThreshold: 30, dangerThreshold: 50),
+    PMFilter.PM_ABOVE_0_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM05", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_0_5, warningThreshold: 30, dangerThreshold: 50),
+    PMFilter.PM_ABOVE_1: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM1", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_1, warningThreshold: 30, dangerThreshold: 50),
+    PMFilter.PM_ABOVE_2_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM25", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_2_5, warningThreshold: 30, dangerThreshold: 50),
+    PMFilter.PM_ABOVE_5: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM5", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_5, warningThreshold: 30, dangerThreshold: 50),
+    PMFilter.PM_ABOVE_10: _PMFilterValues(labelKey: "mapView.sizeFilters.abovePM10", dataRowIndex: DataPointModel.SENSOR_PM_ABOVE_10, warningThreshold: 30, dangerThreshold: 50)
   };
 
 
