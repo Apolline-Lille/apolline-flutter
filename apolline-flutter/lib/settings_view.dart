@@ -32,6 +32,21 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       ),
                     ),
                   ),
+                ),
+                ListTile(
+                  title: Text("Danger threshold"),
+                  trailing: Container(
+                    width: 80,
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      expands: false,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "30",
+                          suffixIcon: Text("µm/m³")
+                      ),
+                    ),
+                  ),
                 )
               ],
             )
