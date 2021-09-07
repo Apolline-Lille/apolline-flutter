@@ -28,7 +28,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "15",
-                        suffix: Text("µm/m³")
+                        suffixIcon: Text("µm/m³")
                       ),
                     ),
                   ),
