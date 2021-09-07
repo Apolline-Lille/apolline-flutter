@@ -1,3 +1,4 @@
+import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,13 +13,13 @@ class SettingsPanel extends StatefulWidget {
 }
 
 class _SettingsPanelState extends State<SettingsPanel> {
-  Widget _buildPM1Card () {
+  Widget _buildPMCard (PMFilter indicator) {
     return Card(
         child: Wrap(
           children: [
             Container(
                 padding: EdgeInsets.only(left: 15, top: 10, bottom: 20),
-                child: Text("PM1", style: TextStyle(
+                child: Text("$indicator", style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold
                 ))
@@ -64,7 +65,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
       padding: widget.padding,
       child: Wrap(
         children: [
-          _buildPM1Card()
+          _buildPMCard(PMFilter.PM_1)
         ],
       ),
     );
