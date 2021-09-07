@@ -1,4 +1,5 @@
 import 'package:apollineflutter/sensor_view.dart';
+import 'package:apollineflutter/settings_view.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/widgets/device_card.dart';
 import 'package:flutter/material.dart';
@@ -271,7 +272,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
               padding: EdgeInsets.all(10)
             )
           )
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.settings),
+        onPressed: () => showModalBottomSheet(context: context, builder: (context) => SettingsPanel()),
+      ),
     );
   }
 }
