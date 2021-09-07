@@ -18,6 +18,8 @@ class SettingsPanel extends StatefulWidget {
 
 class _SettingsPanelState extends State<SettingsPanel> {
   Widget _buildPMCard (PMFilter indicator) {
+    List<int> initialThresholdsValues = widget.ucS.userConf.getThresholds(indicator);
+
     return Card(
       margin: EdgeInsets.only(bottom: 20),
       child: Wrap(
@@ -33,10 +35,10 @@ class _SettingsPanelState extends State<SettingsPanel> {
             title: Text("Warning threshold"),
             trailing: Container(
               width: 80,
-              child: TextField(
+              child: TextFormField(
                 keyboardType: TextInputType.number,
                 inputFormatters: widget.formatters,
-                controller: TextEditingController.fromValue(TextEditingValue(text: widget.ucS.userConf.getThresholds(indicator)[0].toString())),
+                initialValue: initialThresholdsValues[0].toString(),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "15",
@@ -49,10 +51,10 @@ class _SettingsPanelState extends State<SettingsPanel> {
             title: Text("Danger threshold"),
             trailing: Container(
               width: 80,
-              child: TextField(
+              child: TextFormField(
                 keyboardType: TextInputType.number,
                 inputFormatters: widget.formatters,
-                controller: TextEditingController.fromValue(TextEditingValue(text: widget.ucS.userConf.getThresholds(indicator)[1].toString())),
+                initialValue: initialThresholdsValues[1].toString(),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "30",
