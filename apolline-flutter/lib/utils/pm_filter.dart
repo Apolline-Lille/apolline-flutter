@@ -51,6 +51,12 @@ extension PMFilterUtils on PMFilter {
     return PMFilterUtils._values[this].dataRowIndex;
   }
 
+  String getLabel () {
+    if (PMFilterUtils._values[this] == null)
+      throw RangeError("This PMFilter has no associated row index.");
+    return PMFilterUtils._values[this].label;
+  }
+
   static List<String> getLabels () {
     return PMFilter.values.map((filter) => PMFilterUtils._values[filter].label.tr()).toList();
   }
