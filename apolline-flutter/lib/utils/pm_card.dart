@@ -29,6 +29,8 @@ class _PMCardState extends State<PMCard> {
     List<int> initialThresholdsValues = widget.ucS.userConf.getThresholds(widget.indicator);
     warningThresholdValue = initialThresholdsValues[0];
     dangerThresholdValue = initialThresholdsValues[1];
+    isWarningValueCorrect = warningThresholdValue < dangerThresholdValue;
+    isDangerValueCorrect = warningThresholdValue < dangerThresholdValue;
     super.initState();
   }
 
@@ -37,6 +39,7 @@ class _PMCardState extends State<PMCard> {
 
     return Card(
         margin: EdgeInsets.only(bottom: 20),
+        color: !isWarningValueCorrect || !isDangerValueCorrect ? Color.fromRGBO(255, 227, 227, 1.0) : null,
         child: Wrap(
           children: [
             Container(
