@@ -275,7 +275,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.settings),
-        onPressed: () => showModalBottomSheet(context: context, builder: (context) => SettingsPanel()),
+        onPressed: () => showModalBottomSheet(context: context, builder: (context) => SettingsPanel(ucS: ucS,)),
       ),
     );
   }

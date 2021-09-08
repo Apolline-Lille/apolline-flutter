@@ -1,4 +1,3 @@
-import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -10,7 +9,9 @@ class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
   final List<TextInputFormatter> formatters =
     [TextInputFormatter.withFunction((oldValue, newValue) => newValue.text.length > 3 ? oldValue : newValue)];
-  final UserConfigurationService ucS = locator<UserConfigurationService>();
+  final UserConfigurationService ucS;
+
+  SettingsPanel({@required this.ucS});
 
   @override
   State<StatefulWidget> createState() => _SettingsPanelState();
@@ -41,6 +42,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                 initialValue: initialThresholdsValues[0].toString(),
                 onFieldSubmitted: (value) {
                   widget.ucS.userConf.updatePMThreshold(indicator, 0, int.parse(value));
+                  widget.ucS.update();
                 },
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -60,6 +62,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                 initialValue: initialThresholdsValues[1].toString(),
                 onFieldSubmitted: (value) {
                   widget.ucS.userConf.updatePMThreshold(indicator, 1, int.parse(value));
+                  widget.ucS.update();
                 },
                 decoration: InputDecoration(
                     border: InputBorder.none,
