@@ -21,6 +21,8 @@ class PMCard extends StatefulWidget {
 class _PMCardState extends State<PMCard> {
   int warningThresholdValue = 0;
   int dangerThresholdValue = 0;
+  bool isWarningValueCorrect = true;
+  bool isDangerValueCorrect = true;
 
   @override
   void initState() {
@@ -46,11 +48,18 @@ class _PMCardState extends State<PMCard> {
             ),
             ListTile(
               title: Text("Warning threshold"),
+              subtitle: isWarningValueCorrect ? null : Text("Warning threshold value must be inferior than danger threshold."),
               trailing: Container(
                 width: 80,
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   inputFormatters: widget.formatters,
+                  onChanged: (value) {
+                    if (value.isEmpty) return;
+                    setState(() {
+                      isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
+                    });
+                  },
                   initialValue: warningThresholdValue.toString(),
                   onFieldSubmitted: (value) {
                     widget.ucS.userConf.updatePMThreshold(widget.indicator, 0, int.parse(value));
@@ -66,11 +75,18 @@ class _PMCardState extends State<PMCard> {
             ),
             ListTile(
               title: Text("Danger threshold"),
+              subtitle: isDangerValueCorrect ? null : Text("Danger threshold value must be superior to warning threshold."),
               trailing: Container(
                 width: 80,
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   inputFormatters: widget.formatters,
+                  onChanged: (value) {
+                    if (value.isEmpty) return;
+                    setState(() {
+                      isDangerValueCorrect = int.parse(value) > warningThresholdValue;
+                    });
+                  },
                   initialValue: dangerThresholdValue.toString(),
                   onFieldSubmitted: (value) {
                     widget.ucS.userConf.updatePMThreshold(widget.indicator, 1, int.parse(value));

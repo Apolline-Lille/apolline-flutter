@@ -1,5 +1,5 @@
 import 'package:apollineflutter/services/user_configuration_service.dart';
-import 'package:apollineflutter/widgets/pm_card.dart';
+import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
