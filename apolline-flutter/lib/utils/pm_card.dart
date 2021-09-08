@@ -58,7 +58,7 @@ class _PMCardState extends State<PMCard> {
                     if (value.isEmpty) return;
                     setState(() {
                       isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
-                      isDangerValueCorrect = true;
+                      isDangerValueCorrect = int.parse(value) < dangerThresholdValue;
                     });
                   },
                   initialValue: warningThresholdValue.toString(),
@@ -90,7 +90,7 @@ class _PMCardState extends State<PMCard> {
                     if (value.isEmpty) return;
                     setState(() {
                       isDangerValueCorrect = int.parse(value) > warningThresholdValue;
-                      isWarningValueCorrect = true;
+                      isWarningValueCorrect = int.parse(value) > warningThresholdValue;
                     });
                   },
                   initialValue: dangerThresholdValue.toString(),
