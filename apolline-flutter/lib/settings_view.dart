@@ -39,6 +39,9 @@ class _SettingsPanelState extends State<SettingsPanel> {
                 keyboardType: TextInputType.number,
                 inputFormatters: widget.formatters,
                 initialValue: initialThresholdsValues[0].toString(),
+                onFieldSubmitted: (value) {
+                  widget.ucS.userConf.updatePMThreshold(indicator, 0, int.parse(value));
+                },
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "15",
@@ -55,6 +58,9 @@ class _SettingsPanelState extends State<SettingsPanel> {
                 keyboardType: TextInputType.number,
                 inputFormatters: widget.formatters,
                 initialValue: initialThresholdsValues[1].toString(),
+                onFieldSubmitted: (value) {
+                  widget.ucS.userConf.updatePMThreshold(indicator, 1, int.parse(value));
+                },
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "30",
