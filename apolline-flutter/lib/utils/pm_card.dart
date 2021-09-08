@@ -83,6 +83,7 @@ class _PMCardState extends State<PMCard> {
             ),
             ListTile(
               title: Text("Danger threshold"),
+              contentPadding: !isWarningValueCorrect || !isDangerValueCorrect ? EdgeInsets.only(left: 16, right: 16, bottom: 16) : null,
               subtitle: isDangerValueCorrect ? null : Text("Danger threshold value must be superior to warning threshold."),
               trailing: Container(
                 width: 80,
