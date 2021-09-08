@@ -58,10 +58,15 @@ class _PMCardState extends State<PMCard> {
                     if (value.isEmpty) return;
                     setState(() {
                       isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
+                      isDangerValueCorrect = true;
                     });
                   },
                   initialValue: warningThresholdValue.toString(),
                   onFieldSubmitted: (value) {
+                    if (value.isEmpty) return;
+                    setState(() {
+                      warningThresholdValue = int.parse(value);
+                    });
                     widget.ucS.userConf.updatePMThreshold(widget.indicator, 0, int.parse(value));
                     widget.ucS.update();
                   },
@@ -85,10 +90,15 @@ class _PMCardState extends State<PMCard> {
                     if (value.isEmpty) return;
                     setState(() {
                       isDangerValueCorrect = int.parse(value) > warningThresholdValue;
+                      isWarningValueCorrect = true;
                     });
                   },
                   initialValue: dangerThresholdValue.toString(),
                   onFieldSubmitted: (value) {
+                    if (value.isEmpty) return;
+                    setState(() {
+                      dangerThresholdValue = int.parse(value);
+                    });
                     widget.ucS.userConf.updatePMThreshold(widget.indicator, 1, int.parse(value));
                     widget.ucS.update();
                   },
