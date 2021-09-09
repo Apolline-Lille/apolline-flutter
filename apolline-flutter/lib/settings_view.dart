@@ -20,11 +20,25 @@ class _SettingsPanelState extends State<SettingsPanel> {
     return PMFilter.values.map((value) => PMCard(ucS: widget.ucS, indicator: value)).toList();
   }
 
+  Widget _buildInformationWidget () {
+    return Container (
+      margin: EdgeInsets.only(bottom: 40),
+      child: Text(
+          "Here, you can specify warning and danger thresholds.\n"
+          "Received values lower than warning limit will be considered as normal, "
+          "values superior to danger limit will be considered as dangerous."
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgets = [_buildInformationWidget()];
+    widgets.addAll(_buildAllPMCards());
+
     return Container(
       child: ListView(
-        children: _buildAllPMCards(),
+        children: widgets,
         padding: widget.padding
       ),
     );
