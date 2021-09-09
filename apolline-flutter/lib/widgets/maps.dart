@@ -183,13 +183,13 @@ class _PMMapViewState extends State<PMMapView> {
   ///
   ///Get the color fonction of pm25 value
   Color getPMCircleColor(double pmValue) {
-    var index = widget.ucS.userConf.pmFilter.getRowIndex();
-    var min = index >= 0 && index < widget.minPmValues.length ? widget.minPmValues[index] : 0;
-    var max = index >= 0 && index < widget.maxPmValues.length ? widget.maxPmValues[index] : 1;
+    List<int> currentThresholds = widget.ucS.userConf.getCurrentThresholds();
+    int warningValue = currentThresholds[0];
+    int dangerValue = currentThresholds[1];
 
-    if(pmValue < min) {
+    if(pmValue < warningValue) {
       return Color.fromRGBO(170, 255, 0, .1); //vert
-    } else if(pmValue >= min && pmValue <= max) {
+    } else if(pmValue < dangerValue) {
       return Color.fromRGBO(255, 143, 0, .1); //orange
     } else {
       return Color.fromRGBO(255, 15, 0, .1); //rouge

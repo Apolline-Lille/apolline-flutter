@@ -91,4 +91,8 @@ class UserConfiguration {
   void updatePMThreshold (PMFilter filter, int thresholdIndex, int newValue) {
     this._thresholdsValues[filter][thresholdIndex] = newValue;
   }
+
+  List<int> getCurrentThresholds () {
+    return this._thresholdsValues[this.pmFilter];
+  }
 }
