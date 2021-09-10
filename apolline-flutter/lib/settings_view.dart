@@ -29,7 +29,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
   Widget _buildInformationWidget () {
     return Container (
-      margin: EdgeInsets.only(bottom: 40),
       child: Text(
           "Here, you can specify warning and danger thresholds.\n"
           "Received values lower than warning limit will be considered as normal, "
@@ -48,6 +47,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
     };
 
     return Container (
+      margin: EdgeInsets.symmetric(vertical: 30),
       child: ListTile(
         title: Text("Receive warning notifications"),
         onTap: () => updateWarningState(!_showWarningNotifications),
