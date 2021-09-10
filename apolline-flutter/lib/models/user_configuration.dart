@@ -14,17 +14,23 @@ class UserConfiguration {
   PMFilter _pmFilter;
   ///pm size concentration limits
   Map<PMFilter, List<int>> _thresholdsValues;
+  ///pm concentration alerts
+  List<bool> _shouldSendThresholdNotifications;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
   static const String PM_FILTER_KEY = "pmFilterValue";
   static const String THRESHOLDS_KEY = "thresholdsValue";
+  static const String ALERTS_KEY = "thresholdsAlertsValue";
 
   ///
   ///Constructor
-  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmFilter: PMFilter.PM_2_5, Map<PMFilter, int> thresholds}) {
+  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmFilter: PMFilter.PM_2_5, Map<PMFilter, int> thresholds, List<bool> alerts}) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;
+    this._shouldSendThresholdNotifications = alerts == null || alerts.length == 0
+        ? [true, true]
+        : alerts;
     this._thresholdsValues = thresholds == null || thresholds.keys.length == 0
         ? PMFilterUtils.getThresholds()
         : thresholds;
@@ -35,6 +41,7 @@ class UserConfiguration {
   UserConfiguration.fromJson(Map jsonMap) {
     this._timeFilter = TimeFilter.values[jsonMap[UserConfiguration.TIME_FILTER_KEY]];
     this._pmFilter = PMFilter.values[jsonMap[UserConfiguration.PM_FILTER_KEY]];
+    this._shouldSendThresholdNotifications = jsonMap[UserConfiguration.ALERTS_KEY];
 
     Map<String, dynamic> values = json.decode(jsonMap[UserConfiguration.THRESHOLDS_KEY]);
     Map<PMFilter, List<int>> thresholds = Map();
@@ -56,7 +63,8 @@ class UserConfiguration {
     return {
       UserConfiguration.TIME_FILTER_KEY: this.timeFilter.index,
       UserConfiguration.PM_FILTER_KEY: this._pmFilter.index,
-      UserConfiguration.THRESHOLDS_KEY: json.encode(jsonValues)
+      UserConfiguration.THRESHOLDS_KEY: json.encode(jsonValues),
+      UserConfiguration.ALERTS_KEY: json.encode(this._shouldSendThresholdNotifications)
     };
   }
 
