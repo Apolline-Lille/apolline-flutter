@@ -110,4 +110,11 @@ class UserConfiguration {
   set showWarningNotifications (bool value) {
     this._shouldSendThresholdNotifications[0] = value;
   }
+
+  bool get showDangerNotifications {
+    return this._shouldSendThresholdNotifications[1];
+  }
+  set showDangerNotifications (bool value) {
+    this._shouldSendThresholdNotifications[1] = value;
+  }
 }

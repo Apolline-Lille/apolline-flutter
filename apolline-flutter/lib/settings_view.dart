@@ -16,10 +16,12 @@ class SettingsPanel extends StatefulWidget {
 
 class _SettingsPanelState extends State<SettingsPanel> {
   bool _showWarningNotifications = true;
+  bool _showDangerNotifications = true;
 
   @override
   initState () {
     this._showWarningNotifications = widget.ucS.userConf.showWarningNotifications;
+    this._showDangerNotifications = widget.ucS.userConf.showDangerNotifications;
     super.initState();
   }
 
@@ -46,16 +48,36 @@ class _SettingsPanelState extends State<SettingsPanel> {
       });
     };
 
+    Function updateDangerState = (bool value) {
+      widget.ucS.userConf.showDangerNotifications = value;
+      widget.ucS.update();
+      setState(() {
+        _showDangerNotifications = value;
+      });
+    };
+
     return Container (
       margin: EdgeInsets.symmetric(vertical: 30),
-      child: ListTile(
-        title: Text("Receive warning notifications"),
-        onTap: () => updateWarningState(!_showWarningNotifications),
-        trailing: Checkbox(
-          value: _showWarningNotifications,
-          onChanged: updateWarningState,
-        ),
-      ),
+      child: Column(
+        children: [
+          ListTile(
+            title: Text("Receive warning notifications"),
+            onTap: () => updateWarningState(!_showWarningNotifications),
+            trailing: Checkbox(
+              value: _showWarningNotifications,
+              onChanged: updateWarningState,
+            ),
+          ),
+          ListTile(
+            title: Text("Receive danger notifications"),
+            onTap: () => updateDangerState(!_showDangerNotifications),
+            trailing: Checkbox(
+              value: _showDangerNotifications,
+              onChanged: updateDangerState,
+            ),
+          )
+        ],
+      )
     );
   }
 
