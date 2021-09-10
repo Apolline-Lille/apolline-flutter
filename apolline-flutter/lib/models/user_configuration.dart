@@ -41,7 +41,7 @@ class UserConfiguration {
   UserConfiguration.fromJson(Map jsonMap) {
     this._timeFilter = TimeFilter.values[jsonMap[UserConfiguration.TIME_FILTER_KEY]];
     this._pmFilter = PMFilter.values[jsonMap[UserConfiguration.PM_FILTER_KEY]];
-    this._shouldSendThresholdNotifications = jsonMap[UserConfiguration.ALERTS_KEY];
+    this._shouldSendThresholdNotifications = jsonMap[UserConfiguration.ALERTS_KEY].cast<bool>();
 
     Map<String, dynamic> values = json.decode(jsonMap[UserConfiguration.THRESHOLDS_KEY]);
     Map<PMFilter, List<int>> thresholds = Map();
@@ -64,7 +64,7 @@ class UserConfiguration {
       UserConfiguration.TIME_FILTER_KEY: this.timeFilter.index,
       UserConfiguration.PM_FILTER_KEY: this._pmFilter.index,
       UserConfiguration.THRESHOLDS_KEY: json.encode(jsonValues),
-      UserConfiguration.ALERTS_KEY: json.encode(this._shouldSendThresholdNotifications)
+      UserConfiguration.ALERTS_KEY: this._shouldSendThresholdNotifications
     };
   }
 
