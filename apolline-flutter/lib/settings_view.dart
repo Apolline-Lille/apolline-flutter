@@ -39,18 +39,21 @@ class _SettingsPanelState extends State<SettingsPanel> {
   }
 
   Widget _buildNotificationConfigurationWidget () {
+    Function updateWarningState = (bool value) {
+      widget.ucS.userConf.showWarningNotifications = value;
+      widget.ucS.update();
+      setState(() {
+        _showWarningNotifications = value;
+      });
+    };
+
     return Container (
       child: ListTile(
         title: Text("Receive warning notifications"),
+        onTap: () => updateWarningState(!_showWarningNotifications),
         trailing: Checkbox(
           value: _showWarningNotifications,
-          onChanged: (bool value) {
-            widget.ucS.userConf.showWarningNotifications = value;
-            widget.ucS.update();
-            setState(() {
-              _showWarningNotifications = value;
-            });
-          },
+          onChanged: updateWarningState,
         ),
       ),
     );
