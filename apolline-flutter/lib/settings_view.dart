@@ -15,6 +15,13 @@ class SettingsPanel extends StatefulWidget {
 }
 
 class _SettingsPanelState extends State<SettingsPanel> {
+  bool _showWarningNotifications = true;
+
+  @override
+  initState () {
+    this._showWarningNotifications = widget.ucS.userConf.showWarningNotifications;
+    super.initState();
+  }
 
   List<Widget> _buildAllPMCards () {
     return PMFilter.values.map((value) => PMCard(ucS: widget.ucS, indicator: value)).toList();
@@ -31,9 +38,27 @@ class _SettingsPanelState extends State<SettingsPanel> {
     );
   }
 
+  Widget _buildNotificationConfigurationWidget () {
+    return Container (
+      child: ListTile(
+        title: Text("Receive warning notifications"),
+        trailing: Checkbox(
+          value: _showWarningNotifications,
+          onChanged: (bool value) {
+            widget.ucS.userConf.showWarningNotifications = value;
+            widget.ucS.update();
+            setState(() {
+              _showWarningNotifications = value;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [_buildInformationWidget()];
+    List<Widget> widgets = [_buildInformationWidget(), _buildNotificationConfigurationWidget()];
     widgets.addAll(_buildAllPMCards());
 
     return Container(

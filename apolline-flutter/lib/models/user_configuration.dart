@@ -103,4 +103,11 @@ class UserConfiguration {
   List<int> getCurrentThresholds () {
     return this._thresholdsValues[this.pmFilter];
   }
+
+  bool get showWarningNotifications {
+    return this._shouldSendThresholdNotifications[0];
+  }
+  set showWarningNotifications (bool value) {
+    this._shouldSendThresholdNotifications[0] = value;
+  }
 }
