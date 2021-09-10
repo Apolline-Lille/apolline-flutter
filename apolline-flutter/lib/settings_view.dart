@@ -57,7 +57,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
     };
 
     return Container (
-      margin: EdgeInsets.symmetric(vertical: 30),
+      margin: EdgeInsets.only(top: 30),
       child: Column(
         children: [
           ListTile(
@@ -83,7 +83,11 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [_buildInformationWidget(), _buildNotificationConfigurationWidget()];
+    List<Widget> widgets = [
+      _buildInformationWidget(),
+      _buildNotificationConfigurationWidget(),
+      Divider(height: 70)
+    ];
     widgets.addAll(_buildAllPMCards());
 
     return Container(
