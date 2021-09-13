@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:apollineflutter/services/service_locator.dart';
+import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/twins/SensorTwin.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
+import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -20,6 +23,7 @@ enum ConnexionType { Normal, Disconnect }
 class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
   final BluetoothDevice device;
+  final UserConfigurationService ucS = locator<UserConfigurationService>();
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
@@ -116,6 +120,20 @@ class _SensorViewState extends State<SensorView> {
   void _onLiveDataReceived (DataPointModel model) {
     setState(() {
       lastReceivedData = model;
+    });
+
+    if (!widget.ucS.userConf.showDangerNotifications && !widget.ucS.userConf.showWarningNotifications) return;
+    PMFilter.values.forEach((value) {
+      double collectedValue = double.parse(model.values[value.getRowIndex()]);
+      List<int> userThresholds = widget.ucS.userConf.getThresholds(value);
+      int warningThreshold = userThresholds[0];
+      int dangerThreshold = userThresholds[1];
+
+      if (widget.ucS.userConf.showWarningNotifications && collectedValue < dangerThreshold && collectedValue >= warningThreshold) {
+        print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
+      } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
+        print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
+      }
     });
   }
 
