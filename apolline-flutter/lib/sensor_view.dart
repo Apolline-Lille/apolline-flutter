@@ -196,7 +196,7 @@ class _SensorViewState extends State<SensorView> {
     if (!_notificationTimestamps.containsKey(filter)) {
       _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
     }
-    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[filter] > 300000) {
+    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[filter] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
       _showNotification( title, message );
       _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
     }
