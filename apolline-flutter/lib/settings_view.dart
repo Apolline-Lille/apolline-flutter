@@ -86,6 +86,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
             ),
           ),
           ListTile(
+            enabled: _showWarningNotifications || _showDangerNotifications,
             title: Text("Notifications time rate"),
             trailing: Text(_printDuration(_notificationIntervalDuration)),
             onTap: () => showDialog(context: context, builder: (context) => AlertDialog(
