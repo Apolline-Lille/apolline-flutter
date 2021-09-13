@@ -215,6 +215,7 @@ class _SensorViewState extends State<SensorView> {
 
   @override
   void dispose() {
+    FlutterLocalNotificationsPlugin().cancelAll();
     widget.device.disconnect();
     this._sensor?.shutdown();
     disableBackgroundExecution();
