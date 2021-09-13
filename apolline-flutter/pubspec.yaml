@@ -47,6 +47,7 @@ dependencies:
   flutter_background: ^1.0.2+1
   easy_localization: ^3.0.0
   grant_and_activate: ^0.0.1
+  flutter_local_notifications: ^5.0.0+4
 
 
 
