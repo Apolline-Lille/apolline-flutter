@@ -24,6 +24,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
   initState () {
     this._showWarningNotifications = widget.ucS.userConf.showWarningNotifications;
     this._showDangerNotifications = widget.ucS.userConf.showDangerNotifications;
+    this._notificationIntervalDuration = widget.ucS.userConf.exposureNotificationsTimeInterval;
     super.initState();
   }
 
@@ -105,6 +106,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       duration: _notificationIntervalDuration,
                       onChange: (val) {
                         setState(() => _notificationIntervalDuration = val);
+                        widget.ucS.userConf.exposureNotificationsTimeInterval = val;
+                        widget.ucS.update();
                       }
                     ),
                   ],

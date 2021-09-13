@@ -16,18 +16,27 @@ class UserConfiguration {
   Map<PMFilter, List<int>> _thresholdsValues;
   ///pm concentration alerts
   List<bool> _shouldSendThresholdNotifications;
+  ///exposure notifications time interval
+  Duration exposureNotificationsTimeInterval;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
   static const String PM_FILTER_KEY = "pmFilterValue";
   static const String THRESHOLDS_KEY = "thresholdsValue";
   static const String ALERTS_KEY = "thresholdsAlertsValue";
+  static const String NOTIFICATIONS_KEY = "notificationsValue";
 
   ///
   ///Constructor
-  UserConfiguration({timeFilter: TimeFilter.LAST_MIN, pmFilter: PMFilter.PM_2_5, Map<PMFilter, int> thresholds, List<bool> alerts}) {
+  UserConfiguration({timeFilter: TimeFilter.LAST_MIN,
+    pmFilter: PMFilter.PM_2_5,
+    Map<PMFilter, int> thresholds,
+    List<bool> alerts,
+    Duration notificationsInterval: const Duration(minutes: 5)
+  }) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;
+    this.exposureNotificationsTimeInterval = notificationsInterval;
     this._shouldSendThresholdNotifications = alerts == null || alerts.length == 0
         ? [true, true]
         : alerts;
@@ -50,6 +59,7 @@ class UserConfiguration {
     });
 
     this._thresholdsValues = thresholds;
+    this.exposureNotificationsTimeInterval = Duration(milliseconds: jsonMap[UserConfiguration.NOTIFICATIONS_KEY]);
   }
 
   ///
@@ -64,7 +74,8 @@ class UserConfiguration {
       UserConfiguration.TIME_FILTER_KEY: this.timeFilter.index,
       UserConfiguration.PM_FILTER_KEY: this._pmFilter.index,
       UserConfiguration.THRESHOLDS_KEY: json.encode(jsonValues),
-      UserConfiguration.ALERTS_KEY: this._shouldSendThresholdNotifications
+      UserConfiguration.ALERTS_KEY: this._shouldSendThresholdNotifications,
+      UserConfiguration.NOTIFICATIONS_KEY: this.exposureNotificationsTimeInterval.inMilliseconds
     };
   }
 
