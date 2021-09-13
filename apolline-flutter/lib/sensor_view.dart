@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'models/data_point_model.dart';
 import 'widgets/maps.dart';
@@ -24,6 +25,15 @@ class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
   final BluetoothDevice device;
   final UserConfigurationService ucS = locator<UserConfigurationService>();
+  final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+        'apolline_exposure_notifications',
+        'Exposure notifications',
+        'Get alerts when current PM values are above warning/danger thresholds.',
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: false
+    );
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
@@ -131,8 +141,16 @@ class _SensorViewState extends State<SensorView> {
 
       if (widget.ucS.userConf.showWarningNotifications && collectedValue < dangerThreshold && collectedValue >= warningThreshold) {
         print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
+        _showNotification(
+          "Warning",
+          '"${value.getLabelKey().tr()}" value exceeds warning threshold.'
+        );
       } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
         print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
+        _showNotification(
+          "Danger",
+          '"${value.getLabelKey().tr()}" value exceeds danger threshold.'
+        );
       }
     });
   }
@@ -169,6 +187,15 @@ class _SensorViewState extends State<SensorView> {
     var snackBar = SnackBar(content: Text(msg), duration: duration,);
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
+  }
+
+  Future<void> _showNotification (String title, String message) async {
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: widget.androidPlatformChannelSpecifics
+    );
+    await FlutterLocalNotificationsPlugin().show(
+        0, title, message, platformChannelSpecifics
+    );
   }
 
 
