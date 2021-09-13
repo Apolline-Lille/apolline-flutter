@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 import 'bluetoothDevicesPage.dart';
@@ -11,6 +12,7 @@ void main() async {
   await GlobalConfiguration().loadFromPath("assets/config_dev.json");
   setupServiceLocator();
   setupBackgroundConfig();
+  await setupNotificationService();
   await EasyLocalization.ensureInitialized();
 
   runApp(
@@ -51,4 +53,33 @@ void setupBackgroundConfig () async {
     notificationIcon: AndroidResource(name: 'logo_apolline', defType: 'drawable'),
   );
   FlutterBackground.initialize(androidConfig: androidConfig);
+}
+
+Future<void> setupNotificationService () async {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('logo_apolline');
+  final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
+      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+  );
+  final MacOSInitializationSettings initializationSettingsMacOS = MacOSInitializationSettings();
+  final InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+      macOS: initializationSettingsMacOS
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: selectNotification
+  );
+}
+
+Future selectNotification(String payload) async {
+  if (payload != null) {
+    debugPrint('notification payload: $payload');
+  }
+}
+Future onDidReceiveLocalNotification (
+    int id, String title, String body, String payload
+) async {
+  debugPrint('notification payload: $payload');
 }
