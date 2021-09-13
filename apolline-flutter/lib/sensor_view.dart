@@ -194,6 +194,7 @@ class _SensorViewState extends State<SensorView> {
 
   Future<void> _checkNotification (String title, String message, PMFilter filter) async {
     if (!_notificationTimestamps.containsKey(filter)) {
+      _showNotification( title, message );
       _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
     }
     if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[filter] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
