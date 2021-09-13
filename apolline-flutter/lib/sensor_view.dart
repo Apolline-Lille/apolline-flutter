@@ -143,15 +143,15 @@ class _SensorViewState extends State<SensorView> {
       if (widget.ucS.userConf.showWarningNotifications && collectedValue < dangerThreshold && collectedValue >= warningThreshold) {
         // print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
         _checkNotification(
-          "Warning",
-          '"${value.getLabelKey().tr()}" value exceeds warning threshold.',
+          "Warning for ${value.getLabelKey().tr()}",
+          '$collectedValue µm/m³ value exceeds warning threshold.',
           value
         );
       } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
         // print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
         _checkNotification(
-          "Danger",
-          '"${value.getLabelKey().tr()}" value exceeds danger threshold.',
+          "Danger for ${value.getLabelKey().tr()}",
+          '$collectedValue µm/m³ value exceeds danger threshold.',
           value
         );
       }
