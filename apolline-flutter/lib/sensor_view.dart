@@ -32,7 +32,7 @@ class SensorView extends StatefulWidget {
         'Get alerts when current PM values are above warning/danger thresholds.',
         importance: Importance.max,
         priority: Priority.high,
-        showWhen: false
+        showWhen: true
     );
 
   @override
