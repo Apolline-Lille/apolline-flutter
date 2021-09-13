@@ -3,6 +3,7 @@ import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:duration_picker/duration_picker.dart';
 
 class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
@@ -17,6 +18,7 @@ class SettingsPanel extends StatefulWidget {
 class _SettingsPanelState extends State<SettingsPanel> {
   bool _showWarningNotifications = true;
   bool _showDangerNotifications = true;
+  Duration _notificationIntervalDuration = Duration(minutes: 5);
 
   @override
   initState () {
@@ -37,6 +39,13 @@ class _SettingsPanelState extends State<SettingsPanel> {
           "values superior to danger limit will be considered as dangerous."
       ),
     );
+  }
+
+  // https://stackoverflow.com/a/54775297/11243782
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes";
   }
 
   Widget _buildNotificationConfigurationWidget () {
@@ -75,6 +84,43 @@ class _SettingsPanelState extends State<SettingsPanel> {
               value: _showDangerNotifications,
               onChanged: updateDangerState,
             ),
+          ),
+          ListTile(
+            title: Text("Notifications time rate"),
+            trailing: Text(_printDuration(_notificationIntervalDuration)),
+            onTap: () => showDialog(context: context, builder: (context) => AlertDialog(
+              title: const Text('Set time rate'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Container (
+                      margin: EdgeInsets.only(bottom: 30),
+                      child: Text("Set which duration must pass before a new notification is sent.")
+                    ),
+                    DurationPicker(
+                      duration: _notificationIntervalDuration,
+                      onChange: (val) {
+                        setState(() => _notificationIntervalDuration = val);
+                      }
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+              )),
           )
         ],
       )
