@@ -4,7 +4,7 @@ on:
     branches:
       - master
 env:
-  FLUTTER_VERSION: '2.0.3'
+  FLUTTER_VERSION: '2.5.0'
 
 jobs:
   deploy-android:
