@@ -46,6 +46,7 @@ class _SensorViewState extends State<SensorView> {
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
   SensorTwin _sensor;
+  Map<PMFilter, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 
@@ -140,16 +141,18 @@ class _SensorViewState extends State<SensorView> {
       int dangerThreshold = userThresholds[1];
 
       if (widget.ucS.userConf.showWarningNotifications && collectedValue < dangerThreshold && collectedValue >= warningThreshold) {
-        print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
-        _showNotification(
+        // print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
+        _checkNotification(
           "Warning",
-          '"${value.getLabelKey().tr()}" value exceeds warning threshold.'
+          '"${value.getLabelKey().tr()}" value exceeds warning threshold.',
+          value
         );
       } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
-        print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
-        _showNotification(
+        // print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
+        _checkNotification(
           "Danger",
-          '"${value.getLabelKey().tr()}" value exceeds danger threshold.'
+          '"${value.getLabelKey().tr()}" value exceeds danger threshold.',
+          value
         );
       }
     });
@@ -187,6 +190,16 @@ class _SensorViewState extends State<SensorView> {
     var snackBar = SnackBar(content: Text(msg), duration: duration,);
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
+  }
+
+  Future<void> _checkNotification (String title, String message, PMFilter filter) async {
+    if (!_notificationTimestamps.containsKey(filter)) {
+      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+    }
+    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[filter] > 300000) {
+      _showNotification( title, message );
+      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+    }
   }
 
   Future<void> _showNotification (String title, String message) async {
