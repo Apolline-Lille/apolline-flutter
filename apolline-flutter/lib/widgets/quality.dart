@@ -133,8 +133,9 @@ class Quality extends StatelessWidget {
   //Build gauges
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OrientationBuilder(
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: OrientationBuilder(
         builder: (BuildContext builContext, Orientation orientation) {
           return Center(
             child: GridView.count(
