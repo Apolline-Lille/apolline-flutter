@@ -70,6 +70,10 @@
     "danger": {
       "title": "Alerte : {}",
       "body": "La mesure de {} µm/m³ dépasse le seuil de danger."
+    },
+    "background": {
+      "title": "Capteur connecté",
+      "body": "Apolline est actuellement en train de récupérer des données."
     }
   },
   "settings": {

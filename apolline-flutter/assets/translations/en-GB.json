@@ -70,6 +70,10 @@
     "danger": {
       "title": "Danger for {}",
       "body": "{} µm/m³ value exceeds danger threshold."
+    },
+    "background": {
+      "title": "Sensor is connected",
+      "body": "Apolline is currently collecting data."
     }
   },
   "settings": {
