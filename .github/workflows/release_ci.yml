@@ -61,3 +61,4 @@ jobs:
           packageName: com.science.apollineflutter
           releaseFiles: apolline-flutter/build/app/outputs/bundle/release/*.aab
           track: production
+          whatsNewDirectory: releaseNotes

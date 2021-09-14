@@ -1,0 +1,3 @@
+* L'application ne plante plus si la géolocalisation est désactivée ;
+* L'utilisateur peut définir des seuils d'alerte et de danger pour toutes les catégories de particules fines ;
+* Des notifications sont envoyées automatiquement si les mesures de PM dépassent les seuils prédéfinis.
