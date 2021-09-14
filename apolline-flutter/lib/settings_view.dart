@@ -4,6 +4,7 @@ import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:duration_picker/duration_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
@@ -34,11 +35,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
   Widget _buildInformationWidget () {
     return Container (
-      child: Text(
-          "Here, you can specify warning and danger thresholds.\n"
-          "Received values lower than warning limit will be considered as normal, "
-          "values superior to danger limit will be considered as dangerous."
-      ),
+      child: Text("settings.description").tr(),
     );
   }
 
@@ -71,7 +68,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
       child: Column(
         children: [
           ListTile(
-            title: Text("Receive warning notifications"),
+            title: Text("settings.receiveWarning").tr(),
             onTap: () => updateWarningState(!_showWarningNotifications),
             trailing: Checkbox(
               value: _showWarningNotifications,
@@ -79,7 +76,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
             ),
           ),
           ListTile(
-            title: Text("Receive danger notifications"),
+            title: Text("settings.receiveDanger").tr(),
             onTap: () => updateDangerState(!_showDangerNotifications),
             trailing: Checkbox(
               value: _showDangerNotifications,
@@ -88,19 +85,19 @@ class _SettingsPanelState extends State<SettingsPanel> {
           ),
           ListTile(
             enabled: _showWarningNotifications || _showDangerNotifications,
-            title: Text("Notifications time rate"),
+            title: Text("settings.timeInterval").tr(),
             trailing: Container(
               margin: EdgeInsets.only(right: 6),
                 child: Text(_printDuration(_notificationIntervalDuration))
             ),
             onTap: () => showDialog(context: context, builder: (context) => AlertDialog(
-              title: const Text('Set time rate'),
+              title: const Text('settings.setTimeInterval').tr(),
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
                     Container (
                       margin: EdgeInsets.only(bottom: 30),
-                      child: Text("Set which duration must pass before a new notification is sent.")
+                      child: Text("settings.setTimeIntervalBody").tr()
                     ),
                     DurationPicker(
                       duration: _notificationIntervalDuration,
@@ -115,7 +112,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Cancel'),
+                  child: const Text('devicesView.analysisButton.cancel').tr(),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

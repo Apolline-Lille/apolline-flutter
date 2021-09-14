@@ -71,5 +71,13 @@
       "title": "Alerte : {}",
       "body": "La mesure de {} µm/m³ dépasse le seuil de danger."
     }
+  },
+  "settings": {
+    "description": "Vous pouvez spécifier ici des seuils d'alerte et de danger.\nLes valeurs reçues inférieures au seuil d'alerte seront considérées comme normales, celles supérieures au seuil de danger comme dangereuses.",
+    "receiveWarning": "Recevoir des notifications d'alerte",
+    "receiveDanger": "Recevoir des notifications de danger",
+    "timeInterval": "Intervalle entre deux notifications",
+    "setTimeInterval": "Définir l'intervalle de temps",
+    "setTimeIntervalBody": "Choisissez combien de temps doit s'écouler entre l'envoi de deux notifications."
   }
 }

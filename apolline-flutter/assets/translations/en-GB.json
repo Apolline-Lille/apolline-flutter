@@ -71,5 +71,13 @@
       "title": "Danger for {}",
       "body": "{} µm/m³ value exceeds danger threshold."
     }
+  },
+  "settings": {
+    "description": "Here, you can specify warning and danger thresholds.\nReceived values lower than warning limit will be considered as normal, values superior to danger limit will be considered as dangerous.",
+    "receiveWarning": "Receive warning notifications",
+    "receiveDanger": "Receive danger notifications",
+    "timeInterval": "Notifications time interval",
+    "setTimeInterval": "Set time interval",
+    "setTimeIntervalBody": "Set which duration must pass before a new notification is sent."
   }
 }
