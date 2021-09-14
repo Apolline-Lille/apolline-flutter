@@ -57,5 +57,19 @@
       "time": "Par temps",
       "size": "Par taille"
     }
+  },
+  "notifications": {
+    "channel": {
+      "name": "Notifications d'exposition",
+      "description": "Recevez des alertes lorsque les taux de particules fines dépassent les seuils d'alerte définis dans l'application."
+    },
+    "warning": {
+      "title": "Taux de {} préoccupant",
+      "body": "La mesure de {} µm/m³ dépasse le seuil d'alerte."
+    },
+    "danger": {
+      "title": "Alerte : {}",
+      "body": "La mesure de {} µm/m³ dépasse le seuil de danger."
+    }
   }
 }

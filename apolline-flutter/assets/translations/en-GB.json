@@ -57,5 +57,19 @@
       "time": "Per time",
       "size": "Per PM size"
     }
+  },
+  "notifications": {
+    "channel": {
+      "name": "Exposure notifications",
+      "description": "Get alerts when current PM values are above warning/danger thresholds."
+    },
+    "warning": {
+      "title": "Warning for {}",
+      "body": "{} µm/m³ value exceeds warning threshold."
+    },
+    "danger": {
+      "title": "Danger for {}",
+      "body": "{} µm/m³ value exceeds danger threshold."
+    }
   }
 }

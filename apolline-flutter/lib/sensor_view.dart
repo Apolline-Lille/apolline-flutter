@@ -28,8 +28,8 @@ class SensorView extends StatefulWidget {
   final AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
         'apolline_exposure_notifications',
-        'Exposure notifications',
-        'Get alerts when current PM values are above warning/danger thresholds.',
+        'notifications.channel.name'.tr(),
+        'notifications.channel.description'.tr(),
         importance: Importance.max,
         priority: Priority.high,
         showWhen: true
@@ -143,15 +143,15 @@ class _SensorViewState extends State<SensorView> {
       if (widget.ucS.userConf.showWarningNotifications && collectedValue < dangerThreshold && collectedValue >= warningThreshold) {
         // print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
         _checkNotification(
-          "Warning for ${value.getLabelKey().tr()}",
-          '$collectedValue µm/m³ value exceeds warning threshold.',
+          "notifications.warning.title".tr(args: [value.getLabelKey().tr()]),
+          'notifications.warning.body'.tr(args: [collectedValue.toString()]),
           value
         );
       } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
         // print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
         _checkNotification(
-          "Danger for ${value.getLabelKey().tr()}",
-          '$collectedValue µm/m³ value exceeds danger threshold.',
+          "notifications.danger.title".tr(args: [value.getLabelKey().tr()]),
+          'notifications.danger.body'.tr(args: [collectedValue.toString()]),
           value
         );
       }
