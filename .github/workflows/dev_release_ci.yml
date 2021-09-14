@@ -69,8 +69,23 @@ jobs:
         run: flutter pub get
         working-directory: apolline-flutter
 
+      - name: Configure keystore
+        run: |
+          echo "${{ secrets.UPLOAD_KEYSTORE }}" > upload.keystore.asc
+          gpg -d --passphrase "${{ secrets.UPLOAD_KEYSTORE_PASSPHRASE }}" --batch upload.keystore.asc > app/upload-keystore.jks
+          echo "storeFile=upload-keystore.jks" >> key.properties
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> key.properties
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> key.properties
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> key.properties
+        env:
+          PLAY_STORE_UPLOAD_KEY: ${{ secrets.PLAY_STORE_UPLOAD_KEY }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+        working-directory: apolline-flutter/android
+
       - name: Build Apolline APK
-        run: flutter build apk --debug
+        run: flutter build apk
         working-directory: apolline-flutter
         
       - name: Get compilation time
@@ -81,12 +96,12 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: Apolline.apk
-          path: apolline-flutter/build/app/outputs/apk/debug/app-debug.apk
+          path: apolline-flutter/build/app/outputs/apk/release/app-release.apk
 
       - name: Publish release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "apolline-flutter/build/app/outputs/apk/debug/app-debug.apk"
+          artifacts: "apolline-flutter/build/app/outputs/apk/release/app-release.apk"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: android-dev-release
           allowUpdates: true
