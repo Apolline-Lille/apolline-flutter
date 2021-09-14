@@ -266,7 +266,6 @@ class _SensorViewState extends State<SensorView> {
           child: Scaffold(
               key: _scaffoldMessengerKey,
               appBar: AppBar(
-                backgroundColor: Theme.of(context).primaryColor,
                 bottom: TabBar(
                   tabs: [
                     Tab(icon: Icon(Icons.home)),

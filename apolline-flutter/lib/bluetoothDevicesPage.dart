@@ -230,7 +230,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     } else {
       return <Widget>[
         SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Colors.white),
+          child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor, color: Colors.white,),
           width: 20,
           height: 20,
         ),
