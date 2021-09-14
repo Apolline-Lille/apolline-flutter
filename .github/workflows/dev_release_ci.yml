@@ -90,7 +90,7 @@ jobs:
         
       - name: Get compilation time
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"        
+        run: echo "::set-output name=date::$(date +'%d-%m-%Y %H:%M:%S')"
 
       - name: Save build artefact
         uses: actions/upload-artifact@v1
@@ -105,7 +105,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: android-dev-release
           allowUpdates: true
-          body: This is the latest Android version of the Apolline application (created on ${{ steps.date.outputs.date }}).
+          body: This is the latest Android development version of the Apolline application (created on ${{ steps.date.outputs.date }}).
 
 
   build-iOS:
@@ -139,7 +139,7 @@ jobs:
         
       - name: Get compilation time
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"           
+        run: echo "::set-output name=date::$(date +'%d-%m-%Y %H:%M:%S')"
 
       - name: Save build artefact
         uses: actions/upload-artifact@v1
@@ -160,4 +160,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ios-dev-release
           allowUpdates: true
-          body: This is the latest iOS version of the Apolline application (created on ${{ steps.date.outputs.date }}).
+          body: This is the latest iOS development version of the Apolline application (created on ${{ steps.date.outputs.date }}).
