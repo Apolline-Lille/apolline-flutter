@@ -57,5 +57,39 @@
       "time": "Per time",
       "size": "Per PM size"
     }
+  },
+  "notifications": {
+    "channel": {
+      "name": "Exposure notifications",
+      "description": "Get alerts when current PM values are above warning/danger thresholds."
+    },
+    "warning": {
+      "title": "Warning for {}",
+      "body": "{} µm/m³ value exceeds warning threshold."
+    },
+    "danger": {
+      "title": "Danger for {}",
+      "body": "{} µm/m³ value exceeds danger threshold."
+    },
+    "background": {
+      "title": "Sensor connected",
+      "body": "Apolline is currently collecting data."
+    }
+  },
+  "settings": {
+    "description": "Here, you can specify warning and danger thresholds.\nReceived values lower than warning limit will be considered as normal, values superior to danger limit will be considered as dangerous.",
+    "receiveWarning": "Receive warning notifications",
+    "receiveDanger": "Receive danger notifications",
+    "timeInterval": "Notifications time interval",
+    "setTimeInterval": "Set time interval",
+    "setTimeIntervalBody": "Set which duration must pass before a new notification is sent.",
+    "warning": {
+      "title": "Warning threshold",
+      "incorrect": "Must be inferior than danger value."
+    },
+    "danger": {
+      "title": "Danger threshold",
+      "incorrect": "Must be superior to warning value."
+    }
   }
 }

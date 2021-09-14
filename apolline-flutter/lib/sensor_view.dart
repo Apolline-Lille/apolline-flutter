@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'package:apollineflutter/services/service_locator.dart';
+import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/twins/SensorTwin.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
+import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'models/data_point_model.dart';
 import 'widgets/maps.dart';
@@ -20,6 +24,16 @@ enum ConnexionType { Normal, Disconnect }
 class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
   final BluetoothDevice device;
+  final UserConfigurationService ucS = locator<UserConfigurationService>();
+  final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+        'apolline_exposure_notifications',
+        'notifications.channel.name'.tr(),
+        'notifications.channel.description'.tr(),
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: true
+    );
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
@@ -32,6 +46,7 @@ class _SensorViewState extends State<SensorView> {
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
   SensorTwin _sensor;
+  Map<PMFilter, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 
@@ -117,6 +132,30 @@ class _SensorViewState extends State<SensorView> {
     setState(() {
       lastReceivedData = model;
     });
+
+    if (!widget.ucS.userConf.showDangerNotifications && !widget.ucS.userConf.showWarningNotifications) return;
+    PMFilter.values.forEach((value) {
+      double collectedValue = double.parse(model.values[value.getRowIndex()]);
+      List<int> userThresholds = widget.ucS.userConf.getThresholds(value);
+      int warningThreshold = userThresholds[0];
+      int dangerThreshold = userThresholds[1];
+
+      if (widget.ucS.userConf.showWarningNotifications && collectedValue < dangerThreshold && collectedValue >= warningThreshold) {
+        // print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
+        _checkNotification(
+          "notifications.warning.title".tr(args: [value.getLabelKey().tr()]),
+          'notifications.warning.body'.tr(args: [collectedValue.toString()]),
+          value
+        );
+      } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
+        // print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
+        _checkNotification(
+          "notifications.danger.title".tr(args: [value.getLabelKey().tr()]),
+          'notifications.danger.body'.tr(args: [collectedValue.toString()]),
+          value
+        );
+      }
+    });
   }
 
   void _onSensorConnected () {
@@ -153,9 +192,30 @@ class _SensorViewState extends State<SensorView> {
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
   }
 
+  Future<void> _checkNotification (String title, String message, PMFilter filter) async {
+    if (!_notificationTimestamps.containsKey(filter)) {
+      _showNotification( title, message );
+      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+    }
+    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[filter] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
+      _showNotification( title, message );
+      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+    }
+  }
+
+  Future<void> _showNotification (String title, String message) async {
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: widget.androidPlatformChannelSpecifics
+    );
+    await FlutterLocalNotificationsPlugin().show(
+        0, title, message, platformChannelSpecifics
+    );
+  }
+
 
   @override
   void dispose() {
+    FlutterLocalNotificationsPlugin().cancelAll();
     widget.device.disconnect();
     this._sensor?.shutdown();
     disableBackgroundExecution();
