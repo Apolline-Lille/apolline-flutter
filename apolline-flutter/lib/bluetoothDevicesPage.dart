@@ -3,6 +3,7 @@ import 'package:apollineflutter/settings_view.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/widgets/device_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
@@ -30,9 +31,20 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///user configuration in the ui
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
+  void setupBackgroundConfig () async {
+    final androidConfig = FlutterBackgroundAndroidConfig(
+      notificationTitle: "notifications.background.title".tr(),
+      notificationText: "notifications.background.body".tr(),
+      notificationImportance: AndroidNotificationImportance.Default,
+      notificationIcon: AndroidResource(name: 'logo_apolline', defType: 'drawable'),
+    );
+    FlutterBackground.initialize(androidConfig: androidConfig);
+  }
+
   @override
   void initState() {
     super.initState();
+    setupBackgroundConfig();
     this.ucS.addListener(() {
       LocalKeyValuePersistance.saveObject(UserConfigurationService.USER_CONF_KEY, ucS.userConf.toJson());
     });

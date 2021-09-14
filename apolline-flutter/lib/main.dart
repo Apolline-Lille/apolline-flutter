@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:global_configuration/global_configuration.dart';
 
@@ -11,7 +10,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GlobalConfiguration().loadFromPath("assets/config_dev.json");
   setupServiceLocator();
-  setupBackgroundConfig();
   await setupNotificationService();
   await EasyLocalization.ensureInitialized();
 
@@ -43,16 +41,6 @@ class ApollineApp extends StatelessWidget {
       home: BluetoothDevicesPage(),
     );
   }
-}
-
-void setupBackgroundConfig () async {
-  final androidConfig = FlutterBackgroundAndroidConfig(
-    notificationTitle: "Capteur connecté",
-    notificationText: "Apolline est actuellement en train de récupérer des données. ",
-    notificationImportance: AndroidNotificationImportance.Default,
-    notificationIcon: AndroidResource(name: 'logo_apolline', defType: 'drawable'),
-  );
-  FlutterBackground.initialize(androidConfig: androidConfig);
 }
 
 Future<void> setupNotificationService () async {
