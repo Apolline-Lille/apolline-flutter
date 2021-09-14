@@ -277,7 +277,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           child: Container(
             child: ListView(
               children: _buildDevicesList(),
-              padding: EdgeInsets.all(10)
+              padding: EdgeInsets.all(17)
             )
           )
       ),
