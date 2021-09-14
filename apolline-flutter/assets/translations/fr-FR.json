@@ -78,6 +78,14 @@
     "receiveDanger": "Recevoir des notifications de danger",
     "timeInterval": "Intervalle entre deux notifications",
     "setTimeInterval": "Définir l'intervalle de temps",
-    "setTimeIntervalBody": "Choisissez combien de temps doit s'écouler entre l'envoi de deux notifications."
+    "setTimeIntervalBody": "Choisissez combien de temps doit s'écouler entre l'envoi de deux notifications.",
+    "warning": {
+      "title": "Seuil d'alerte",
+      "incorrect": "Doit être inférieur au seuil de danger."
+    },
+    "danger": {
+      "title": "Seuil de danger",
+      "incorrect": "Doit être supérieur au seuil d'alerte."
+    }
   }
 }

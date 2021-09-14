@@ -78,6 +78,14 @@
     "receiveDanger": "Receive danger notifications",
     "timeInterval": "Notifications time interval",
     "setTimeInterval": "Set time interval",
-    "setTimeIntervalBody": "Set which duration must pass before a new notification is sent."
+    "setTimeIntervalBody": "Set which duration must pass before a new notification is sent.",
+    "warning": {
+      "title": "Warning threshold",
+      "incorrect": "Must be inferior than danger value."
+    },
+    "danger": {
+      "title": "Danger threshold",
+      "incorrect": "Must be superior to warning value."
+    }
   }
 }

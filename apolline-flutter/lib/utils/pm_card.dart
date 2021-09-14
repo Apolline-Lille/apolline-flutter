@@ -54,8 +54,8 @@ class _PMCardState extends State<PMCard> {
                 ))
             ),
             ListTile(
-              title: Text("Warning threshold"),
-              subtitle: isWarningValueCorrect ? null : Text("Must be inferior than danger value."),
+              title: Text("settings.warning.title").tr(),
+              subtitle: isWarningValueCorrect ? null : Text("settings.warning.incorrect").tr(),
               trailing: Container(
                 width: 80,
                 child: TextFormField(
@@ -86,8 +86,8 @@ class _PMCardState extends State<PMCard> {
               ),
             ),
             ListTile(
-              title: Text("Danger threshold"),
-              subtitle: isDangerValueCorrect ? null : Text("Must be superior to warning value."),
+              title: Text("settings.danger.title").tr(),
+              subtitle: isDangerValueCorrect ? null : Text("settings.danger.incorrect").tr(),
               trailing: Container(
                 width: 80,
                 child: TextFormField(
