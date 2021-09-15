@@ -133,6 +133,8 @@ class Quality extends StatelessWidget {
   //Build gauges
   @override
   Widget build(BuildContext context) {
+    if (lastReceivedData == null)
+      return Container();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: OrientationBuilder(
