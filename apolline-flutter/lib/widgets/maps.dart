@@ -40,10 +40,12 @@ class _PMMapViewState extends State<PMMapView> {
   Set<Circle> _circles;
   ///help for close subscription
   StreamSubscription _sub;
+  ValueNotifier<bool> _isDialOpen;
 
   @override
   void initState() {
     super.initState();
+    this._isDialOpen = ValueNotifier(false);
     this._circles = HashSet<Circle>();
     this.updateCirclesFromData();
 
@@ -120,6 +122,7 @@ class _PMMapViewState extends State<PMMapView> {
   ///select for time
   ///[ctx] the context of app
   Future<void> chooseTimeFilter(BuildContext ctx) async{
+    this._isDialOpen.value = false;
     var uConf = widget.ucS.userConf;
     var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter, "mapView.timeFilters.title");
     if(val != null) {
@@ -133,6 +136,7 @@ class _PMMapViewState extends State<PMMapView> {
   ///select for choose pm.
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
+    this._isDialOpen.value = false;
     var uConf = widget.ucS.userConf;
     var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter, "mapView.sizeFilters.title");
     if(val != null) {
@@ -165,6 +169,7 @@ class _PMMapViewState extends State<PMMapView> {
         overlayColor: theme.primaryColor,
         spacing: 25,
         spaceBetweenChildren: 10,
+        openCloseDial: _isDialOpen,
         children: [
           SpeedDialChild(
             label: "mapView.filters.time".tr(),
