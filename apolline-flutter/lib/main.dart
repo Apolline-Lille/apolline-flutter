@@ -26,9 +26,9 @@ void main() async {
 // Scans and displays Bluetooth devices in range, and allows to connect to them.
 
 class ApollineApp extends StatelessWidget {
-  Color mainColor = Color.fromRGBO(47, 56, 92, 1);
-  Color secondaryColor = Color.fromRGBO(123, 137, 191, 1);
-  Color tertiaryColor = Color.fromRGBO(181, 187, 217, 1);
+  final Color mainColor = Color.fromRGBO(47, 56, 92, 1);
+  final Color secondaryColor = Color.fromRGBO(123, 137, 191, 1);
+  final Color tertiaryColor = Color.fromRGBO(181, 187, 217, 1);
 
   @override
   Widget build(BuildContext context) {
