@@ -258,6 +258,8 @@ class _SensorViewState extends State<SensorView> {
         ),
       );
     } else {
+      final ThemeData theme = Theme.of(context);
+
       /* We got data : display them */
       return WillPopScope(
         onWillPop: () => _onWillPop(DeviceConnectionStatusHelper.fromConnectionStatus(isConnected)),
@@ -265,21 +267,28 @@ class _SensorViewState extends State<SensorView> {
           length: 3,
           child: Scaffold(
               key: _scaffoldMessengerKey,
-              appBar: AppBar(
-                bottom: TabBar(
+              bottomNavigationBar: Container(
+                color: theme.primaryColor,
+                child: TabBar(
                   tabs: [
-                    Tab(icon: Icon(Icons.home)),
-                    Tab(icon: Icon(Icons.insert_chart)),
-                    Tab(icon: Icon(Icons.map)),
+                    Tab(icon: Icon(Icons.home), text: "Home"),
+                    Tab(icon: Icon(Icons.insert_chart), text: "Chart"),
+                    Tab(icon: Icon(Icons.map), text: "Map")
                   ],
                 ),
+              ),
+              appBar: AppBar(
                 title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
               ),
-              body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
-                Quality(lastReceivedData: lastReceivedData),
-                Stats(),
-                PMMapView()
-              ])),
+              body: TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    Quality(lastReceivedData: lastReceivedData),
+                    Stats(),
+                    PMMapView()
+                  ]
+              )
+          ),
         ),
       );
     }
