@@ -270,6 +270,7 @@ class _SensorViewState extends State<SensorView> {
               bottomNavigationBar: Container(
                 color: theme.primaryColor,
                 child: TabBar(
+                  automaticIndicatorColorAdjustment: true,
                   tabs: [
                     Tab(icon: Icon(Icons.home), text: "Home"),
                     Tab(icon: Icon(Icons.insert_chart), text: "Chart"),

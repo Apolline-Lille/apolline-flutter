@@ -43,7 +43,6 @@ class ApollineApp extends StatelessWidget {
         appBarTheme: AppBarTheme(backgroundColor: mainColor),
         floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: secondaryColor),
         tabBarTheme: TabBarTheme(
-          labelColor: Colors.white,
           unselectedLabelColor: tertiaryColor
         ),
         toggleableActiveColor: tertiaryColor
