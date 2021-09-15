@@ -248,15 +248,21 @@ class _SensorViewState extends State<SensorView> {
         length: 3,
         child: Scaffold(
           key: _scaffoldMessengerKey,
-          bottomNavigationBar: Container(
-            color: theme.primaryColor,
-            child: TabBar(
-              automaticIndicatorColorAdjustment: true,
-              tabs: [
-                Tab(icon: Icon(Icons.home), text: "navigation.home".tr()),
-                Tab(icon: Icon(Icons.insert_chart), text: "navigation.chart".tr()),
-                Tab(icon: Icon(Icons.map), text: "navigation.map".tr())
-              ],
+          bottomNavigationBar: IgnorePointer(
+            ignoring: !hasData,
+            child: ColorFiltered(
+              colorFilter: hasData ? ColorFilter.mode(Colors.transparent, BlendMode.exclusion) : ColorFilter.mode(Colors.grey.shade500, BlendMode.modulate),
+              child: Container(
+                color: theme.primaryColor,
+                child: TabBar(
+                  automaticIndicatorColorAdjustment: true,
+                  tabs: [
+                    Tab(icon: Icon(Icons.home), text: "navigation.home".tr()),
+                    Tab(icon: Icon(Icons.insert_chart), text: "navigation.chart".tr()),
+                    Tab(icon: Icon(Icons.map), text: "navigation.map".tr())
+                  ],
+                ),
+              ),
             ),
           ),
           appBar: AppBar(
