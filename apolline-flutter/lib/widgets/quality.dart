@@ -138,59 +138,62 @@ class Quality extends StatelessWidget {
       child: OrientationBuilder(
         builder: (BuildContext builContext, Orientation orientation) {
           return Center(
-            child: GridView.count(
-              primary: false,
-              padding: const EdgeInsets.all(0),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              //displays 3 gauges when screen is horizontal and 2 when is vertical
-              crossAxisCount: orientation == Orientation.landscape ? 3 : 2,
-              children: <Widget>[
-                //creates PM1 gauge
-                Container(
-                  child: _buildGauge(
-                      "PM1", //title
-                      lastReceivedData.values[DataPointModel.SENSOR_PM_1], //data
-                      "µg/m3", //unit
-                      Colors.blueGrey, //color
-                      new BoxDecoration()), //box
-                ),
-                //creates PM2.5 gauge
-                Container(
-                  child: _buildGauge(
-                      "PM2.5",
-                      lastReceivedData.values[DataPointModel.SENSOR_PM_2_5],
-                      "µg/m3",
-                      Colors.blueGrey,
-                      new BoxDecoration()),
-                ),
-                //creates PM10 gauge
-                Container(
-                  child: _buildGauge(
-                      "PM10",
-                      lastReceivedData.values[DataPointModel.SENSOR_PM_10],
-                      "µg/m3",
-                      Colors.blueGrey,
-                      new BoxDecoration()),
-                ),
-                //creates TEMPERATURE gauge
-                Container(
-                  child: _buildGauge(
-                      "temperature".tr(),
-                      lastReceivedData.values[DataPointModel.SENSOR_TEMP],
-                      "°C",
-                      Color(0xFFFFCD60),
-                      new BoxDecoration(
-                          image: new DecorationImage(
-                              image: ExactAssetImage(
-                                  'assets/sun.png'), //creates image for temperature gauge
-                              fit: BoxFit.fitHeight))),
-                ),
-                //creates BATTERY gauge
-                Container(
-                    child: _buildGaugeBattery("BAT",
-                        lastReceivedData.values[DataPointModel.SENSOR_VOLT]))
-              ],
+            child: Container (
+              child: GridView.count(
+                primary: false,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(0),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                //displays 3 gauges when screen is horizontal and 2 when is vertical
+                crossAxisCount: orientation == Orientation.landscape ? 3 : 2,
+                children: <Widget>[
+                  //creates PM1 gauge
+                  Container(
+                    child: _buildGauge(
+                        "PM1", //title
+                        lastReceivedData.values[DataPointModel.SENSOR_PM_1], //data
+                        "µg/m3", //unit
+                        Colors.blueGrey, //color
+                        new BoxDecoration()), //box
+                  ),
+                  //creates PM2.5 gauge
+                  Container(
+                    child: _buildGauge(
+                        "PM2.5",
+                        lastReceivedData.values[DataPointModel.SENSOR_PM_2_5],
+                        "µg/m3",
+                        Colors.blueGrey,
+                        new BoxDecoration()),
+                  ),
+                  //creates PM10 gauge
+                  Container(
+                    child: _buildGauge(
+                        "PM10",
+                        lastReceivedData.values[DataPointModel.SENSOR_PM_10],
+                        "µg/m3",
+                        Colors.blueGrey,
+                        new BoxDecoration()),
+                  ),
+                  //creates TEMPERATURE gauge
+                  Container(
+                    child: _buildGauge(
+                        "temperature".tr(),
+                        lastReceivedData.values[DataPointModel.SENSOR_TEMP],
+                        "°C",
+                        Color(0xFFFFCD60),
+                        new BoxDecoration(
+                            image: new DecorationImage(
+                                image: ExactAssetImage(
+                                    'assets/sun.png'), //creates image for temperature gauge
+                                fit: BoxFit.fitHeight))),
+                  ),
+                  //creates BATTERY gauge
+                  Container(
+                      child: _buildGaugeBattery("BAT",
+                          lastReceivedData.values[DataPointModel.SENSOR_VOLT]))
+                ],
+              ),
             ),
           );
         },
