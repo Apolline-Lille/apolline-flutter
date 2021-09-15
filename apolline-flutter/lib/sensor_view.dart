@@ -272,9 +272,9 @@ class _SensorViewState extends State<SensorView> {
                 child: TabBar(
                   automaticIndicatorColorAdjustment: true,
                   tabs: [
-                    Tab(icon: Icon(Icons.home), text: "Home"),
-                    Tab(icon: Icon(Icons.insert_chart), text: "Chart"),
-                    Tab(icon: Icon(Icons.map), text: "Map")
+                    Tab(icon: Icon(Icons.home), text: "navigation.home".tr()),
+                    Tab(icon: Icon(Icons.insert_chart), text: "navigation.chart".tr()),
+                    Tab(icon: Icon(Icons.map), text: "navigation.map".tr())
                   ],
                 ),
               ),

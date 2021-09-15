@@ -91,5 +91,10 @@
       "title": "Danger threshold",
       "incorrect": "Must be superior to warning value."
     }
+  },
+  "navigation": {
+    "home": "Measures",
+    "chart": "Chart",
+    "map": "Map"
   }
 }
