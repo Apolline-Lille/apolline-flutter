@@ -251,10 +251,17 @@ class _SensorViewState extends State<SensorView> {
               }),
         ),
         body: Center(
-          child: Column(children: <Widget>[
-            CupertinoActivityIndicator(),
-            Text(state),
-          ]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container (
+                child: CupertinoActivityIndicator(),
+                margin: EdgeInsets.only(bottom: 10)
+              ),
+              Text(state),
+            ]
+          ),
         ),
       );
     } else {
