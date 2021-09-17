@@ -14,6 +14,7 @@ import 'package:apollineflutter/configuration_key_name.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 
 
@@ -39,10 +40,12 @@ class _PMMapViewState extends State<PMMapView> {
   Set<Circle> _circles;
   ///help for close subscription
   StreamSubscription _sub;
+  ValueNotifier<bool> _isDialOpen;
 
   @override
   void initState() {
     super.initState();
+    this._isDialOpen = ValueNotifier(false);
     this._circles = HashSet<Circle>();
     this.updateCirclesFromData();
 
@@ -119,6 +122,7 @@ class _PMMapViewState extends State<PMMapView> {
   ///select for time
   ///[ctx] the context of app
   Future<void> chooseTimeFilter(BuildContext ctx) async{
+    this._isDialOpen.value = false;
     var uConf = widget.ucS.userConf;
     var val = await this.dialog(ctx, TimeFilterUtils.getLabels(), TimeFilter.values, uConf.timeFilter, "mapView.timeFilters.title");
     if(val != null) {
@@ -132,6 +136,7 @@ class _PMMapViewState extends State<PMMapView> {
   ///select for choose pm.
   ///[ctx] the context of app
   Future<void> choosePm(BuildContext ctx) async {
+    this._isDialOpen.value = false;
     var uConf = widget.ucS.userConf;
     var val = await this.dialog(ctx, PMFilterUtils.getLabels(), PMFilter.values, uConf.pmFilter, "mapView.sizeFilters.title");
     if(val != null) {
@@ -155,27 +160,33 @@ class _PMMapViewState extends State<PMMapView> {
       circles: this._circles,
     );
 
+    final ThemeData theme = Theme.of(context);
+
     return new Scaffold(
       body: googleMap,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FloatingActionButton.extended(
-              label: Text("mapView.filters.time").tr(),
-              icon: Icon(Icons.access_time),
-              onPressed: () { this.chooseTimeFilter(context); }
-            ),
-            FloatingActionButton.extended(
-              label: Text("mapView.filters.size").tr(),
-              icon: Icon(Icons.cloud_outlined),
-              onPressed: () { this.choosePm(context); }
+      floatingActionButton: SpeedDial(
+        icon: Icons.filter_list,
+        overlayColor: theme.primaryColor,
+        spacing: 25,
+        spaceBetweenChildren: 10,
+        openCloseDial: _isDialOpen,
+        children: [
+          SpeedDialChild(
+            label: "mapView.filters.time".tr(),
+            child: FloatingActionButton(
+              onPressed: () => this.chooseTimeFilter(context),
+              child: Icon(Icons.access_time),
             )
-          ],
-        ),
-      ),
+          ),
+          SpeedDialChild(
+            label: "mapView.filters.size".tr(),
+            child: FloatingActionButton(
+              onPressed: () => this.choosePm(context),
+              child: Icon(Icons.cloud_outlined),
+            )
+          )
+        ],
+      )
     );
   }
 

@@ -101,24 +101,15 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   }
 
   Widget getBody() {
-    return Stack(children: <Widget>[
-      Positioned(
-        right: 0,
-        left: 0,
-        top: 0,
-        bottom: 0,
-        child: LineChart(controller),
-      ),
-      Align(
-        alignment: Alignment.bottomRight,
-        child: FloatingActionButton(
-          onPressed: _togglePulsar,
-          child: Icon(
+    return Scaffold(
+      body: LineChart(controller),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _togglePulsar,
+        child: Icon(
             _dataService.isRunning ? Icons.pause : Icons.play_arrow
-          ),
         ),
-      ),
-    ]);
+      )
+    );
   }
 
   @override
@@ -163,7 +154,6 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
         scaleYEnabled: true,
         selectionListener: this,
         pinchZoomEnabled: true,
-        infoBgColor: ColorUtils.HOLO_GREEN_LIGHT,
         description: desc);
   }
 

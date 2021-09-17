@@ -238,51 +238,71 @@ class _SensorViewState extends State<SensorView> {
   /* UI update only */
   @override
   Widget build(BuildContext context) {
-    /* If we are not initialized, display status info */
-    if (lastReceivedData == null) {
-      return Scaffold(
-        key: _scaffoldMessengerKey,
-        appBar: AppBar(
-          title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                _onWillPop(DeviceConnectionStatusHelper.fromConnectionStatus(isConnected));
-              }),
-        ),
-        body: Center(
-          child: Column(children: <Widget>[
-            CupertinoActivityIndicator(),
-            Text(state),
-          ]),
-        ),
-      );
-    } else {
-      /* We got data : display them */
-      return WillPopScope(
+    bool hasData = lastReceivedData != null;
+    final ThemeData theme = Theme.of(context);
+    final Duration animationDuration = const Duration(milliseconds: 500);
+
+    return WillPopScope(
         onWillPop: () => _onWillPop(DeviceConnectionStatusHelper.fromConnectionStatus(isConnected)),
         child: DefaultTabController(
-          length: 3,
-          child: Scaffold(
-              key: _scaffoldMessengerKey,
-              appBar: AppBar(
-                backgroundColor: Theme.of(context).primaryColor,
-                bottom: TabBar(
+        length: 3,
+        child: Scaffold(
+          key: _scaffoldMessengerKey,
+          bottomNavigationBar: IgnorePointer(
+            ignoring: !hasData,
+            child: ColorFiltered(
+              colorFilter: hasData ? ColorFilter.mode(Colors.transparent, BlendMode.exclusion) : ColorFilter.mode(Colors.grey.shade500, BlendMode.modulate),
+              child: Container(
+                color: theme.primaryColor,
+                child: TabBar(
+                  automaticIndicatorColorAdjustment: true,
                   tabs: [
-                    Tab(icon: Icon(Icons.home)),
-                    Tab(icon: Icon(Icons.insert_chart)),
-                    Tab(icon: Icon(Icons.map)),
+                    Tab(icon: Icon(Icons.home), text: "navigation.home".tr()),
+                    Tab(icon: Icon(Icons.insert_chart), text: "navigation.chart".tr()),
+                    Tab(icon: Icon(Icons.map), text: "navigation.map".tr())
                   ],
                 ),
-                title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
               ),
-              body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
-                Quality(lastReceivedData: lastReceivedData),
-                Stats(),
-                PMMapView()
-              ])),
-        ),
-      );
-    }
+            ),
+          ),
+          appBar: AppBar(
+            title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
+          ),
+          body: Stack(
+            children: [
+              AnimatedOpacity(
+                opacity: hasData ? 0.0 : 1.0,
+                duration: animationDuration,
+                child: Center(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container (
+                            child: CupertinoActivityIndicator(),
+                            margin: EdgeInsets.only(bottom: 10)
+                        ),
+                        Text(state),
+                      ]
+                  ),
+                ),
+              ),
+
+              AnimatedOpacity(
+                opacity: hasData ? 1.0 : 0.0,
+                duration: animationDuration,
+                child: TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    Quality(lastReceivedData: lastReceivedData),
+                    Stats(),
+                    PMMapView()
+                  ]
+                ),
+              )
+            ]),
+          )
+        )
+    );
   }
 }

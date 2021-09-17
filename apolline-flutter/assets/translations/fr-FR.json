@@ -91,5 +91,10 @@
       "title": "Seuil de danger",
       "incorrect": "Doit être supérieur au seuil d'alerte."
     }
+  },
+  "navigation": {
+    "home": "Mesures",
+    "chart": "Graphique",
+    "map": "Carte"
   }
 }

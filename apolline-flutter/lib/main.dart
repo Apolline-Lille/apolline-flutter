@@ -26,7 +26,10 @@ void main() async {
 // Scans and displays Bluetooth devices in range, and allows to connect to them.
 
 class ApollineApp extends StatelessWidget {
-  // This widget is the root of your application.
+  final Color mainColor = Color.fromRGBO(47, 56, 92, 1);
+  final Color secondaryColor = Color.fromRGBO(123, 137, 191, 1);
+  final Color tertiaryColor = Color.fromRGBO(181, 187, 217, 1);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,8 +38,14 @@ class ApollineApp extends StatelessWidget {
       locale: context.locale,
       title: 'Apolline',
       theme: ThemeData(
-        primaryColor: Colors.green,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Colors.lightGreen)
+        primaryColor: mainColor,
+        backgroundColor: mainColor,
+        appBarTheme: AppBarTheme(backgroundColor: mainColor),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: secondaryColor),
+        tabBarTheme: TabBarTheme(
+          unselectedLabelColor: tertiaryColor
+        ),
+        toggleableActiveColor: tertiaryColor
       ),
       home: BluetoothDevicesPage(),
     );
