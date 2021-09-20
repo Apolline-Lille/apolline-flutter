@@ -4,7 +4,6 @@ import 'package:apollineflutter/widgets/charts/RadialGauge.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 
@@ -20,48 +19,6 @@ class Quality extends StatelessWidget {
         maximumValue: maximumValue,
         currentValue: data
     );
-  }
-
-  //Commun method to create similar gauge (PM1, PM2.5 , PM10 and TEMPERATURE)
-  Widget _buildGauge(String title, String data, String unit, Color color,
-      BoxDecoration boxDecoration) {
-    return SfRadialGauge(title: GaugeTitle(text: title), axes: <RadialAxis>[
-      RadialAxis(
-          interval: 10,
-          startAngle: 0,
-          endAngle: 360,
-          showTicks: false,
-          showLabels: false,
-          axisLineStyle: AxisLineStyle(thickness: 20),
-          pointers: <GaugePointer>[
-            RangePointer(
-                value: double.parse(data),
-                width: 20,
-                color: color,
-                enableAnimation: true,
-                cornerStyle: CornerStyle.bothCurve)
-          ],
-          annotations: <GaugeAnnotation>[
-            GaugeAnnotation(
-                widget: Column(
-                  children: <Widget>[
-                    Container(
-                        width: 50.00, height: 50.00, decoration: boxDecoration),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: Container(
-                        child: Text(data + unit,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 25)),
-                      ),
-                    )
-                  ],
-                ),
-                angle: 270,
-                positionFactor: 0.9,
-                verticalAlignment: GaugeAlignment.near)
-          ])
-    ]);
   }
 
   //Build gauges
