@@ -135,10 +135,26 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
           LineSeries<DataPointModel, String>(
               dataSource: this._data,
               xValueMapper: (DataPointModel point, _) => DateTime.fromMillisecondsSinceEpoch(point.date).toString(),
+              yValueMapper: (DataPointModel point, _) => double.parse(point.values[PMFilter.PM_1.getRowIndex()]),
+              dataLabelSettings: DataLabelSettings(isVisible: true),
+              name: "PM1",
+              color: Colors.black
+          ),
+          LineSeries<DataPointModel, String>(
+              dataSource: this._data,
+              xValueMapper: (DataPointModel point, _) => DateTime.fromMillisecondsSinceEpoch(point.date).toString(),
               yValueMapper: (DataPointModel point, _) => double.parse(point.values[PMFilter.PM_2_5.getRowIndex()]),
               dataLabelSettings: DataLabelSettings(isVisible: true),
               name: "PM2.5",
               color: Colors.red
+          ),
+          LineSeries<DataPointModel, String>(
+              dataSource: this._data,
+              xValueMapper: (DataPointModel point, _) => DateTime.fromMillisecondsSinceEpoch(point.date).toString(),
+              yValueMapper: (DataPointModel point, _) => double.parse(point.values[PMFilter.PM_10.getRowIndex()]),
+              dataLabelSettings: DataLabelSettings(isVisible: true),
+              name: "PM10",
+              color: Colors.yellow
           )
         ]
     );
