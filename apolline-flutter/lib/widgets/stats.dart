@@ -5,6 +5,7 @@ import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -54,6 +55,9 @@ class StatsState extends State<Stats> {
     );
   }
 
+  String _getPointTimeLabel (DataPointModel point) =>
+      DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch(point.date));
+
   Widget _getChart () {
     return SfCartesianChart(
 
@@ -66,7 +70,7 @@ class StatsState extends State<Stats> {
         series: <LineSeries<DataPointModel, String>>[
           LineSeries<DataPointModel, String>(
               dataSource: this._data,
-              xValueMapper: (DataPointModel point, _) => DateTime.fromMillisecondsSinceEpoch(point.date).toString(),
+              xValueMapper: (DataPointModel point, _) => _getPointTimeLabel(point),
               yValueMapper: (DataPointModel point, _) => double.parse(point.values[PMFilter.PM_1.getRowIndex()]),
               dataLabelSettings: DataLabelSettings(isVisible: true),
               name: "PM1",
@@ -74,7 +78,7 @@ class StatsState extends State<Stats> {
           ),
           LineSeries<DataPointModel, String>(
               dataSource: this._data,
-              xValueMapper: (DataPointModel point, _) => DateTime.fromMillisecondsSinceEpoch(point.date).toString(),
+              xValueMapper: (DataPointModel point, _) => _getPointTimeLabel(point),
               yValueMapper: (DataPointModel point, _) => double.parse(point.values[PMFilter.PM_2_5.getRowIndex()]),
               dataLabelSettings: DataLabelSettings(isVisible: true),
               name: "PM2.5",
@@ -82,7 +86,7 @@ class StatsState extends State<Stats> {
           ),
           LineSeries<DataPointModel, String>(
               dataSource: this._data,
-              xValueMapper: (DataPointModel point, _) => DateTime.fromMillisecondsSinceEpoch(point.date).toString(),
+              xValueMapper: (DataPointModel point, _) => _getPointTimeLabel(point),
               yValueMapper: (DataPointModel point, _) => double.parse(point.values[PMFilter.PM_10.getRowIndex()]),
               dataLabelSettings: DataLabelSettings(isVisible: true),
               name: "PM10",
