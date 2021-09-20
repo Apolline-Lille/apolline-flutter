@@ -1,5 +1,6 @@
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/widgets/charts/BatteryLevelIndicator.dart';
+import 'package:apollineflutter/widgets/charts/RadialGauge.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,17 @@ class Quality extends StatelessWidget {
 
   Quality({Key key, this.lastReceivedData}) : super(key: key);
 
+  Widget _buildNewGauge(String title, double data, double minimumValue, double maximumValue) {
+    return RadialGauge(
+        indicatorTitle: title,
+        minimumValue: minimumValue,
+        maximumValue: maximumValue,
+        currentValue: data
+    );
+  }
+
   //Commun method to create similar gauge (PM1, PM2.5 , PM10 and TEMPERATURE)
-  SfRadialGauge _buildGauge(String title, String data, String unit, Color color,
+  Widget _buildGauge(String title, String data, String unit, Color color,
       BoxDecoration boxDecoration) {
     return SfRadialGauge(title: GaugeTitle(text: title), axes: <RadialAxis>[
       RadialAxis(
@@ -74,32 +84,23 @@ class Quality extends StatelessWidget {
                 //displays 3 gauges when screen is horizontal and 2 when is vertical
                 crossAxisCount: orientation == Orientation.landscape ? 3 : 2,
                 children: <Widget>[
-                  //creates PM1 gauge
                   Container(
-                    child: _buildGauge(
-                        "PM1", //title
-                        lastReceivedData.values[DataPointModel.SENSOR_PM_1], //data
-                        "µg/m3", //unit
-                        Colors.blueGrey, //color
-                        new BoxDecoration()), //box
+                    child: _buildNewGauge("PM1 (µg/m3)",
+                        double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_1]),
+                        0,
+                        20) //box
                   ),
-                  //creates PM2.5 gauge
                   Container(
-                    child: _buildGauge(
-                        "PM2.5",
-                        lastReceivedData.values[DataPointModel.SENSOR_PM_2_5],
-                        "µg/m3",
-                        Colors.blueGrey,
-                        new BoxDecoration()),
+                    child: _buildNewGauge("PM2.5 (µg/m3)",
+                        double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_2_5]),
+                        0,
+                        20),
                   ),
-                  //creates PM10 gauge
                   Container(
-                    child: _buildGauge(
-                        "PM10",
-                        lastReceivedData.values[DataPointModel.SENSOR_PM_10],
-                        "µg/m3",
-                        Colors.blueGrey,
-                        new BoxDecoration()),
+                    child: _buildNewGauge("PM10 (µg/m3)",
+                        double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_10]),
+                        0,
+                        20),
                   ),
                   //creates TEMPERATURE gauge
                   Container(
