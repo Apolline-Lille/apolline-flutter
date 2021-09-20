@@ -50,6 +50,7 @@ dependencies:
   flutter_local_notifications: ^8.2.0
   duration_picker: ^1.0.1
   flutter_speed_dial: ^4.3.0
+  syncfusion_flutter_charts: ^19.2.62
 
 
 
