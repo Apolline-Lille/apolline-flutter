@@ -28,11 +28,6 @@ dependencies:
   cupertino_icons: ^1.0.3
   syncfusion_flutter_gauges: ^19.2.47
   get_it: ^7.1.3
-  mp_chart:
-    git:
-      url: git://github.com/Hub-Varith/MPFlutterChart.git
-      ref: master
-      path: mp_chart
   google_maps_flutter: ^2.0.6
   flutter_launcher_icons: ^0.9.0
   http: ^0.13.3

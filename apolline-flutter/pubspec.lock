@@ -308,13 +308,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.4"
-  image_gallery_saver:
-    dependency: transitive
-    description:
-      name: image_gallery_saver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.6.9"
   intl:
     dependency: transitive
     description:
@@ -364,22 +357,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
-  mp_chart:
-    dependency: "direct main"
-    description:
-      path: mp_chart
-      ref: master
-      resolved-ref: f437182d14f9bb9c0497fd196b01f0b2ffe0e7d8
-      url: "git://github.com/Hub-Varith/MPFlutterChart.git"
-    source: git
-    version: "0.3.1"
-  optimized_gesture_detector:
-    dependency: transitive
-    description:
-      name: optimized_gesture_detector
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.6"
   path:
     dependency: transitive
     description:
@@ -387,20 +364,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
-  path_drawing:
-    dependency: transitive
-    description:
-      name: path_drawing
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.1"
-  path_parsing:
-    dependency: transitive
-    description:
-      name: path_parsing
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.1"
   path_provider:
     dependency: "direct main"
     description:
@@ -499,13 +462,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.26.0"
-  screenshot:
-    dependency: transitive
-    description:
-      name: screenshot
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
   shared_preferences:
     dependency: "direct main"
     description:
