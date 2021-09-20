@@ -27,6 +27,12 @@ class _RadialGaugeState extends State<RadialGauge> {
   }
 
   Widget _buildGauge(BuildContext context) {
+    final double localCurrentValue = widget.currentValue > widget.maximumValue
+        ? widget.maximumValue
+        : widget.currentValue < widget.minimumValue
+            ? widget.minimumValue
+            : widget.currentValue;
+
     return SfRadialGauge(
       enableLoadingAnimation: true,
       axes: <RadialAxis>[
@@ -79,7 +85,7 @@ class _RadialGaugeState extends State<RadialGauge> {
             ],
             pointers: <GaugePointer>[
               RangePointer(
-                value: widget.currentValue,
+                value: localCurrentValue,
                 width: 18,
                 pointerOffset: -6,
                 cornerStyle: CornerStyle.bothCurve,
@@ -89,7 +95,7 @@ class _RadialGaugeState extends State<RadialGauge> {
                     stops: <double>[0.25, 0.75]),
               ),
               MarkerPointer(
-                value: widget.currentValue,
+                value: localCurrentValue,
                 color: Colors.white,
                 markerType: MarkerType.circle,
               ),
