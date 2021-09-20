@@ -1,4 +1,5 @@
 import 'package:apollineflutter/models/data_point_model.dart';
+import 'package:apollineflutter/widgets/charts/BatteryLevelIndicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -50,83 +51,6 @@ class Quality extends StatelessWidget {
                 positionFactor: 0.9,
                 verticalAlignment: GaugeAlignment.near)
           ])
-    ]);
-  }
-
-  //Build BATTERY gauge
-  SfRadialGauge _buildGaugeBattery(String title, String data) {
-    String level;
-    double pointer;
-    if (double.parse(data) > 3.97) {
-      //80 100
-      level = "100";
-      pointer = 100;
-    } else if (double.parse(data) >= 3.87) {
-      //60 80
-      level = "80";
-      pointer = 80;
-    } else if (double.parse(data) >= 3.79) {
-      //60 80
-      level = "60";
-      pointer = 60;
-    } else if (double.parse(data) >= 3.70) {
-      //40 60
-      level = "40";
-      pointer = 40;
-    } else {
-      //0 20
-      level = "20";
-      pointer = 20;
-    }
-    //Creates Battery gauge parts
-    return SfRadialGauge(title: GaugeTitle(text: title), axes: <RadialAxis>[
-      RadialAxis(minimum: 0, maximum: 100, ranges: <GaugeRange>[
-        //first part
-        GaugeRange(
-            startValue: 0,
-            endValue: 20,
-            color: Colors.red,
-            startWidth: 10,
-            endWidth: 10),
-        //second part
-        GaugeRange(
-            startValue: 20,
-            endValue: 40,
-            color: Colors.orange,
-            startWidth: 10,
-            endWidth: 10),
-        //third part
-        GaugeRange(
-            startValue: 40,
-            endValue: 60,
-            color: Colors.green[200],
-            startWidth: 10,
-            endWidth: 10),
-        //forth part
-        GaugeRange(
-            startValue: 60,
-            endValue: 80,
-            color: Colors.green[300],
-            startWidth: 10,
-            endWidth: 10),
-        //fifth part
-        GaugeRange(
-            startValue: 80,
-            endValue: 100,
-            color: Colors.green,
-            startWidth: 10,
-            endWidth: 10)
-      ], pointers: <GaugePointer>[
-        NeedlePointer(value: pointer)
-      ], annotations: <GaugeAnnotation>[
-        GaugeAnnotation(
-            widget: Container(
-                child: Text(level,
-                    style:
-                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-            angle: 90,
-            positionFactor: 0.5)
-      ])
     ]);
   }
 
@@ -192,8 +116,10 @@ class Quality extends StatelessWidget {
                   ),
                   //creates BATTERY gauge
                   Container(
-                      child: _buildGaugeBattery("BAT",
-                          lastReceivedData.values[DataPointModel.SENSOR_VOLT]))
+                      child: BatteryLevelIndicator(
+                          currentBatteryLevel: double.parse(lastReceivedData.values[DataPointModel.SENSOR_VOLT])
+                      )
+                  )
                 ],
               ),
             ),
