@@ -4,6 +4,7 @@ import 'dart:core';
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
+import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mp_chart/mp/chart/line_chart.dart';
@@ -20,6 +21,7 @@ import 'package:mp_chart/mp/core/highlight/highlight.dart';
 import 'package:mp_chart/mp/core/utils/color_utils.dart';
 import 'package:mp_chart/mp/core/value_formatter/value_formatter.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 
 
@@ -38,6 +40,7 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
   Stream<DataPointModel> _dataStream = locator<RealtimeDataService>().dataStream;
   // a controller with the stream it controls.
   StreamSubscription<DataPointModel> _streamSubscription;
+  List<DataPointModel> _data;
   // contorller for chart
   LineChartController controller;
   // Line PM1
@@ -60,9 +63,13 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
 
   @override
   void initState() {
-    _initController();
+    this._data = [];
+
+    // _initController();
     // add point to chart after recieve newData
     _streamSubscription = _dataStream.listen((newData) {
+      setState(() => _data.add(newData));
+
       if (intialized) {
         _addEntry(
             0, i0++, double.parse(newData.values[DataPointModel.SENSOR_PM_1]));
@@ -100,21 +107,41 @@ class StatsState extends State<Stats> implements OnChartValueSelectedListener {
     setState(() {});
   }
 
-  Widget getBody() {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: LineChart(controller),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _togglePulsar,
-        child: Icon(
-            _dataService.isRunning ? Icons.pause : Icons.play_arrow
-        ),
-      )
+        body: _getChart(), // LineChart(controller),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _togglePulsar,
+          child: Icon(
+              _dataService.isRunning ? Icons.pause : Icons.play_arrow
+          ),
+        )
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return getBody();
+  Widget _getChart () {
+    return SfCartesianChart(
+
+        primaryXAxis: CategoryAxis(),
+        // Chart title
+        title: ChartTitle(text: 'Pollution exposition'),
+        // Enable legend
+        legend: Legend(isVisible: true),
+        // Enable tooltip
+        // tooltipBehavior: _tooltipBehavior,
+
+        series: <LineSeries<DataPointModel, String>>[
+          LineSeries<DataPointModel, String>(
+              dataSource: this._data,
+              xValueMapper: (DataPointModel point, _) => DateTime.fromMillisecondsSinceEpoch(point.date).toString(),
+              yValueMapper: (DataPointModel point, _) => double.parse(point.values[PMFilter.PM_2_5.getRowIndex()]),
+              dataLabelSettings: DataLabelSettings(isVisible: true),
+              name: "PM2.5",
+              color: Colors.red
+          )
+        ]
+    );
   }
   
   //init chart
