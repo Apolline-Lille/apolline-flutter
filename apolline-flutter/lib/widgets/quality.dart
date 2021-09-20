@@ -104,16 +104,27 @@ class Quality extends StatelessWidget {
                   ),
                   //creates TEMPERATURE gauge
                   Container(
-                    child: _buildGauge(
-                        "temperature".tr(),
-                        lastReceivedData.values[DataPointModel.SENSOR_TEMP],
-                        "°C",
-                        Color(0xFFFFCD60),
-                        new BoxDecoration(
-                            image: new DecorationImage(
-                                image: ExactAssetImage(
-                                    'assets/sun.png'), //creates image for temperature gauge
-                                fit: BoxFit.fitHeight))),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(double.parse(lastReceivedData.values[DataPointModel.SENSOR_TEMP]).toStringAsFixed(2) + '°C',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 30)),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+                          child: Text(
+                            "temperature".tr(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 14),
+                          ),
+                        )
+                      ],
+                    )
                   ),
                   //creates BATTERY gauge
                   Container(
