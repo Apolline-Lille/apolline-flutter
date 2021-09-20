@@ -21,6 +21,68 @@ class Quality extends StatelessWidget {
     );
   }
 
+  Widget _getPM1Gauge () {
+    return Container(
+        child: _buildNewGauge("PM1 (µg/m3)",
+            double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_1]),
+            0,
+            20) //box
+    );
+  }
+
+  Widget _getPM25Gauge () {
+    return Container(
+      child: _buildNewGauge("PM2.5 (µg/m3)",
+          double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_2_5]),
+          0,
+          20),
+    );
+  }
+
+  Widget _getPM10Gauge () {
+    return Container(
+      child: _buildNewGauge("PM10 (µg/m3)",
+          double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_10]),
+          0,
+          20),
+    );
+  }
+
+  Widget _getTemperatureInfo () {
+    return Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(double.parse(lastReceivedData.values[DataPointModel.SENSOR_TEMP]).toStringAsFixed(2) + '°C',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 30)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+              child: Text(
+                "temperature".tr(),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 14),
+              ),
+            )
+          ],
+        )
+    );
+  }
+
+  Widget _getBatteryInfo () {
+    return Container(
+        child: BatteryLevelIndicator(
+            currentBatteryLevel: double.parse(lastReceivedData.values[DataPointModel.SENSOR_VOLT])
+        )
+    );
+  }
+
+
   //Build gauges
   @override
   Widget build(BuildContext context) {
@@ -41,54 +103,11 @@ class Quality extends StatelessWidget {
                 //displays 3 gauges when screen is horizontal and 2 when is vertical
                 crossAxisCount: orientation == Orientation.landscape ? 3 : 2,
                 children: <Widget>[
-                  Container(
-                    child: _buildNewGauge("PM1 (µg/m3)",
-                        double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_1]),
-                        0,
-                        20) //box
-                  ),
-                  Container(
-                    child: _buildNewGauge("PM2.5 (µg/m3)",
-                        double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_2_5]),
-                        0,
-                        20),
-                  ),
-                  Container(
-                    child: _buildNewGauge("PM10 (µg/m3)",
-                        double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_10]),
-                        0,
-                        20),
-                  ),
-                  //creates TEMPERATURE gauge
-                  Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(double.parse(lastReceivedData.values[DataPointModel.SENSOR_TEMP]).toStringAsFixed(2) + '°C',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 30)),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
-                          child: Text(
-                            "temperature".tr(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 14),
-                          ),
-                        )
-                      ],
-                    )
-                  ),
-                  //creates BATTERY gauge
-                  Container(
-                      child: BatteryLevelIndicator(
-                          currentBatteryLevel: double.parse(lastReceivedData.values[DataPointModel.SENSOR_VOLT])
-                      )
-                  )
+                  this._getPM1Gauge(),
+                  this._getPM25Gauge(),
+                  this._getPM10Gauge(),
+                  this._getTemperatureInfo(),
+                  this._getBatteryInfo()
                 ],
               ),
             ),
