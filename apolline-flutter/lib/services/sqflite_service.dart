@@ -128,7 +128,7 @@ class SqfLiteService {
   Future removeOldModels() async {
     Database db = await database;
     var time = DateTime.now().subtract(Duration(days: 7)).millisecondsSinceEpoch;
-    int rowsCount = await db.delete(dataPointTableName, where: "$columnDate <= ?", whereArgs: [time]);
+    int rowsCount = await db.delete(dataPointTableName, where: "$columnDate <= ? AND $columnSynchro = 1", whereArgs: [time]);
     print("Removed $rowsCount data points older than one week.");
   }
 
