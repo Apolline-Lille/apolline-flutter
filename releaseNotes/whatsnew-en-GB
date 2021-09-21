@@ -1,16 +1,4 @@
-# 1.4.0
-
 * Completely rewriting all graphs;
 * Data live-displayed on the graph can be filtered (1/5/15 minutes old);
 * Displayed battery level is more accurate;
 * Removing deprecated dependencies and unused code.
-
-# 1.3.0
-
-* Reviewing entire application design.
-
-# 1.2.1
-
-* Application does not crash anymore if geolocation is not activated;
-* User can define warning and danger thresholds for all PM categories;
-* Notifications are automatically sent if current PM values exceed thresholds.
