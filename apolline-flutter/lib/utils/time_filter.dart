@@ -56,6 +56,12 @@ extension TimeFilterUtils on TimeFilter {
     return TimeFilterUtils._values[this].toMinutes();
   }
 
+  String get labelKey {
+    if (TimeFilterUtils._values[this] == null)
+      throw RangeError("This TimeFilter has no label.");
+    return TimeFilterUtils._values[this].label;
+  }
+
   static List<String> getLabels () {
     return TimeFilter.values.map((filter) => TimeFilterUtils._values[filter].label.tr()).toList();
   }

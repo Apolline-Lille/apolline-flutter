@@ -84,7 +84,7 @@ class StatsState extends State<Stats> {
     ]
     .forEach((element) {
       buttons.add(SpeedDialChild(
-          label: element.toString(),
+          label: element.labelKey.tr(),
           child: FloatingActionButton(
             onPressed: () {
               setState(() {
