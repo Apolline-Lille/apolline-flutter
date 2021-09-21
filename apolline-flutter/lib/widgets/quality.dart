@@ -91,27 +91,54 @@ class Quality extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: OrientationBuilder(
-        builder: (BuildContext builContext, Orientation orientation) {
-          return Center(
-            child: Container (
-              child: GridView.count(
-                primary: false,
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(0),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                //displays 3 gauges when screen is horizontal and 2 when is vertical
-                crossAxisCount: orientation == Orientation.landscape ? 3 : 2,
-                children: <Widget>[
-                  this._getPM1Gauge(),
-                  this._getPM25Gauge(),
-                  this._getPM10Gauge(),
-                  this._getTemperatureInfo(),
-                  this._getBatteryInfo()
-                ],
+        builder: (_, Orientation orientation) {
+          bool isLandscape = orientation == Orientation.landscape;
+
+          if (isLandscape) {
+            return Center(
+              child: Container (
+                child: GridView.count(
+                  primary: false,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(0),
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 3,
+                  children: <Widget>[
+                    this._getPM1Gauge(),
+                    this._getPM25Gauge(),
+                    this._getPM10Gauge(),
+                    this._getTemperatureInfo(),
+                    this._getBatteryInfo()
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            return Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(child: this._getPM1Gauge()),
+                      Expanded(child: this._getPM25Gauge()),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: this._getPM10Gauge(),
+                ),
+                Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(child: this._getTemperatureInfo()),
+                        Expanded(child: this._getBatteryInfo())
+                      ],
+                    )
+                )
+              ],
+            );
+          }
         },
       ),
     );
