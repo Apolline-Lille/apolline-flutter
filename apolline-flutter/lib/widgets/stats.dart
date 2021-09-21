@@ -28,7 +28,7 @@ class StatsState extends State<Stats> {
   Stream<DataPointModel> _dataStream = locator<RealtimeDataService>().dataStream;
   StreamSubscription<DataPointModel> _streamSubscription;
   List<DataPointModel> _data;
-  Duration _dataDurationFilter;
+  TimeFilter _dataDurationFilter;
   SqfLiteService _sqfLiteService;
 
   @override
@@ -40,16 +40,16 @@ class StatsState extends State<Stats> {
   @override
   void initState() {
     this._data = [];
-    this._dataDurationFilter = Duration(minutes: 5);
+    this._dataDurationFilter = TimeFilter.LAST_5_MIN;
     this._sqfLiteService = SqfLiteService();
 
-    this._sqfLiteService.getAllDataPointsAfterDate(TimeFilter.LAST_5_MIN)
+    this._sqfLiteService.getAllDataPointsAfterDate(this._dataDurationFilter)
         .then((points){
           setState(() {
             this._data = points;
           });
           _streamSubscription = _dataStream.listen((newData) {
-            int timeDelta = DateTime.now().millisecondsSinceEpoch - 60000*TimeFilter.LAST_5_MIN.toMinutes();
+            int timeDelta = DateTime.now().millisecondsSinceEpoch - 60000*this._dataDurationFilter.toMinutes();
             setState(() {
               _data.add(newData);
               _data = _data.where((element) => element.date > timeDelta).toList();
