@@ -88,34 +88,34 @@ class Quality extends StatelessWidget {
   Widget build(BuildContext context) {
     if (lastReceivedData == null)
       return Container();
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: OrientationBuilder(
-        builder: (_, Orientation orientation) {
-          bool isLandscape = orientation == Orientation.landscape;
+    return OrientationBuilder(
+      builder: (_, Orientation orientation) {
+        bool isLandscape = orientation == Orientation.landscape;
 
-          if (isLandscape) {
-            return Center(
-              child: Container (
-                child: GridView.count(
-                  primary: false,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(0),
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  crossAxisCount: 3,
-                  children: <Widget>[
-                    this._getPM1Gauge(),
-                    this._getPM25Gauge(),
-                    this._getPM10Gauge(),
-                    this._getTemperatureInfo(),
-                    this._getBatteryInfo()
-                  ],
-                ),
+        if (isLandscape) {
+          return Center(
+            child: Container (
+              child: GridView.count(
+                primary: false,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(0),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                crossAxisCount: 3,
+                children: <Widget>[
+                  this._getPM1Gauge(),
+                  this._getPM25Gauge(),
+                  this._getPM10Gauge(),
+                  this._getTemperatureInfo(),
+                  this._getBatteryInfo()
+                ],
               ),
-            );
-          } else {
-            return Column(
+            ),
+          );
+        } else {
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 30),
+            child: Column(
               children: [
                 Expanded(
                   child: Row(
@@ -137,10 +137,10 @@ class Quality extends StatelessWidget {
                     )
                 )
               ],
-            );
-          }
-        },
-      ),
+            )
+          );
+        }
+      },
     );
   }
 }
