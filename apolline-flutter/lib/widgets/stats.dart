@@ -46,21 +46,23 @@ class StatsState extends State<Stats> {
     this._sqfLiteService = SqfLiteService();
     this._isDialOpen = ValueNotifier(false);
 
-    this._sqfLiteService.getAllDataPointsAfterDate(this._dataDurationFilter)
-        .then((points){
-          setState(() {
-            this._data = points;
-          });
-          _streamSubscription = _dataStream.listen((newData) {
-            int timeDelta = DateTime.now().millisecondsSinceEpoch - 60000*this._dataDurationFilter.toMinutes();
-            setState(() {
-              _data.add(newData);
-              _data = _data.where((element) => element.date > timeDelta).toList();
-            });
-          });
+    this._updateDataFrom(this._dataDurationFilter).then((value) {
+      _streamSubscription = _dataStream.listen((newData) {
+        int timeDelta = DateTime.now().millisecondsSinceEpoch - 60000*this._dataDurationFilter.toMinutes();
+        setState(() {
+          _data.add(newData);
+          _data = _data.where((element) => element.date > timeDelta).toList();
         });
-
+      });
+    });
     super.initState();
+  }
+
+  Future<void> _updateDataFrom(TimeFilter filter) async {
+    List<DataPointModel> points = await this._sqfLiteService.getAllDataPointsAfterDate(filter);
+    setState(() {
+      this._data = points;
+    });
   }
 
   List<SpeedDialChild> _getSpeedDialButtons () {
@@ -87,10 +89,11 @@ class StatsState extends State<Stats> {
           label: element.labelKey.tr(),
           child: FloatingActionButton(
             onPressed: () {
+              _isDialOpen.value = false;
               setState(() {
-                _isDialOpen.value = false;
                 this._dataDurationFilter = element;
               });
+              this._updateDataFrom(element);
             },
             child: Icon(Icons.filter_list),
           )
