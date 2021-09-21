@@ -8,6 +8,7 @@ import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -112,7 +113,21 @@ class StatsState extends State<Stats> {
 
     return Scaffold(
         body: Container(
-          child: _getChart(),
+          child: this._data.isEmpty
+              ? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container (
+                        child: CupertinoActivityIndicator(),
+                        margin: EdgeInsets.only(bottom: 10)
+                    ),
+                    Text("connectionMessages.waiting").tr()
+                  ],
+                )
+              )
+              : _getChart(),
           margin: EdgeInsets.only(top: 15, bottom: 40, right: 10)
         ),
         floatingActionButton: SpeedDial(
