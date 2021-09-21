@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - develop
 env:
   FLUTTER_VERSION: '2.5.0'
 
@@ -54,11 +55,22 @@ jobs:
         run: flutter build appbundle
         working-directory: apolline-flutter
 
-      - name: Deploy bundle to Play store
+      - name: Deploy production bundle to Play store
+        if: contains(github.ref, "master")
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: com.science.apollineflutter
           releaseFiles: apolline-flutter/build/app/outputs/bundle/release/*.aab
           track: production
+          whatsNewDirectory: releaseNotes
+
+      - name: Deploy test bundle to Play store
+        if: contains(github.ref, "develop")
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: com.science.apollineflutter
+          releaseFiles: apolline-flutter/build/app/outputs/bundle/release/*.aab
+          track: development
           whatsNewDirectory: releaseNotes
