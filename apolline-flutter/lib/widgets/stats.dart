@@ -111,7 +111,10 @@ class StatsState extends State<Stats> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
-        body: _getChart(),
+        body: Container(
+          child: _getChart(),
+          margin: EdgeInsets.only(top: 15, bottom: 40, right: 10)
+        ),
         floatingActionButton: SpeedDial(
           icon: Icons.settings,
           overlayColor: theme.primaryColor,
@@ -128,11 +131,7 @@ class StatsState extends State<Stats> {
 
   Widget _getChart () {
     return SfCartesianChart(
-
         primaryXAxis: CategoryAxis(),
-        // Chart title
-        title: ChartTitle(text: 'Pollution exposition'),
-        // Enable legend
         legend: Legend(isVisible: true),
 
         series: <LineSeries<DataPointModel, String>>[
