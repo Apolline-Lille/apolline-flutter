@@ -63,6 +63,43 @@ class StatsState extends State<Stats> {
     super.initState();
   }
 
+  List<SpeedDialChild> _getSpeedDialButtons () {
+    List<SpeedDialChild> buttons = [
+      SpeedDialChild(
+          label: _dataService.isRunning ? "Pause data gathering" : "Resume data gathering",
+          child: FloatingActionButton(
+            onPressed: () {
+              _isDialOpen.value = false;
+              _dataService.isRunning ? _dataService.stop() : _dataService.start();
+            },
+            child: Icon(_dataService.isRunning ? Icons.pause : Icons.play_arrow),
+          )
+      )
+    ];
+
+    [
+      TimeFilter.LAST_MIN,
+      TimeFilter.LAST_5_MIN,
+      TimeFilter.LAST_15_MIN
+    ]
+    .forEach((element) {
+      buttons.add(SpeedDialChild(
+          label: element.toString(),
+          child: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                _isDialOpen.value = false;
+                this._dataDurationFilter = element;
+              });
+            },
+            child: Icon(Icons.filter_list),
+          )
+      ));
+    });
+
+    return buttons;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -75,54 +112,7 @@ class StatsState extends State<Stats> {
           spacing: 25,
           spaceBetweenChildren: 10,
           openCloseDial: _isDialOpen,
-          children: [
-            SpeedDialChild(
-                label: _dataService.isRunning ? "Pause data gathering" : "Resume data gathering",
-                child: FloatingActionButton(
-                  onPressed: () {
-                    _isDialOpen.value = false;
-                    _dataService.isRunning ? _dataService.stop() : _dataService.start();
-                  },
-                  child: Icon(_dataService.isRunning ? Icons.pause : Icons.play_arrow),
-                )
-            ),
-            SpeedDialChild(
-                label: "Display data from last minute",
-                child: FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      _isDialOpen.value = false;
-                      this._dataDurationFilter = TimeFilter.LAST_MIN;
-                    });
-                  },
-                  child: Icon(Icons.filter_list),
-                )
-            ),
-            SpeedDialChild(
-                label: "Display data from last 5 minutes",
-                child: FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      _isDialOpen.value = false;
-                      this._dataDurationFilter = TimeFilter.LAST_5_MIN;
-                    });
-                  },
-                  child: Icon(Icons.filter_list),
-                )
-            ),
-            SpeedDialChild(
-                label: "Display data from last 15 minutes",
-                child: FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      _isDialOpen.value = false;
-                      this._dataDurationFilter = TimeFilter.LAST_15_MIN;
-                    });
-                  },
-                  child: Icon(Icons.filter_list),
-                )
-            ),
-          ],
+          children: this._getSpeedDialButtons(),
         )
     );
   }
