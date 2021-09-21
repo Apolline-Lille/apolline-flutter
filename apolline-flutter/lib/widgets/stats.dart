@@ -4,7 +4,9 @@ import 'dart:core';
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/utils/time_filter.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -26,6 +28,8 @@ class StatsState extends State<Stats> {
   Stream<DataPointModel> _dataStream = locator<RealtimeDataService>().dataStream;
   StreamSubscription<DataPointModel> _streamSubscription;
   List<DataPointModel> _data;
+  Duration _dataDurationFilter;
+  SqfLiteService _sqfLiteService;
 
   @override
   void dispose() {
@@ -36,9 +40,19 @@ class StatsState extends State<Stats> {
   @override
   void initState() {
     this._data = [];
-    _streamSubscription = _dataStream.listen((newData) {
-      setState(() => _data.add(newData));
-    });
+    this._dataDurationFilter = Duration(minutes: 5);
+    this._sqfLiteService = SqfLiteService();
+
+    this._sqfLiteService.getAllDataPointsAfterDate(TimeFilter.LAST_5_MIN)
+        .then((points){
+          setState(() {
+            this._data = points;
+          });
+          _streamSubscription = _dataStream.listen((newData) {
+            setState(() => _data.add(newData));
+          });
+        });
+
     super.initState();
   }
 
