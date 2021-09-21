@@ -49,7 +49,11 @@ class StatsState extends State<Stats> {
             this._data = points;
           });
           _streamSubscription = _dataStream.listen((newData) {
-            setState(() => _data.add(newData));
+            int timeDelta = DateTime.now().millisecondsSinceEpoch - 60000*TimeFilter.LAST_5_MIN.toMinutes();
+            setState(() {
+              _data.add(newData);
+              _data = _data.where((element) => element.date > timeDelta).toList();
+            });
           });
         });
 
