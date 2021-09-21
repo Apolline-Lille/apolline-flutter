@@ -79,6 +79,8 @@ class StatsState extends State<Stats> {
       )
     ];
 
+    final ThemeData theme = Theme.of(context);
+
     [
       TimeFilter.LAST_MIN,
       TimeFilter.LAST_5_MIN,
@@ -88,6 +90,7 @@ class StatsState extends State<Stats> {
       buttons.add(SpeedDialChild(
           label: element.labelKey.tr(),
           child: FloatingActionButton(
+            backgroundColor: theme.toggleableActiveColor,
             onPressed: () {
               _isDialOpen.value = false;
               setState(() {
