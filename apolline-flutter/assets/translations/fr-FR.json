@@ -24,7 +24,8 @@
   },
   "temperature": "TEMPÉRATURE",
   "statsView": {
-    "noData": "Pas de données disponibles."
+    "pauseGathering": "Mettre en pause l'affichage des données",
+    "startGathering": "Reprendre l'affichage des données"
   },
   "mapView": {
     "timeFilters": {

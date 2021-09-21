@@ -69,7 +69,9 @@ class StatsState extends State<Stats> {
   List<SpeedDialChild> _getSpeedDialButtons () {
     List<SpeedDialChild> buttons = [
       SpeedDialChild(
-          label: _dataService.isRunning ? "Pause data gathering" : "Resume data gathering",
+          label: _dataService.isRunning
+              ? "statsView.pauseGathering".tr()
+              : "statsView.resumeGathering".tr(),
           child: FloatingActionButton(
             onPressed: () {
               _isDialOpen.value = false;
