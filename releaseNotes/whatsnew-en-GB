@@ -1,4 +1,2 @@
-* Completely rewriting all graphs;
-* Data live-displayed on the graph can be filtered (1/5/15 minutes old);
-* Displayed battery level is more accurate;
-* Removing deprecated dependencies and unused code.
+Automatically removing data points that are more than one week old.
+Non-synchronized points are not deleted.
