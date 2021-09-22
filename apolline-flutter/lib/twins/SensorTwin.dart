@@ -8,6 +8,7 @@ import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -218,14 +219,27 @@ class SensorTwin {
   DataPointModel _handleSensorUpdate (String message) {
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
-    List<String> values = message.split(';');
-
-    var model = DataPointModel(values: values, sensorName: this.name, position: _currentPosition);
+    DataPointModel model = this._getPointWithPosition(message.split(';'));
     _dataService.update(model);
     /* insert to sqflite */
     _sqfLiteService.addDataPoint(model.toJSON());
 
     return model;
+  }
+
+  /// Returns a data point with the current location.
+  /// Current location is either:
+  ///   * sensor location, if it currently has access to GPS signal;
+  ///   * phone location otherwise.
+  DataPointModel _getPointWithPosition (List<String> values) {
+    double sensorLongitude = double.parse(values[DataPointModel.SENSOR_LONGITUDE]);
+    double sensorLatitude = double.parse(values[DataPointModel.SENSOR_LATITUDE]);
+
+    Position currentPosition = sensorLongitude == 0 && sensorLatitude == 0
+        ? _currentPosition
+        : Position(provider: "sensor", geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
+
+    return DataPointModel(values: values, sensorName: this.name, position: currentPosition);
   }
 
   /// Sets up listeners and synchronises sensor clock.
