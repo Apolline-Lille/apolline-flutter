@@ -235,9 +235,17 @@ class SensorTwin {
     double sensorLongitude = double.parse(values[DataPointModel.SENSOR_LONGITUDE]);
     double sensorLatitude = double.parse(values[DataPointModel.SENSOR_LATITUDE]);
 
-    Position currentPosition = sensorLongitude == 0 && sensorLatitude == 0
-        ? _currentPosition
-        : Position(provider: "sensor", geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
+    Position currentPosition;
+
+    if (sensorLongitude == 0 && sensorLatitude == 0) {
+      currentPosition = _currentPosition;
+      _initLocationService();
+    } else {
+      currentPosition = Position(
+          provider: "sensor",
+          geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
+      this._locationService?.close();
+    }
 
     return DataPointModel(values: values, sensorName: this.name, position: currentPosition);
   }
