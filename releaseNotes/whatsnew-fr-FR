@@ -1,4 +1,2 @@
-* Tous les graphes ont été réécrits pour une meilleure lisibilité ;
-* Les données affichées sur le graphe peuvent être filtrées (datant de moins de 1/5/15 minutes) ;
-* Le niveau de batterie affiché est plus précis ;
-* Des dépendences obsolètes ainsi que du code inutile ont été supprimés.
+Les données datant de plus d'une semaine sont automatiquement supprimées pour sauvegarder de l'espace disque.
+Les données non-synchronisées avec le serveur sont laissées sur le téléphone.

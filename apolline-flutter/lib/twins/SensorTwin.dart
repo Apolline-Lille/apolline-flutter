@@ -179,6 +179,8 @@ class SensorTwin {
 
   /// Retrieves all data points from local database that have not been sent
   /// to InfluxDB yet, and sends them.
+  /// Points that have been sent to backend are marked as synchronized, and are
+  /// deleted from local database if they're more than one-week-old.
   void _synchronizationCallback () async {
     // find not-synchronized data
     List<DataPointModel> dataPoints = await _sqfLiteService.getNotSynchronizedModels();
@@ -205,8 +207,11 @@ class SensorTwin {
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();
-      _sqfLiteService.setModelsAsSynchronized(ids);
+      await _sqfLiteService.setModelsAsSynchronized(ids);
     }
+
+    // Avoiding using too much disk space
+    _sqfLiteService.removeOldModels();
   }
 
   /// Called when data is received from the sensor
