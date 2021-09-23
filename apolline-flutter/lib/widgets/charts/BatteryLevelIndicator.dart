@@ -7,7 +7,7 @@ class BatteryLevelIndicator extends StatefulWidget {
   final double currentBatteryLevel;
   final double minimumLevel = 0;
   final double maximumLevel = 100;
-  final double minimumSensorBatteryLevel = 3.50;
+  final double minimumSensorBatteryLevel = 2.90;
   final double maximumSensorBatteryLevel = 4.20;
 
   const BatteryLevelIndicator({Key key, @required this.currentBatteryLevel}) : super(key: key);
