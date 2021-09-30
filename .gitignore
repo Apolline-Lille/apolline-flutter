@@ -888,3 +888,5 @@ DerivedData/
 
 ### Configuration files
 apolline-flutter/assets/config*
+apolline-flutter/android/app/upload-keystore.jks
+apolline-flutter/android/key.properties
