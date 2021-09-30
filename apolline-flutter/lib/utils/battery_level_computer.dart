@@ -33,6 +33,13 @@ int getBatteryPercentageFromVoltageValue(double voltageValue) {
   for (int i=0; i<_steps.length-1; i++) {
     final inferiorStep = _steps[i];
     final superiorStep = _steps[i+1];
+
+    if (voltageValue >= inferiorStep.voltageValue
+        && voltageValue < superiorStep.voltageValue) {
+      double coefficient = (voltageValue - inferiorStep.voltageValue) / (superiorStep.voltageValue - inferiorStep.voltageValue);
+      int percentageDiff = superiorStep.percentage - inferiorStep.percentage;
+      return (inferiorStep.percentage + percentageDiff*coefficient).round();
+    }
   }
 
   return -1;
