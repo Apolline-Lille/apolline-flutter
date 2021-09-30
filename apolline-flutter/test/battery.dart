@@ -13,4 +13,10 @@ void main () {
     final int percentageResult = getBatteryPercentageFromVoltageValue(currentVoltage);
     expect(percentageResult, 0);
   });
+
+  test('should return battery level of 100% for high voltage', () {
+    const currentVoltage = 6.42;
+    final int percentageResult = getBatteryPercentageFromVoltageValue(currentVoltage);
+    expect(percentageResult, 100);
+  });
 }
