@@ -19,4 +19,10 @@ void main () {
     final int percentageResult = getBatteryPercentageFromVoltageValue(currentVoltage);
     expect(percentageResult, 100);
   });
+
+  test('should return battery level of 95%', () {
+    const currentVoltage = 4.15;  // between 4.1V (90%) and 4.2V (100%) steps
+    final int percentageResult = getBatteryPercentageFromVoltageValue(currentVoltage);
+    expect(percentageResult, 95);
+  });
 }
