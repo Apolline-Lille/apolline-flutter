@@ -7,4 +7,10 @@ void main () {
     final int percentageResult = getBatteryPercentageFromVoltageValue(currentVoltage);
     expect(percentageResult, 0);
   });
+
+  test('should return battery level of 0% for negative voltage', () {
+    const currentVoltage = -42.0;
+    final int percentageResult = getBatteryPercentageFromVoltageValue(currentVoltage);
+    expect(percentageResult, 0);
+  });
 }
