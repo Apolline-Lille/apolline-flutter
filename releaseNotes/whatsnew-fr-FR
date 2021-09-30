@@ -1,2 +1,3 @@
-Les données datant de plus d'une semaine sont automatiquement supprimées pour sauvegarder de l'espace disque.
-Les données non-synchronisées avec le serveur sont laissées sur le téléphone.
+Les icônes de notification apparaissent désormais correctement ;
+Le temps maximum de tentative de connexion à un périphérique Bluetooth a été porté à 8 secondes ;
+L'affichage de la charge actuelle de la batterie est plus précis.

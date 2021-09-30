@@ -36,7 +36,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       notificationTitle: "notifications.background.title".tr(),
       notificationText: "notifications.background.body".tr(),
       notificationImportance: AndroidNotificationImportance.Default,
-      notificationIcon: AndroidResource(name: 'logo_apolline', defType: 'drawable'),
+      notificationIcon: AndroidResource(name: 'ic_apolline_notification', defType: 'drawable'),
     );
     FlutterBackground.initialize(androidConfig: androidConfig);
   }
