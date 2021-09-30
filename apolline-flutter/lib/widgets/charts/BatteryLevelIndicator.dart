@@ -1,3 +1,4 @@
+import 'package:apollineflutter/utils/battery_level_computer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,6 @@ class BatteryLevelIndicator extends StatefulWidget {
   final double currentBatteryLevel;
   final double minimumLevel = 0;
   final double maximumLevel = 100;
-  final double minimumSensorBatteryLevel = 2.90;
-  final double maximumSensorBatteryLevel = 4.20;
 
   const BatteryLevelIndicator({Key key, @required this.currentBatteryLevel}) : super(key: key);
 
@@ -25,7 +24,8 @@ class _BatteryLevelIndicatorState extends State<BatteryLevelIndicator> {
   /// https://github.com/syncfusion/flutter-examples/blob/master/lib/samples/linear_gauge/showcase/battery_indicator.dart
   Widget _buildBatteryIndicator(BuildContext context) {
     final Brightness _brightness = Theme.of(context).brightness;
-    final double batteryLevelPercentage = (widget.currentBatteryLevel - widget.minimumSensorBatteryLevel) * 100 / (widget.maximumSensorBatteryLevel - widget.minimumSensorBatteryLevel);
+    final double batteryLevelPercentage =
+      getBatteryPercentageFromVoltageValue(widget.currentBatteryLevel).toDouble();
 
     final Color _fillColor = batteryLevelPercentage <= 25
         ? const Color(0xffF45656)
