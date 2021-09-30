@@ -1,3 +1,3 @@
 Notification icons correctly show up in production;
 Increased sensor connection timeout delay to 8 seconds;
-Updated sensor minimum battery level value.
+Battery current level (charge percentage) is more accurate.
