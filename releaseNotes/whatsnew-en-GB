@@ -1,2 +1,3 @@
-Automatically removing data points that are more than one week old.
-Non-synchronized points are not deleted.
+Notification icons correctly show up in production;
+Increased sensor connection timeout delay to 8 seconds;
+Battery current level (charge percentage) is more accurate.
