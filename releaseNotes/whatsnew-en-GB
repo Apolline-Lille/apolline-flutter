@@ -1,3 +1,1 @@
-Notification icons correctly show up in production;
-Increased sensor connection timeout delay to 8 seconds;
-Battery current level (charge percentage) is more accurate.
+Battery level indicator does not crash anymore when displaying battery levels below 5%.
