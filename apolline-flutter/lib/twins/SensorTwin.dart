@@ -234,18 +234,22 @@ class SensorTwin {
   DataPointModel _getPointWithPosition (List<String> values) {
     double sensorLongitude = double.parse(values[DataPointModel.SENSOR_LONGITUDE]);
     double sensorLatitude = double.parse(values[DataPointModel.SENSOR_LATITUDE]);
+    double satellitesCount = double.parse(values[DataPointModel.SENSOR_GPS_SATELLITES_COUNT]);
 
     Position currentPosition;
+    bool shouldUseSatellitePositioning = satellitesCount >= 3 && sensorLongitude != 0 && sensorLatitude != 0;
 
-    if (sensorLongitude == 0 && sensorLatitude == 0) {
-      currentPosition = _currentPosition;
-      _initLocationService();
-    } else {
+    if (shouldUseSatellitePositioning) {
       currentPosition = Position(
           provider: "sensor",
           geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
-      this._locationService?.close();
+      // TODO stop phone GPS
+    } else {
+      currentPosition = _currentPosition;
+      // TODO start phone GPS
     }
+
+    print('Using position from ${shouldUseSatellitePositioning ? 'satellites' : 'phone'}.');
 
     return DataPointModel(values: values, sensorName: this.name, position: currentPosition);
   }
