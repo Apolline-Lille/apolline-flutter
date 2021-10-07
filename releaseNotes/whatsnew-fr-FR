@@ -1,2 +1,2 @@
-L'affichage de la charge actuelle de la batterie ne plante plus lorsque celle-ci est chargée à moins
-de 5%.
+Lorsque le signal GPS du capteur est suffisamment précis, l'application utilise sa position et
+désactive le GPS du téléphone afin d'économiser sa batterie.

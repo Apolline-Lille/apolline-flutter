@@ -1,1 +1,2 @@
-Battery level indicator does not crash anymore when displaying battery levels below 5%.
+When sensor GPS is accurate enough, the application uses its location and deactivate phone GPS to
+save battery power.

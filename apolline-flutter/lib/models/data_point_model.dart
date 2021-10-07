@@ -29,6 +29,11 @@ class DataPointModel {
   static const int SENSOR_PM_ABOVE_2_5 = 7;
   static const int SENSOR_PM_ABOVE_5 = 8;
   static const int SENSOR_PM_ABOVE_10 = 9;
+  static const int SENSOR_LATITUDE = 10;
+  static const int SENSOR_LONGITUDE = 11;
+  static const int SENSOR_GPS_SATELLITES_COUNT = 14;
+
+
   String sensorName;
   int _date;
   int id;
