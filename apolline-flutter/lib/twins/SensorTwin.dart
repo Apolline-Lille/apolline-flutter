@@ -238,6 +238,11 @@ class SensorTwin {
   /// Current location is either:
   ///   * sensor location, if it currently has access to GPS signal;
   ///   * phone location otherwise.
+  ///
+  /// If 3 satellites or more are accessible by the sensor, this will switch
+  /// to using sensor locations, and will turn off phone location service to
+  /// save battery usage.
+  /// Else, phone location service is started.
   DataPointModel _getPointWithPosition (List<String> values) {
     double sensorLongitude = double.parse(values[DataPointModel.SENSOR_LONGITUDE]);
     double sensorLatitude = double.parse(values[DataPointModel.SENSOR_LATITUDE]);
