@@ -27,9 +27,14 @@ class _BatteryLevelIndicatorState extends State<BatteryLevelIndicator> {
     final double batteryLevelPercentage =
       getBatteryPercentageFromVoltageValue(widget.currentBatteryLevel).toDouble();
 
-    final Color _fillColor = batteryLevelPercentage <= 25
+    // widget build fails if percentage is lower than 5%
+    final double levelPercentage = batteryLevelPercentage > 4
+        ? batteryLevelPercentage
+        : 5;
+
+    final Color _fillColor = levelPercentage <= 25
         ? const Color(0xffF45656)
-        : batteryLevelPercentage <= 50
+        : levelPercentage <= 50
         ? const Color(0xffFFC93E)
         : Colors.green[400];
     return Container(
@@ -68,8 +73,8 @@ class _BatteryLevelIndicatorState extends State<BatteryLevelIndicator> {
                 startValue: widget.minimumLevel + 5,
                 startWidth: 55,
                 endWidth: 55,
-                endValue: batteryLevelPercentage < widget.maximumLevel / 4
-                    ? batteryLevelPercentage
+                endValue: levelPercentage < widget.maximumLevel / 4
+                    ? levelPercentage
                     : widget.maximumLevel / 4,
                 position: LinearElementPosition.cross,
                 color: Colors.transparent,
@@ -79,13 +84,13 @@ class _BatteryLevelIndicatorState extends State<BatteryLevelIndicator> {
                         color: _fillColor,
                         borderRadius: BorderRadius.circular(4)))),
             LinearGaugeRange(
-                startValue: batteryLevelPercentage >= (widget.maximumLevel / 4 + 2)
+                startValue: levelPercentage >= (widget.maximumLevel / 4 + 2)
                     ? (widget.maximumLevel / 4 + 2)
                     : widget.minimumLevel + 5,
-                endValue: batteryLevelPercentage < (widget.maximumLevel / 4 + 2)
+                endValue: levelPercentage < (widget.maximumLevel / 4 + 2)
                     ? widget.minimumLevel + 5
-                    : batteryLevelPercentage <= widget.maximumLevel / 2
-                    ? batteryLevelPercentage
+                    : levelPercentage <= widget.maximumLevel / 2
+                    ? levelPercentage
                     : widget.maximumLevel / 2,
                 startWidth: 55,
                 endWidth: 55,
@@ -99,13 +104,13 @@ class _BatteryLevelIndicatorState extends State<BatteryLevelIndicator> {
                         color: _fillColor,
                         borderRadius: BorderRadius.circular(4)))),
             LinearGaugeRange(
-                startValue: batteryLevelPercentage >= (widget.maximumLevel / 2 + 2)
+                startValue: levelPercentage >= (widget.maximumLevel / 2 + 2)
                     ? (widget.maximumLevel / 2 + 2)
                     : widget.minimumLevel + 5,
-                endValue: batteryLevelPercentage < (widget.maximumLevel / 2 + 2)
+                endValue: levelPercentage < (widget.maximumLevel / 2 + 2)
                     ? widget.minimumLevel + 5
-                    : batteryLevelPercentage <= (widget.maximumLevel * 3 / 4)
-                    ? batteryLevelPercentage
+                    : levelPercentage <= (widget.maximumLevel * 3 / 4)
+                    ? levelPercentage
                     : (widget.maximumLevel * 3 / 4),
                 startWidth: 55,
                 endWidth: 55,
@@ -117,13 +122,13 @@ class _BatteryLevelIndicatorState extends State<BatteryLevelIndicator> {
                         color: _fillColor,
                         borderRadius: BorderRadius.circular(4)))),
             LinearGaugeRange(
-                startValue: batteryLevelPercentage >= (widget.maximumLevel * 3 / 4 + 2)
+                startValue: levelPercentage >= (widget.maximumLevel * 3 / 4 + 2)
                     ? (widget.maximumLevel * 3 / 4 + 2)
                     : widget.minimumLevel + 5,
-                endValue: batteryLevelPercentage < (widget.maximumLevel * 3 / 4 + 2)
+                endValue: levelPercentage < (widget.maximumLevel * 3 / 4 + 2)
                     ? widget.minimumLevel + 5
-                    : batteryLevelPercentage < widget.maximumLevel
-                    ? batteryLevelPercentage
+                    : levelPercentage < widget.maximumLevel
+                    ? levelPercentage
                     : widget.maximumLevel - 7,
                 startWidth: 55,
                 endWidth: 55,

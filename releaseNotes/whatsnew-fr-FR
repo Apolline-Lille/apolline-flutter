@@ -1,3 +1,2 @@
-Les icônes de notification apparaissent désormais correctement ;
-Le temps maximum de tentative de connexion à un périphérique Bluetooth a été porté à 8 secondes ;
-L'affichage de la charge actuelle de la batterie est plus précis.
+L'affichage de la charge actuelle de la batterie ne plante plus lorsque celle-ci est chargée à moins
+de 5%.
