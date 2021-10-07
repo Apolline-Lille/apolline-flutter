@@ -176,7 +176,7 @@ class SensorTwin {
     });
   }
   void _stopLocationService() {
-    this._locationSubscription.cancel();
+    this._locationSubscription?.cancel();
     this._locationSubscription = null;
     this._locationService.close();
   }
