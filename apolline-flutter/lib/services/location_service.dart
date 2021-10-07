@@ -11,7 +11,7 @@ class SimpleLocationService {
   ///current position.
   Position _currentPosition;
   ///stream.
-  StreamController<Position> _locationStream = StreamController<Position>();
+  StreamController<Position> _locationStream = StreamController<Position>.broadcast();
   StreamSubscription<geo.Position> _locationSubscription;
 
   ///
@@ -42,6 +42,7 @@ class SimpleLocationService {
   }
 
   void start () async {
+    this._locationStream = StreamController<Position>.broadcast();
     this._locationSubscription = geo.Geolocator.getPositionStream().listen((p) {
       if(p != null) {
         this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude)));

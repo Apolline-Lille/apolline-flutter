@@ -43,7 +43,9 @@ class SensorTwin {
   Timer _syncTimer;
 
   SimpleLocationService _locationService;
+  StreamSubscription _locationSubscription;
   Position _currentPosition;
+  bool _isUsingSatellitePositioning;
 
 
   SensorTwin({@required BluetoothDevice device, @required Duration syncTiming}) {
@@ -54,6 +56,7 @@ class SensorTwin {
     this._service = InfluxDBAPI();
     this._sqfLiteService = SqfLiteService();
     this._synchronizationTiming = syncTiming;
+    this._isUsingSatellitePositioning = false;
   }
 
 
@@ -167,11 +170,15 @@ class SensorTwin {
     return true;
   }
 
-  void _initLocationService () {
-    this._locationService = SimpleLocationService();
-    this._locationService.locationStream.listen((p) {
+  void _startLocationService () {
+    this._locationSubscription = this._locationService.locationStream.listen((p) {
       this._currentPosition = p;
     });
+  }
+  void _stopLocationService() {
+    this._locationSubscription.cancel();
+    this._locationSubscription = null;
+    this._locationService.close();
   }
 
   void _initSynchronizationTimer () {
@@ -243,10 +250,17 @@ class SensorTwin {
       currentPosition = Position(
           provider: "sensor",
           geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
-      // TODO stop phone GPS
+      if (!this._isUsingSatellitePositioning) {
+        this._isUsingSatellitePositioning = true;
+        _stopLocationService();
+      }
     } else {
       currentPosition = _currentPosition;
-      // TODO start phone GPS
+      if (this._isUsingSatellitePositioning) {
+        this._isUsingSatellitePositioning = false;
+        _startLocationService();
+        this._locationService.start();
+      }
     }
 
     print('Using position from ${shouldUseSatellitePositioning ? 'satellites' : 'phone'}.');
@@ -263,7 +277,10 @@ class SensorTwin {
 
     await _setUpListeners();
     await synchronizeClock();
-    _initLocationService();
+
+    this._locationService = SimpleLocationService();
+    _startLocationService();
+
     _initSynchronizationTimer();
     return true;
   }
@@ -274,7 +291,7 @@ class SensorTwin {
     this._syncTimer?.cancel();
     this._service.client?.close();
     this._dataService?.stop();
-    this._locationService?.close();
+    _stopLocationService();
     try {
       this._device.disconnect();
     } catch (err) {
