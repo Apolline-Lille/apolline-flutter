@@ -11,7 +11,8 @@ class SimpleLocationService {
   ///current position.
   Position _currentPosition;
   ///stream.
-  StreamController<Position> _locationStream = StreamController<Position>.broadcast();
+  StreamController<Position> _locationStream = StreamController<Position>();
+  StreamSubscription<geo.Position> _locationSubscription;
 
   ///
   ///constructor.
@@ -20,11 +21,7 @@ class SimpleLocationService {
       if(permission == geo.LocationPermission.denied || permission == geo.LocationPermission.deniedForever) {
         this._locationStream.add(Position());
       }
-      geo.Geolocator.getPositionStream().listen((p) {
-        if(p != null) {
-          this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude)));
-        }
-      });
+      this.start();
     });
   }
 
@@ -44,9 +41,17 @@ class SimpleLocationService {
     return this._currentPosition;
   }
 
+  void start () async {
+    this._locationSubscription = geo.Geolocator.getPositionStream().listen((p) {
+      if(p != null) {
+        this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude)));
+      }
+    });
+  }
+
   /// Removes all stream listeners and close it.
   void close () async {
-    await this._locationStream.stream.drain();
+    this._locationSubscription?.cancel();
     this._locationStream.close();
   }
 }
