@@ -9,13 +9,10 @@ class DurationPicker extends StatefulWidget {
 
 class _DurationPickerState extends State<DurationPicker> {
   double _borderWidth = 5;
-  double _firstMarkerValue = 0;
   double _secondMarkerValue = 8;
   double _markerSize = 25;
   double _annotationFontSize = 25;
   double _thickness = 0.06;
-  String _annotationValue = '06';
-  String _minutesValue = '40';
   double _overlayRadius = 30;
   bool _enableDragging = true;
   int _minutesCount = 15;
@@ -23,7 +20,7 @@ class _DurationPickerState extends State<DurationPicker> {
   /// Cancelled the dragging when pointer value reaching the axis end/start value, greater/less than another
   /// pointer value
   void _handleSecondPointerValueChanging(ValueChangingArgs args) {
-    if (args.value <= _firstMarkerValue ||
+    if (args.value <= 0 ||
         (args.value - _secondMarkerValue).abs() > 1) {
       args.cancel = true;
     }
@@ -34,24 +31,7 @@ class _DurationPickerState extends State<DurationPicker> {
     setState(() {
       _minutesCount = (5*value).round();
       _secondMarkerValue = value;
-      final int _value = (_firstMarkerValue - _secondMarkerValue).abs().toInt();
-      final String _hourValue = '$_value';
-      _annotationValue = _hourValue.length == 1 ? '0' + _hourValue : _hourValue;
-      _calculateMinutes(_value);
     });
-  }
-
-  /// Calculate the minutes value from pointer value to update in annotation.
-  void _calculateMinutes(int _value) {
-    final double _minutes =
-        (_firstMarkerValue - _secondMarkerValue).abs() - _value;
-    final List<String> _minList = _minutes.toStringAsFixed(2).split('.');
-    double _currentMinutes = double.parse(_minList[1]);
-    _currentMinutes =
-    _currentMinutes > 60 ? _currentMinutes - 60 : _currentMinutes;
-    final String _actualValue = _currentMinutes.toInt().toString();
-    _minutesValue =
-    _actualValue.length == 1 ? '0' + _actualValue : _actualValue;
   }
 
   @override
@@ -83,7 +63,7 @@ class _DurationPickerState extends State<DurationPicker> {
           endAngle: 270,
           pointers: <GaugePointer>[
             MarkerPointer(
-                value: _firstMarkerValue,
+                value: 0,
                 enableDragging: false,
                 color: Colors.transparent),
             MarkerPointer(
@@ -104,7 +84,7 @@ class _DurationPickerState extends State<DurationPicker> {
             GaugeRange(
                 endValue: _secondMarkerValue,
                 sizeUnit: GaugeSizeUnit.factor,
-                startValue: _firstMarkerValue,
+                startValue: 0,
                 startWidth: _thickness,
                 endWidth: _thickness)
           ],
