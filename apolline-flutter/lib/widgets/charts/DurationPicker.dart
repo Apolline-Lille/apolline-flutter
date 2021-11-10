@@ -18,6 +18,7 @@ class _DurationPickerState extends State<DurationPicker> {
   String _minutesValue = '40';
   double _overlayRadius = 30;
   bool _enableDragging = true;
+  int _minutesCount = 15;
 
   /// Cancelled the dragging when pointer value reaching the axis end/start value, greater/less than another
   /// pointer value
@@ -31,6 +32,7 @@ class _DurationPickerState extends State<DurationPicker> {
   /// Dragged pointer new value is updated to range.
   void _handleSecondPointerValueChanged(double value) {
     setState(() {
+      _minutesCount = (5*value).round();
       _secondMarkerValue = value;
       final int _value = (_firstMarkerValue - _secondMarkerValue).abs().toInt();
       final String _hourValue = '$_value';
@@ -111,7 +113,7 @@ class _DurationPickerState extends State<DurationPicker> {
                 widget: Container(
                     child: Center(
                         child: Text(
-                          '${_annotationValue}hr ${_minutesValue}m',
+                          '$_minutesCount mins',
                           style: TextStyle(
                               fontSize: _annotationFontSize,
                               fontFamily: 'Times',
