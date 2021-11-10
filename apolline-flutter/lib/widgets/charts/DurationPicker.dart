@@ -9,7 +9,7 @@ class DurationPicker extends StatefulWidget {
 
 class _DurationPickerState extends State<DurationPicker> {
   double _borderWidth = 5;
-  double _firstMarkerValue = 2;
+  double _firstMarkerValue = 0;
   double _secondMarkerValue = 8;
   double _markerSize = 25;
   double _annotationFontSize = 25;
@@ -18,26 +18,6 @@ class _DurationPickerState extends State<DurationPicker> {
   String _minutesValue = '40';
   double _overlayRadius = 30;
   bool _enableDragging = true;
-
-  /// Dragged pointer new value is updated to range.
-  void _handleFirstPointerValueChanged(double value) {
-    setState(() {
-      _firstMarkerValue = value;
-      final int _value = (_firstMarkerValue - _secondMarkerValue).abs().toInt();
-      final String _hourValue = '$_value';
-      _annotationValue = _hourValue.length == 1 ? '0' + _hourValue : _hourValue;
-      _calculateMinutes(_value);
-    });
-  }
-
-  /// Cancelled the dragging when pointer value reaching the axis end/start value, greater/less than another
-  /// pointer value
-  void _handleFirstPointerValueChanging(ValueChangingArgs args) {
-    if (args.value >= _secondMarkerValue ||
-        (args.value - _firstMarkerValue).abs() > 1) {
-      args.cancel = true;
-    }
-  }
 
   /// Cancelled the dragging when pointer value reaching the axis end/start value, greater/less than another
   /// pointer value
@@ -102,17 +82,8 @@ class _DurationPickerState extends State<DurationPicker> {
           pointers: <GaugePointer>[
             MarkerPointer(
                 value: _firstMarkerValue,
-                onValueChanged: _handleFirstPointerValueChanged,
-                onValueChanging: _handleFirstPointerValueChanging,
-                enableDragging: _enableDragging,
-                borderColor: const Color(0xFFFFCD60),
-                borderWidth: _borderWidth,
-                color: Colors.black.withOpacity(0.8),
-                markerHeight: _markerSize,
-                markerWidth: _markerSize,
-                markerType: MarkerType.circle,
-                overlayColor: const Color.fromRGBO(255, 205, 96, 0.3),
-                overlayRadius: _overlayRadius),
+                enableDragging: false,
+                color: Colors.transparent),
             MarkerPointer(
                 value: _secondMarkerValue,
                 onValueChanged: _handleSecondPointerValueChanged,
