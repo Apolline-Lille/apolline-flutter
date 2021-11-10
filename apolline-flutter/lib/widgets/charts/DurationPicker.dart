@@ -11,7 +11,7 @@ class _DurationPickerState extends State<DurationPicker> {
   double _borderWidth = 5;
   double _secondMarkerValue = 8;
   double _markerSize = 25;
-  double _annotationFontSize = 25;
+  double _annotationFontSize = 40;
   double _thickness = 0.06;
   double _overlayRadius = 30;
   bool _enableDragging = true;
@@ -38,12 +38,10 @@ class _DurationPickerState extends State<DurationPicker> {
   Widget build(BuildContext context) {
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
       _markerSize = 25;
-      _annotationFontSize = 25;
       _thickness = 0.06;
       _borderWidth = 5;
     } else {
       _markerSize = 23;
-      _annotationFontSize = 15;
       _thickness = 0.1;
       _borderWidth = 4;
     }
@@ -93,12 +91,22 @@ class _DurationPickerState extends State<DurationPicker> {
             GaugeAnnotation(
                 widget: Container(
                     child: Center(
-                        child: Text(
-                          '$_minutesCount mins',
-                          style: TextStyle(
-                              fontSize: _annotationFontSize,)
-                              // fontFamily: 'Times',
-                              //fontWeight: FontWeight.bold),
+                        child: Column(
+                            children: [
+                              Text(
+                                  _minutesCount.toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: _annotationFontSize,)
+                              ),
+                              Text(
+                                  'min.',
+                                  style: TextStyle(
+                                    fontSize: _annotationFontSize-25,)
+                              )
+                            ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                         ))),
                 positionFactor: 0.05,
                 angle: 0)
