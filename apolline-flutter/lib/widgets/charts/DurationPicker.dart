@@ -16,7 +16,7 @@ class DurationPicker extends StatefulWidget {
 
 class _DurationPickerState extends State<DurationPicker> {
   double _borderWidth = 5;
-  double _markerValue = 8;
+  double _markerValue = 0;
   double _markerSize = 25;
   double _annotationFontSize = 40;
   double _thickness = 0.06;
@@ -26,6 +26,7 @@ class _DurationPickerState extends State<DurationPicker> {
   void initState() {
     super.initState();
     this._minutesCount = widget.duration.inMinutes;
+    this._markerValue = widget.duration.inMinutes / 5;
   }
 
   /// Cancelled the dragging when pointer value reaching the axis end/start value, greater/less than another
