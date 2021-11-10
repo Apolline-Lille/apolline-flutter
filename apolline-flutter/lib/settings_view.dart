@@ -21,7 +21,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
   bool _showDangerNotifications = true;
   Duration _notificationIntervalDuration = Duration(minutes: 5);
   List<List<String>> pickerData = [
-    new List<String>.generate(23, (i) => (i + 1).toString() + 'h'),
+    new List<String>.generate(24, (i) => (i).toString() + 'h'),
     new List<String>.generate(60, (i) => (i).toString() + 'min')
   ];
 
@@ -109,7 +109,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
         confirmText: 'OK',
         cancelText: 'devicesView.analysisButton.cancel'.tr(),
         selecteds: [
-          _notificationIntervalDuration.inHours-1,
+          _notificationIntervalDuration.inHours,
           _notificationIntervalDuration.inMinutes % 60
         ],
         onConfirm: (Picker picker, List value) {
