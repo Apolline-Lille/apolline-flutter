@@ -44,6 +44,10 @@ class _DurationPickerState extends State<DurationPicker> {
       _minutesCount = (5*value).round();
       _markerValue = value;
     });
+  }
+
+  // Dragged pointer dragging finished.
+  void _handlePointerNewValue(double range) {
     widget.onChange(Duration(minutes: _minutesCount));
   }
 
@@ -81,6 +85,7 @@ class _DurationPickerState extends State<DurationPicker> {
                 value: _markerValue,
                 onValueChanged: _handleSecondPointerValueChanged,
                 onValueChanging: _handleSecondPointerValueChanging,
+                onValueChangeEnd: _handlePointerNewValue,
                 color: Color(0xff42a5f5),
                 enableDragging: true,
                 borderColor: const Color(0xff42a5f5),
