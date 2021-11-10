@@ -1,10 +1,9 @@
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
-import 'package:apollineflutter/widgets/charts/DurationPicker.dart' as localPicker;
+import 'package:apollineflutter/widgets/charts/DurationPicker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:duration_picker/duration_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class SettingsPanel extends StatefulWidget {
@@ -100,14 +99,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       margin: EdgeInsets.only(bottom: 30),
                       child: Text("settings.setTimeIntervalBody").tr()
                     ),
-                    localPicker.DurationPicker(
-                      duration: _notificationIntervalDuration,
-                      onChange: (val) {
-                        setState(() => _notificationIntervalDuration = val);
-                        widget.ucS.userConf.exposureNotificationsTimeInterval = val;
-                        widget.ucS.update();
-                      }
-                    ),
                     DurationPicker(
                       duration: _notificationIntervalDuration,
                       onChange: (val) {
@@ -115,7 +106,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                         widget.ucS.userConf.exposureNotificationsTimeInterval = val;
                         widget.ucS.update();
                       }
-                    ),
+                    )
                   ],
                 ),
               ),
