@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class DurationPicker extends StatefulWidget {
+  final Duration duration;
+  final Function(Duration) onChange;
+  const DurationPicker({
+    Key key,
+    @required this.duration,
+    @required this.onChange}) : super(key: key);
+
   @override
   _DurationPickerState createState() => _DurationPickerState();
 }
@@ -13,7 +20,13 @@ class _DurationPickerState extends State<DurationPicker> {
   double _markerSize = 25;
   double _annotationFontSize = 40;
   double _thickness = 0.06;
-  int _minutesCount = 15;
+  int _minutesCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    this._minutesCount = widget.duration.inMinutes;
+  }
 
   /// Cancelled the dragging when pointer value reaching the axis end/start value, greater/less than another
   /// pointer value
@@ -30,6 +43,7 @@ class _DurationPickerState extends State<DurationPicker> {
       _minutesCount = (5*value).round();
       _markerValue = value;
     });
+    widget.onChange(Duration(minutes: _minutesCount));
   }
 
   @override

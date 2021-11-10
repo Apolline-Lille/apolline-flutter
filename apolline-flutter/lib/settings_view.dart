@@ -100,7 +100,14 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       margin: EdgeInsets.only(bottom: 30),
                       child: Text("settings.setTimeIntervalBody").tr()
                     ),
-                    localPicker.DurationPicker(),
+                    localPicker.DurationPicker(
+                      duration: _notificationIntervalDuration,
+                      onChange: (val) {
+                        setState(() => _notificationIntervalDuration = val);
+                        widget.ucS.userConf.exposureNotificationsTimeInterval = val;
+                        widget.ucS.update();
+                      }
+                    ),
                     DurationPicker(
                       duration: _notificationIntervalDuration,
                       onChange: (val) {
