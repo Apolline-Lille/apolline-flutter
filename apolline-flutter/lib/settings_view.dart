@@ -1,6 +1,7 @@
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/widgets/charts/DurationPicker.dart' as localPicker;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:duration_picker/duration_picker.dart';
@@ -99,6 +100,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       margin: EdgeInsets.only(bottom: 30),
                       child: Text("settings.setTimeIntervalBody").tr()
                     ),
+                    localPicker.DurationPicker(),
                     DurationPicker(
                       duration: _notificationIntervalDuration,
                       onChange: (val) {
