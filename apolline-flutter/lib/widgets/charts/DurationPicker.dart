@@ -70,19 +70,20 @@ class _DurationPickerState extends State<DurationPicker> {
                 value: _secondMarkerValue,
                 onValueChanged: _handleSecondPointerValueChanged,
                 onValueChanging: _handleSecondPointerValueChanging,
-                color: Colors.black.withOpacity(0.8),
+                color: Color(0xff42a5f5),
                 enableDragging: _enableDragging,
-                borderColor: const Color(0xFFFFCD60),
+                borderColor: const Color(0xff42a5f5),
                 markerHeight: _markerSize,
                 borderWidth: _borderWidth,
                 markerWidth: _markerSize,
                 markerType: MarkerType.circle,
-                overlayColor: const Color.fromRGBO(255, 205, 96, 0.3),
+                overlayColor: const Color(0x8880d6ff),
                 overlayRadius: _overlayRadius),
           ],
           ranges: <GaugeRange>[
             GaugeRange(
                 endValue: _secondMarkerValue,
+                color: Color(0xff80d6ff),
                 sizeUnit: GaugeSizeUnit.factor,
                 startValue: 0,
                 startWidth: _thickness,
@@ -95,10 +96,9 @@ class _DurationPickerState extends State<DurationPicker> {
                         child: Text(
                           '$_minutesCount mins',
                           style: TextStyle(
-                              fontSize: _annotationFontSize,
-                              fontFamily: 'Times',
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF00A8B5)),
+                              fontSize: _annotationFontSize,)
+                              // fontFamily: 'Times',
+                              //fontWeight: FontWeight.bold),
                         ))),
                 positionFactor: 0.05,
                 angle: 0)
