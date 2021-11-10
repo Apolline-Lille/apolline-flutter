@@ -9,19 +9,17 @@ class DurationPicker extends StatefulWidget {
 
 class _DurationPickerState extends State<DurationPicker> {
   double _borderWidth = 5;
-  double _secondMarkerValue = 8;
+  double _markerValue = 8;
   double _markerSize = 25;
   double _annotationFontSize = 40;
   double _thickness = 0.06;
-  double _overlayRadius = 30;
-  bool _enableDragging = true;
   int _minutesCount = 15;
 
   /// Cancelled the dragging when pointer value reaching the axis end/start value, greater/less than another
   /// pointer value
   void _handleSecondPointerValueChanging(ValueChangingArgs args) {
     if (args.value <= 0 ||
-        (args.value - _secondMarkerValue).abs() > 1) {
+        (args.value - _markerValue).abs() > 1) {
       args.cancel = true;
     }
   }
@@ -30,7 +28,7 @@ class _DurationPickerState extends State<DurationPicker> {
   void _handleSecondPointerValueChanged(double value) {
     setState(() {
       _minutesCount = (5*value).round();
-      _secondMarkerValue = value;
+      _markerValue = value;
     });
   }
 
@@ -65,22 +63,22 @@ class _DurationPickerState extends State<DurationPicker> {
                 enableDragging: false,
                 color: Colors.transparent),
             MarkerPointer(
-                value: _secondMarkerValue,
+                value: _markerValue,
                 onValueChanged: _handleSecondPointerValueChanged,
                 onValueChanging: _handleSecondPointerValueChanging,
                 color: Color(0xff42a5f5),
-                enableDragging: _enableDragging,
+                enableDragging: true,
                 borderColor: const Color(0xff42a5f5),
                 markerHeight: _markerSize,
                 borderWidth: _borderWidth,
                 markerWidth: _markerSize,
                 markerType: MarkerType.circle,
                 overlayColor: const Color(0x8880d6ff),
-                overlayRadius: _overlayRadius),
+                overlayRadius: 30),
           ],
           ranges: <GaugeRange>[
             GaugeRange(
-                endValue: _secondMarkerValue,
+                endValue: _markerValue,
                 color: Color(0xff80d6ff),
                 sizeUnit: GaugeSizeUnit.factor,
                 startValue: 0,
