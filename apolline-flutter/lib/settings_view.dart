@@ -90,6 +90,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
           ListTile(
             enabled: _showWarningNotifications || _showDangerNotifications,
             title: Text("settings.timeInterval").tr(),
+            subtitle: Text('(' + "settings.sameType".tr() + ')'),
             trailing: Container(
               margin: EdgeInsets.only(right: 6),
                 child: Text(_printDuration(_notificationIntervalDuration))

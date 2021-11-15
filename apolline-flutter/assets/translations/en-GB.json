@@ -86,6 +86,7 @@
     "receiveWarning": "Receive warning notifications",
     "receiveDanger": "Receive danger notifications",
     "timeInterval": "Notifications time interval",
+    "sameType": "of same type",
     "setTimeInterval": "Set time interval",
     "setTimeIntervalBody": "Set which duration must pass before a new notification is sent.",
     "warning": {
