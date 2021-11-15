@@ -142,10 +142,12 @@ packages:
   flutter_blue:
     dependency: "direct main"
     description:
-      name: flutter_blue
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.8.0"
+      path: "."
+      ref: "0.11.0"
+      resolved-ref: f6bf99be778bdbeac9a41fbb0eb36597325109ac
+      url: "https://github.com/boskokg/flutter_blue/"
+    source: git
+    version: "0.11.0"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -461,7 +463,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.26.0"
+    version: "0.27.2"
   shared_preferences:
     dependency: "direct main"
     description:
