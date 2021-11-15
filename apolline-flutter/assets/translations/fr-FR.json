@@ -64,6 +64,10 @@
       "name": "Notifications d'exposition (alerte)",
       "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils d'alerte définis dans l'application."
     },
+    "dangerChannel": {
+      "name": "Notifications d'exposition (danger)",
+      "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils de danger définis dans l'application."
+    },
     "warning": {
       "title": "Taux de {} préoccupant",
       "body": "La mesure de {} µm/m³ dépasse le seuil d'alerte."

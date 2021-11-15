@@ -64,6 +64,10 @@
       "name": "Exposure notifications (warning)",
       "description": "Get alerts when current PM values are above warning thresholds."
     },
+    "dangerChannel": {
+      "name": "Exposure notifications (danger)",
+      "description": "Get alerts when current PM values are above danger thresholds."
+    },
     "warning": {
       "title": "Warning for {}",
       "body": "{} µm/m³ value exceeds warning threshold."
