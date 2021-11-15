@@ -25,15 +25,25 @@ class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
   final BluetoothDevice device;
   final UserConfigurationService ucS = locator<UserConfigurationService>();
-  final AndroidNotificationDetails androidPlatformChannelSpecifics =
+  final AndroidNotificationDetails androidPlatformWarningChannelSpecifics =
     AndroidNotificationDetails(
-        'apolline_exposure_notifications',
+        'apolline_exposure_warning_notifications',
         'notifications.warningChannel.name'.tr(),
         'notifications.warningChannel.description'.tr(),
         importance: Importance.max,
         priority: Priority.high,
         showWhen: true
     );
+  final AndroidNotificationDetails androidPlatformDangerChannelSpecifics =
+    AndroidNotificationDetails(
+        'apolline_exposure_danger_notifications',
+        'notifications.dangerChannel.name'.tr(),
+        'notifications.dangerChannel.description'.tr(),
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: true
+    );
+
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
@@ -46,7 +56,7 @@ class _SensorViewState extends State<SensorView> {
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
   SensorTwin _sensor;
-  Map<PMFilter, int> _notificationTimestamps = Map();
+  Map<bool, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 
@@ -145,14 +155,14 @@ class _SensorViewState extends State<SensorView> {
         _checkNotification(
           "notifications.warning.title".tr(args: [value.getLabelKey().tr()]),
           'notifications.warning.body'.tr(args: [collectedValue.toString()]),
-          value
+          false
         );
       } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
         // print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
         _checkNotification(
           "notifications.danger.title".tr(args: [value.getLabelKey().tr()]),
           'notifications.danger.body'.tr(args: [collectedValue.toString()]),
-          value
+          true
         );
       }
     });
@@ -192,23 +202,26 @@ class _SensorViewState extends State<SensorView> {
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
   }
 
-  Future<void> _checkNotification (String title, String message, PMFilter filter) async {
-    if (!_notificationTimestamps.containsKey(filter)) {
-      _showNotification( title, message );
-      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+  Future<void> _checkNotification (String title, String message, bool isDanger) async {
+    if (!_notificationTimestamps.containsKey(isDanger)) {
+      _showNotification( title, message, isDanger: isDanger );
+      _notificationTimestamps[isDanger] = DateTime.now().millisecondsSinceEpoch;
     }
-    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[filter] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
-      _showNotification( title, message );
-      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[isDanger] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
+      _showNotification( title, message, isDanger: isDanger );
+      _notificationTimestamps[isDanger] = DateTime.now().millisecondsSinceEpoch;
     }
   }
 
-  Future<void> _showNotification (String title, String message) async {
+  Future<void> _showNotification (String title, String message, {bool isDanger = false}) async {
     NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: widget.androidPlatformChannelSpecifics
+      android: isDanger
+          ? widget.androidPlatformDangerChannelSpecifics
+          : widget.androidPlatformWarningChannelSpecifics
     );
     await FlutterLocalNotificationsPlugin().show(
-        0, title, message, platformChannelSpecifics
+        isDanger ? 0 : 1,
+        title, message, platformChannelSpecifics
     );
   }
 
