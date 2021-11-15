@@ -30,8 +30,8 @@ class SensorView extends StatefulWidget {
         'apolline_exposure_warning_notifications',
         'notifications.warningChannel.name'.tr(),
         'notifications.warningChannel.description'.tr(),
-        importance: Importance.defaultImportance,
-        priority: Priority.defaultPriority,
+        importance: Importance.max,
+        priority: Priority.high,
         showWhen: true
     );
   final AndroidNotificationDetails androidPlatformDangerChannelSpecifics =
@@ -39,8 +39,8 @@ class SensorView extends StatefulWidget {
         'apolline_exposure_danger_notifications',
         'notifications.dangerChannel.name'.tr(),
         'notifications.dangerChannel.description'.tr(),
-        importance: Importance.defaultImportance,
-        priority: Priority.defaultPriority,
+        importance: Importance.max,
+        priority: Priority.high,
         showWhen: true
     );
 
