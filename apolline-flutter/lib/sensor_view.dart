@@ -28,8 +28,8 @@ class SensorView extends StatefulWidget {
   final AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
         'apolline_exposure_notifications',
-        'notifications.channel.name'.tr(),
-        'notifications.channel.description'.tr(),
+        'notifications.warningChannel.name'.tr(),
+        'notifications.warningChannel.description'.tr(),
         importance: Importance.max,
         priority: Priority.high,
         showWhen: true

@@ -60,9 +60,9 @@
     }
   },
   "notifications": {
-    "channel": {
-      "name": "Notifications d'exposition",
-      "description": "Recevez des alertes lorsque les taux de particules fines dépassent les seuils d'alerte définis dans l'application."
+    "warningChannel": {
+      "name": "Notifications d'exposition (alerte)",
+      "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils d'alerte définis dans l'application."
     },
     "warning": {
       "title": "Taux de {} préoccupant",

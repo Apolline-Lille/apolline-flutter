@@ -60,9 +60,9 @@
     }
   },
   "notifications": {
-    "channel": {
-      "name": "Exposure notifications",
-      "description": "Get alerts when current PM values are above warning/danger thresholds."
+    "warningChannel": {
+      "name": "Exposure notifications (warning)",
+      "description": "Get alerts when current PM values are above warning thresholds."
     },
     "warning": {
       "title": "Warning for {}",
