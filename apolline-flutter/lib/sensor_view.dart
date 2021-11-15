@@ -30,8 +30,8 @@ class SensorView extends StatefulWidget {
         'apolline_exposure_warning_notifications',
         'notifications.warningChannel.name'.tr(),
         'notifications.warningChannel.description'.tr(),
-        importance: Importance.max,
-        priority: Priority.high,
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
         showWhen: true
     );
   final AndroidNotificationDetails androidPlatformDangerChannelSpecifics =
@@ -39,8 +39,8 @@ class SensorView extends StatefulWidget {
         'apolline_exposure_danger_notifications',
         'notifications.dangerChannel.name'.tr(),
         'notifications.dangerChannel.description'.tr(),
-        importance: Importance.max,
-        priority: Priority.high,
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
         showWhen: true
     );
 
@@ -220,7 +220,7 @@ class _SensorViewState extends State<SensorView> {
           : widget.androidPlatformWarningChannelSpecifics
     );
     await FlutterLocalNotificationsPlugin().show(
-        isDanger ? 0 : 1,
+        isDanger ? -1 : -2,
         title, message, platformChannelSpecifics
     );
   }
