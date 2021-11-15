@@ -60,9 +60,13 @@
     }
   },
   "notifications": {
-    "channel": {
-      "name": "Exposure notifications",
-      "description": "Get alerts when current PM values are above warning/danger thresholds."
+    "warningChannel": {
+      "name": "Exposure notifications (warning)",
+      "description": "Get alerts when current PM values are above warning thresholds."
+    },
+    "dangerChannel": {
+      "name": "Exposure notifications (danger)",
+      "description": "Get alerts when current PM values are above danger thresholds."
     },
     "warning": {
       "title": "Warning for {}",
@@ -82,6 +86,7 @@
     "receiveWarning": "Receive warning notifications",
     "receiveDanger": "Receive danger notifications",
     "timeInterval": "Notifications time interval",
+    "sameType": "of same type",
     "setTimeInterval": "Set time interval",
     "setTimeIntervalBody": "Set which duration must pass before a new notification is sent.",
     "warning": {

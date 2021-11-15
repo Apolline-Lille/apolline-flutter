@@ -85,13 +85,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
-  duration_picker:
-    dependency: "direct main"
-    description:
-      name: duration_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   easy_localization:
     dependency: "direct main"
     description:
@@ -179,6 +172,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_picker:
+    dependency: "direct main"
+    description:
+      name: flutter_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
