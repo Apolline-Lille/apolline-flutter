@@ -25,7 +25,7 @@
   "temperature": "TEMPÉRATURE",
   "statsView": {
     "pauseGathering": "Mettre en pause l'affichage des données",
-    "startGathering": "Reprendre l'affichage des données"
+    "resumeGathering": "Reprendre l'affichage des données"
   },
   "mapView": {
     "timeFilters": {
