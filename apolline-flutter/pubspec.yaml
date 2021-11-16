@@ -36,7 +36,7 @@ dependencies:
   geohash: ^0.2.1
   path_provider: ^2.0.2
   # location
-  geolocator: ^7.3.0
+  geolocator: ^7.7.1
   sqflite: ^2.0.0+3
   shared_preferences: ^2.0.6
   flutter_background: ^1.0.2+1
