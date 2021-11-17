@@ -1,2 +1,6 @@
-When sensor GPS is accurate enough, the application uses its location and deactivate phone GPS to
-save battery power.
+Notifications time interval picker has been fixed.
+Warning and danger notifications can be displayed at the same time.
+
+Sensor reconnection is done automatically after signal loss.
+
+The application is now compatible with more devices, ranging from Android Marshmallow (6) to Android 12.

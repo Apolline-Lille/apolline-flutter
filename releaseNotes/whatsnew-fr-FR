@@ -1,2 +1,7 @@
-Lorsque le signal GPS du capteur est suffisamment précis, l'application utilise sa position et
-désactive le GPS du téléphone afin d'économiser sa batterie.
+Le sélecteur de délai entre deux notifications consécutives fonctionne désormais correctement.
+Les notifications d'alerte et de danger peuvent apparaître en même temps.
+
+La reconnection au capteur se fait automatiquement après une perte de connexion.
+
+L'application est maintenant compatible à partir d'Android Marshmallow (6) et fonctionne correctement
+sur Android 12.
