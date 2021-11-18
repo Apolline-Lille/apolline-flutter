@@ -60,7 +60,13 @@ class UserConfiguration {
     this._timeFilter = TimeFilter.values[jsonMap[UserConfiguration.TIME_FILTER_KEY]];
     this._pmFilter = PMFilter.values[jsonMap[UserConfiguration.PM_FILTER_KEY]];
     this._shouldSendThresholdNotifications = jsonMap[UserConfiguration.ALERTS_KEY].cast<bool>();
-    this._sensorEvents = jsonMap[UserConfiguration.SENSOR_EVENTS_KEY].cast<SensorEvent>();
+
+    List<dynamic> eventValues = jsonMap[UserConfiguration.SENSOR_EVENTS_KEY];
+    List<SensorEvent> events = [];
+    eventValues.forEach((element) {
+      events.add(SensorEvent.fromJson(element));
+    });
+    this._sensorEvents = events;
 
     Map<String, dynamic> values = json.decode(jsonMap[UserConfiguration.THRESHOLDS_KEY]);
     Map<PMFilter, List<int>> thresholds = Map();
@@ -85,7 +91,8 @@ class UserConfiguration {
       UserConfiguration.PM_FILTER_KEY: this._pmFilter.index,
       UserConfiguration.THRESHOLDS_KEY: json.encode(jsonValues),
       UserConfiguration.ALERTS_KEY: this._shouldSendThresholdNotifications,
-      UserConfiguration.NOTIFICATIONS_KEY: this.exposureNotificationsTimeInterval.inMilliseconds
+      UserConfiguration.NOTIFICATIONS_KEY: this.exposureNotificationsTimeInterval.inMilliseconds,
+      UserConfiguration.SENSOR_EVENTS_KEY: this._sensorEvents
     };
   }
 
