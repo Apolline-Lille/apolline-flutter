@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/utils/sensor_events/SensorEvent.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 
 
@@ -138,7 +139,10 @@ class UserConfiguration {
     this._shouldSendThresholdNotifications[1] = value;
   }
 
-  List<SensorEvent> getSensorEvents () {
+  List<SensorEvent> get sensorEvents {
     return this._sensorEvents;
+  }
+  void addSensorEvent (SensorEventType event) {
+    this._sensorEvents.add( SensorEvent(event) );
   }
 }

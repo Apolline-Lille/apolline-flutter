@@ -5,6 +5,7 @@ import 'package:apollineflutter/twins/SensorTwin.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -140,6 +141,9 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onLiveDataReceived (DataPointModel model) {
+    widget.ucS.userConf.addSensorEvent(SensorEventType.LiveData);
+    widget.ucS.update();
+
     setState(() {
       lastReceivedData = model;
       this._receivedData = true;
@@ -177,6 +181,9 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onSensorConnected () {
+    widget.ucS.userConf.addSensorEvent(SensorEventType.Connection);
+    widget.ucS.update();
+
     if (connectType == ConnexionType.Disconnect && !isConnected) {
       print("-------------------connectedExécute---------");
       handleDeviceConnect(widget.device);
@@ -187,6 +194,9 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onSensorDisconnected () {
+    widget.ucS.userConf.addSensorEvent(SensorEventType.Disconnection);
+    widget.ucS.update();
+
     print("----------------disconnected----------------");
     setState(() {
       isConnected = false;
