@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEvent.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 
 
@@ -18,6 +19,8 @@ class UserConfiguration {
   List<bool> _shouldSendThresholdNotifications;
   ///exposure notifications time interval
   Duration exposureNotificationsTimeInterval;
+  ///sensor events
+  List<SensorEvent> _sensorEvents;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
@@ -25,6 +28,7 @@ class UserConfiguration {
   static const String THRESHOLDS_KEY = "thresholdsValue";
   static const String ALERTS_KEY = "thresholdsAlertsValue";
   static const String NOTIFICATIONS_KEY = "notificationsValue";
+  static const String SENSOR_EVENTS_KEY = "sensorEventsKey";
 
   ///
   ///Constructor
@@ -32,7 +36,8 @@ class UserConfiguration {
     pmFilter: PMFilter.PM_2_5,
     Map<PMFilter, int> thresholds,
     List<bool> alerts,
-    Duration notificationsInterval: const Duration(minutes: 5)
+    Duration notificationsInterval: const Duration(minutes: 5),
+    List<SensorEvent> sensorEvents
   }) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;
@@ -43,6 +48,9 @@ class UserConfiguration {
     this._thresholdsValues = thresholds == null || thresholds.keys.length == 0
         ? PMFilterUtils.getThresholds()
         : thresholds;
+    this._sensorEvents = sensorEvents == null || _sensorEvents.length == 0
+      ? []
+      : sensorEvents;
   }
 
   ///
@@ -51,6 +59,7 @@ class UserConfiguration {
     this._timeFilter = TimeFilter.values[jsonMap[UserConfiguration.TIME_FILTER_KEY]];
     this._pmFilter = PMFilter.values[jsonMap[UserConfiguration.PM_FILTER_KEY]];
     this._shouldSendThresholdNotifications = jsonMap[UserConfiguration.ALERTS_KEY].cast<bool>();
+    this._sensorEvents = jsonMap[UserConfiguration.SENSOR_EVENTS_KEY].cast<SensorEvent>();
 
     Map<String, dynamic> values = json.decode(jsonMap[UserConfiguration.THRESHOLDS_KEY]);
     Map<PMFilter, List<int>> thresholds = Map();
@@ -127,5 +136,9 @@ class UserConfiguration {
   }
   set showDangerNotifications (bool value) {
     this._shouldSendThresholdNotifications[1] = value;
+  }
+
+  List<SensorEvent> getSensorEvents () {
+    return this._sensorEvents;
   }
 }
