@@ -4,8 +4,10 @@ class SensorEvent {
   SensorEventType type;
   DateTime time;
 
-  SensorEvent(this.type) {
+  SensorEvent(this.type, {String time = ""}) {
     this.type = type;
-    this.time = DateTime.now();
+    this.time = time.length == 0
+        ? DateTime.now()
+        : DateTime.parse(time);
   }
 }
