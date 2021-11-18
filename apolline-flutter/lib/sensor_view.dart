@@ -6,6 +6,7 @@ import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
+import 'package:apollineflutter/utils/sensor_events/events_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -272,14 +273,16 @@ class _SensorViewState extends State<SensorView> {
     return _sensor != null
         ? Container(
           margin: EdgeInsets.only(right: 15),
-          child: Icon(
-              Icons.circle_sharp,
-              color: !this.isConnected
-                  ? Colors.red
-                  : this._receivedData
+          child: IconButton(
+              onPressed: () => showSensorEventsDialog(context, widget.device.name),
+              icon: Icon(
+                Icons.circle_sharp,
+                color: !this.isConnected
+                    ? Colors.red
+                    : this._receivedData
                     ? Colors.green.shade800
                     : Colors.green.shade900,
-          )
+              ))
         )
         : Container();
   }
