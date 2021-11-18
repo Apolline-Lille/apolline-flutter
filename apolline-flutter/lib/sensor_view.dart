@@ -58,6 +58,7 @@ class _SensorViewState extends State<SensorView> {
   SensorTwin _sensor;
   Map<bool, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  bool _receivedData = false;
 
 
   @override
@@ -141,6 +142,13 @@ class _SensorViewState extends State<SensorView> {
   void _onLiveDataReceived (DataPointModel model) {
     setState(() {
       lastReceivedData = model;
+      this._receivedData = true;
+    });
+
+    Future.delayed(Duration(milliseconds: 150), () {
+      setState(() {
+        this._receivedData = false;
+      });
     });
 
     if (!widget.ucS.userConf.showDangerNotifications && !widget.ucS.userConf.showWarningNotifications) return;
@@ -180,7 +188,9 @@ class _SensorViewState extends State<SensorView> {
 
   void _onSensorDisconnected () {
     print("----------------disconnected----------------");
-    isConnected = false;
+    setState(() {
+      isConnected = false;
+    });
     connectType = ConnexionType.Disconnect; //deconnexion
     showSnackBar("connectionMessages.disconnected".tr(), duration: Duration(days: 1));
   }
@@ -248,6 +258,22 @@ class _SensorViewState extends State<SensorView> {
     return false;
   }
 
+  Widget _getActionIndicator() {
+    return _sensor != null
+        ? Container(
+          margin: EdgeInsets.only(right: 15),
+          child: Icon(
+              Icons.circle_sharp,
+              color: !this.isConnected
+                  ? Colors.red
+                  : this._receivedData
+                    ? Colors.green.shade800
+                    : Colors.green.shade900,
+          )
+        )
+        : Container();
+  }
+
   /* UI update only */
   @override
   Widget build(BuildContext context) {
@@ -280,6 +306,9 @@ class _SensorViewState extends State<SensorView> {
           ),
           appBar: AppBar(
             title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
+            actions: [
+              this._getActionIndicator()
+            ],
           ),
           body: Stack(
             children: [
