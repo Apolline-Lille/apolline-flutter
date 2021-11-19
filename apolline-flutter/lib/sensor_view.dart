@@ -142,7 +142,7 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onLiveDataReceived (DataPointModel model) {
-    widget.ucS.userConf.addSensorEvent(SensorEventType.LiveData);
+    widget.ucS.userConf.addSensorEvent(widget.device.name, SensorEventType.LiveData);
     widget.ucS.update();
 
     setState(() {
@@ -182,7 +182,7 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onSensorConnected () {
-    widget.ucS.userConf.addSensorEvent(SensorEventType.Connection);
+    widget.ucS.userConf.addSensorEvent(widget.device.name, SensorEventType.Connection);
     widget.ucS.update();
 
     if (connectType == ConnexionType.Disconnect && !isConnected) {
@@ -195,7 +195,7 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onSensorDisconnected () {
-    widget.ucS.userConf.addSensorEvent(SensorEventType.Disconnection);
+    widget.ucS.userConf.addSensorEvent(widget.device.name, SensorEventType.Disconnection);
     widget.ucS.update();
 
     print("----------------disconnected----------------");

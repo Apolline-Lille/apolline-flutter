@@ -149,7 +149,7 @@ class UserConfiguration {
   List<SensorEvent> get sensorEvents {
     return this._sensorEvents;
   }
-  void addSensorEvent (SensorEventType event) {
+  void addSensorEvent (String deviceName, SensorEventType event) {
     this._sensorEvents.add( SensorEvent(event) );
   }
 }
