@@ -61,12 +61,17 @@ class _SensorViewState extends State<SensorView> {
   Map<bool, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   bool _receivedData = false;
+  Timer timer;
 
 
   @override
   void initState() {
     super.initState();
     initializeDevice();
+    timer = Timer.periodic(Duration(minutes: 5), (timer) {
+      widget.ucS.userConf.clearSensorEvents(widget.device.name);
+      widget.ucS.update();
+    });
   }
 
 
@@ -253,6 +258,7 @@ class _SensorViewState extends State<SensorView> {
     widget.device.disconnect();
     this._sensor?.shutdown();
     disableBackgroundExecution();
+    this.timer.cancel();
     super.dispose();
   }
 

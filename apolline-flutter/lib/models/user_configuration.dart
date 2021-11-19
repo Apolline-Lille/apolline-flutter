@@ -158,4 +158,11 @@ class UserConfiguration {
     if (this._sensorEvents[deviceName] == null) this._sensorEvents[deviceName] = [];
     this._sensorEvents[deviceName].add( SensorEvent(event) );
   }
+  void clearSensorEvents (String deviceName) {
+    DateTime now = DateTime.now();
+    print("Removing sensor events older than one week.");
+    this._sensorEvents[deviceName] =
+        this._sensorEvents[deviceName]
+            .where((element) => now.difference(element.time) < Duration(days: 7)).toList();
+  }
 }
