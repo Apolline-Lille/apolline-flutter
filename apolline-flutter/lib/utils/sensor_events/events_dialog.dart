@@ -15,13 +15,19 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
           content: Container(
               height: 300,
               width: 300,
-              child: ListView(
+              child: _hasEventsForSensor(deviceName) ? ListView(
                 children: _getEventCards(deviceName),
+              ) : ListTile(
+                title: Text("No events registered for this device."),
               )
           ),
         );
       }
   );
+}
+
+bool _hasEventsForSensor(String deviceName) {
+  return ucS.userConf.getSensorEvents(deviceName) != null;
 }
 
 List<Widget> _getEventCards (String deviceName) {
