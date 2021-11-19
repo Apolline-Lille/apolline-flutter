@@ -1,10 +1,12 @@
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 final UserConfigurationService ucS = locator<UserConfigurationService>();
+final DateFormat formatter = DateFormat('dd-MM-yyyy H:m:s');
 
 void showSensorEventsDialog(BuildContext context, String deviceName) {
   showDialog(
@@ -37,7 +39,7 @@ List<Widget> _getEventCards (String deviceName) {
     widgets.add(
       ListTile(
         title: Text(event.type.label),
-        subtitle: Text(event.time.toString()),
+        subtitle: Text(formatter.format(event.time).toString()),
       )
     );
   });
