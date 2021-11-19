@@ -22,7 +22,7 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
                 children: _getEventCards(deviceName),
               )
           ) : ListTile(
-            title: Text("No events registered for this device."),
+            title: Text("events.noEventsText").tr(),
           ),
         );
       }
