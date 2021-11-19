@@ -40,6 +40,11 @@ List<Widget> _getEventCards (String deviceName) {
       ListTile(
         title: Text(event.type.label),
         subtitle: Text(formatter.format(event.time).toString()),
+        tileColor: event.type == SensorEventType.Connection
+            ? Colors.green.shade100
+            : event.type == SensorEventType.Disconnection
+              ? Colors.red.shade100
+              : Colors.white
       )
     );
   });
