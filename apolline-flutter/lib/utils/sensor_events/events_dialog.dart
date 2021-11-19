@@ -16,7 +16,7 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
               height: 300,
               width: 300,
               child: ListView(
-                children: _getEventCards(),
+                children: _getEventCards(deviceName),
               )
           ),
         );
@@ -24,9 +24,9 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
   );
 }
 
-List<Widget> _getEventCards () {
+List<Widget> _getEventCards (String deviceName) {
   List<Widget> widgets = [];
-  ucS.userConf.sensorEvents.forEach((event) {
+  ucS.userConf.getSensorEvents(deviceName).forEach((event) {
     widgets.add(
       ListTile(
         title: Text(event.type.toString()),

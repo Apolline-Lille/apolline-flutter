@@ -21,7 +21,7 @@ class UserConfiguration {
   ///exposure notifications time interval
   Duration exposureNotificationsTimeInterval;
   ///sensor events
-  List<SensorEvent> _sensorEvents;
+  Map<String, List<SensorEvent>> _sensorEvents;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
@@ -49,9 +49,9 @@ class UserConfiguration {
     this._thresholdsValues = thresholds == null || thresholds.keys.length == 0
         ? PMFilterUtils.getThresholds()
         : thresholds;
-    this._sensorEvents = sensorEvents == null || _sensorEvents.length == 0
-      ? []
-      : sensorEvents;
+    this._sensorEvents = sensorEvents == null || _sensorEvents.keys.length == 0
+        ? {}
+        : sensorEvents;
   }
 
   ///
@@ -61,10 +61,15 @@ class UserConfiguration {
     this._pmFilter = PMFilter.values[jsonMap[UserConfiguration.PM_FILTER_KEY]];
     this._shouldSendThresholdNotifications = jsonMap[UserConfiguration.ALERTS_KEY].cast<bool>();
 
-    List<dynamic> eventValues = jsonMap[UserConfiguration.SENSOR_EVENTS_KEY];
-    List<SensorEvent> events = [];
-    eventValues.forEach((element) {
-      events.add(SensorEvent.fromJson(element));
+    Map<String, dynamic> eventValues = jsonMap[UserConfiguration.SENSOR_EVENTS_KEY];
+    Map<String, List<SensorEvent>> events = {};
+    eventValues.forEach((key, value) {
+      print(key);
+      List<SensorEvent> localEvents = [];
+      (value as List<dynamic>).forEach((element) {
+        localEvents.add(SensorEvent.fromJson(element));
+      });
+      events.putIfAbsent(key, () => localEvents);
     });
     this._sensorEvents = events;
 
@@ -146,10 +151,11 @@ class UserConfiguration {
     this._shouldSendThresholdNotifications[1] = value;
   }
 
-  List<SensorEvent> get sensorEvents {
-    return this._sensorEvents;
+  List<SensorEvent> getSensorEvents(String deviceName) {
+    return this._sensorEvents[deviceName];
   }
   void addSensorEvent (String deviceName, SensorEventType event) {
-    this._sensorEvents.add( SensorEvent(event) );
+    if (this._sensorEvents[deviceName] == null) this._sensorEvents[deviceName] = [];
+    this._sensorEvents[deviceName].add( SensorEvent(event) );
   }
 }
