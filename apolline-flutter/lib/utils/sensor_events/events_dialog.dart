@@ -1,5 +1,6 @@
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,7 @@ List<Widget> _getEventCards (String deviceName) {
   ucS.userConf.getSensorEvents(deviceName).forEach((event) {
     widgets.add(
       ListTile(
-        title: Text(event.type.toString()),
+        title: Text(event.type.label),
         subtitle: Text(event.time.toString()),
       )
     );
