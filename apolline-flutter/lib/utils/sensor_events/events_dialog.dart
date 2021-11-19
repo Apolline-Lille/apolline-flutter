@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 final UserConfigurationService ucS = locator<UserConfigurationService>();
-final DateFormat formatter = DateFormat('dd-MM-yyyy H:m:s');
+final DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm:ss');
 
 void showSensorEventsDialog(BuildContext context, String deviceName) {
   showDialog(
