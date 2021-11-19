@@ -15,14 +15,14 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
         return AlertDialog(
           title: Text(deviceName),
           contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
-          content: Container(
+          content: _hasEventsForSensor(deviceName) ? Container(
               height: 300,
               width: 300,
-              child: _hasEventsForSensor(deviceName) ? ListView(
+              child: ListView(
                 children: _getEventCards(deviceName),
-              ) : ListTile(
-                title: Text("No events registered for this device."),
               )
+          ) : ListTile(
+            title: Text("No events registered for this device."),
           ),
         );
       }
