@@ -102,5 +102,13 @@
     "home": "Mesures",
     "chart": "Graphique",
     "map": "Carte"
+  },
+  "events": {
+    "noEventsText": "Aucun événement enregistré pour ce périphérique.",
+    "types": {
+      "disconnection": "Déconnecté du capteur",
+      "connection": "Connecté au capteur",
+      "liveData": "Données de qualité de l'air reçues (live)"
+    }
   }
 }

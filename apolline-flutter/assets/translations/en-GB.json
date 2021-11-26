@@ -102,5 +102,13 @@
     "home": "Measures",
     "chart": "Chart",
     "map": "Map"
+  },
+  "events": {
+    "noEventsText": "No events registered for this device.",
+    "types": {
+      "disconnection": "Disconnected from sensor",
+      "connection": "Connected to sensor",
+      "liveData": "Air quality data received (live)"
+    }
   }
 }

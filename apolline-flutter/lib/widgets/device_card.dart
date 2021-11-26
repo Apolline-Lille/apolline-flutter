@@ -1,3 +1,4 @@
+import 'package:apollineflutter/utils/sensor_events/events_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -21,6 +22,9 @@ class _DeviceCardState extends State<DeviceCard> {
         subtitle: Text(widget.device.id.toString()),
         onTap: () {
           widget.connectionCallback(widget.device);
+        },
+        onLongPress: () {
+          showSensorEventsDialog(context, widget.device.name);
         },
         enabled: widget.enabled,
         trailing: widget.enabled ? null : Icon(Icons.bluetooth_disabled_outlined),
