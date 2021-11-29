@@ -68,7 +68,7 @@ class _PMCardState extends State<PMCard> {
                     bool _isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
 
                     if (!_isDangerValueCorrect || !_isWarningValueCorrect) {
-                      Fluttertoast.showToast(msg: "Warning value must be inferior to danger value.");
+                      Fluttertoast.showToast(msg: "settings.warning.toastMessage".tr());
                     }
 
                     setState(() {
@@ -103,7 +103,7 @@ class _PMCardState extends State<PMCard> {
                     bool _isWarningValueCorrect = int.parse(value) > warningThresholdValue;
 
                     if (!_isDangerValueCorrect || !_isWarningValueCorrect) {
-                      Fluttertoast.showToast(msg: "Danger value must be superior to warning value.");
+                      Fluttertoast.showToast(msg: "settings.danger.toastMessage".tr());
                     }
 
                     setState(() {
