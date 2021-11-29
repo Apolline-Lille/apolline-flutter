@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 class PMCard extends StatefulWidget {
@@ -63,9 +64,16 @@ class _PMCardState extends State<PMCard> {
                   inputFormatters: widget.formatters,
                   onChanged: (value) {
                     if (value.isEmpty) return;
+                    bool _isDangerValueCorrect = int.parse(value) < dangerThresholdValue;
+                    bool _isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
+
+                    if (!_isDangerValueCorrect || !_isWarningValueCorrect) {
+                      Fluttertoast.showToast(msg: "Warning value must be inferior to danger value.");
+                    }
+
                     setState(() {
-                      isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
-                      isDangerValueCorrect = int.parse(value) < dangerThresholdValue;
+                      isDangerValueCorrect = _isDangerValueCorrect;
+                      isWarningValueCorrect = _isWarningValueCorrect;
                     });
                   },
                   initialValue: warningThresholdValue.toString(),
@@ -95,9 +103,16 @@ class _PMCardState extends State<PMCard> {
                   inputFormatters: widget.formatters,
                   onChanged: (value) {
                     if (value.isEmpty) return;
+                    bool _isDangerValueCorrect = int.parse(value) > warningThresholdValue;
+                    bool _isWarningValueCorrect = int.parse(value) > warningThresholdValue;
+
+                    if (!_isDangerValueCorrect || !_isWarningValueCorrect) {
+                      Fluttertoast.showToast(msg: "Danger value must be superior to warning value.");
+                    }
+
                     setState(() {
-                      isDangerValueCorrect = int.parse(value) > warningThresholdValue;
-                      isWarningValueCorrect = int.parse(value) > warningThresholdValue;
+                      isDangerValueCorrect = _isDangerValueCorrect;
+                      isWarningValueCorrect = _isWarningValueCorrect;
                     });
                   },
                   initialValue: dangerThresholdValue.toString(),
