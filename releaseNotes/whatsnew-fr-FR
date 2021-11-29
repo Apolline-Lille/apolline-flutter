@@ -1,3 +1,3 @@
-Un indicateur d'activité montre l'état de la connexion avec le capteur.
-Les événements de connexion aux capteurs sont stockés sur le téléphone et visibles par l'utilisateur ;
-ceux datant de plus d'une semaine sont automatiquement supprimés.
+Les seuils d'avertissement/danger sont sauvegardés automatiquement dès que leur valeur est changée
+par l'utilisateur.
+Des messages d'alerte sont affichés si une valeur entrée est incorrecte.
