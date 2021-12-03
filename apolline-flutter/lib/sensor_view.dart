@@ -6,6 +6,8 @@ import 'package:apollineflutter/twins/SensorTwin.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
+import 'package:apollineflutter/utils/sensor_events/events_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -26,15 +28,25 @@ class SensorView extends StatefulWidget {
   SensorView({Key key, this.device}) : super(key: key);
   final BluetoothDevice device;
   final UserConfigurationService ucS = locator<UserConfigurationService>();
-  final AndroidNotificationDetails androidPlatformChannelSpecifics =
+  final AndroidNotificationDetails androidPlatformWarningChannelSpecifics =
     AndroidNotificationDetails(
-        'apolline_exposure_notifications',
-        'notifications.channel.name'.tr(),
-        'notifications.channel.description'.tr(),
+        'apolline_exposure_warning_notifications',
+        'notifications.warningChannel.name'.tr(),
+        'notifications.warningChannel.description'.tr(),
         importance: Importance.max,
         priority: Priority.high,
         showWhen: true
     );
+  final AndroidNotificationDetails androidPlatformDangerChannelSpecifics =
+    AndroidNotificationDetails(
+        'apolline_exposure_danger_notifications',
+        'notifications.dangerChannel.name'.tr(),
+        'notifications.dangerChannel.description'.tr(),
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: true
+    );
+
 
   @override
   State<StatefulWidget> createState() => _SensorViewState();
@@ -47,14 +59,20 @@ class _SensorViewState extends State<SensorView> {
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
   SensorTwin _sensor;
-  Map<PMFilter, int> _notificationTimestamps = Map();
+  Map<bool, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  bool _receivedData = false;
+  Timer timer;
 
 
   @override
   void initState() {
     super.initState();
     initializeDevice();
+    timer = Timer.periodic(Duration(minutes: 5), (timer) {
+      widget.ucS.userConf.clearSensorEvents(widget.device.name);
+      widget.ucS.update();
+    });
   }
 
 
@@ -65,7 +83,7 @@ class _SensorViewState extends State<SensorView> {
     bool isConnectedToDevice = true;
 
     try {
-      await widget.device.connect().timeout(Duration(seconds: 3), onTimeout: () {
+      await widget.device.connect().timeout(Duration(seconds: 8), onTimeout: () {
         isConnectedToDevice = false;
         if (_scaffoldMessengerKey.currentContext != null) {
           Fluttertoast.showToast(msg: "connectionMessages.failed".tr());
@@ -130,8 +148,18 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onLiveDataReceived (DataPointModel model) {
+    widget.ucS.userConf.addSensorEvent(widget.device.name, SensorEventType.LiveData);
+    widget.ucS.update();
+
     setState(() {
       lastReceivedData = model;
+      this._receivedData = true;
+    });
+
+    Future.delayed(Duration(milliseconds: 150), () {
+      setState(() {
+        this._receivedData = false;
+      });
     });
 
     if (!widget.ucS.userConf.showDangerNotifications && !widget.ucS.userConf.showWarningNotifications) return;
@@ -146,20 +174,23 @@ class _SensorViewState extends State<SensorView> {
         _checkNotification(
           "notifications.warning.title".tr(args: [value.getLabelKey().tr()]),
           'notifications.warning.body'.tr(args: [collectedValue.toString()]),
-          value
+          false
         );
       } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
         // print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
         _checkNotification(
           "notifications.danger.title".tr(args: [value.getLabelKey().tr()]),
           'notifications.danger.body'.tr(args: [collectedValue.toString()]),
-          value
+          true
         );
       }
     });
   }
 
   void _onSensorConnected () {
+    widget.ucS.userConf.addSensorEvent(widget.device.name, SensorEventType.Connection);
+    widget.ucS.update();
+
     if (connectType == ConnexionType.Disconnect && !isConnected) {
       print("-------------------connectedExécute---------");
       handleDeviceConnect(widget.device);
@@ -170,8 +201,13 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void _onSensorDisconnected () {
+    widget.ucS.userConf.addSensorEvent(widget.device.name, SensorEventType.Disconnection);
+    widget.ucS.update();
+
     print("----------------disconnected----------------");
-    isConnected = false;
+    setState(() {
+      isConnected = false;
+    });
     connectType = ConnexionType.Disconnect; //deconnexion
     showSnackBar("connectionMessages.disconnected".tr(), duration: Duration(days: 1));
   }
@@ -193,23 +229,26 @@ class _SensorViewState extends State<SensorView> {
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
   }
 
-  Future<void> _checkNotification (String title, String message, PMFilter filter) async {
-    if (!_notificationTimestamps.containsKey(filter)) {
-      _showNotification( title, message );
-      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+  Future<void> _checkNotification (String title, String message, bool isDanger) async {
+    if (!_notificationTimestamps.containsKey(isDanger)) {
+      _showNotification( title, message, isDanger: isDanger );
+      _notificationTimestamps[isDanger] = DateTime.now().millisecondsSinceEpoch;
     }
-    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[filter] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
-      _showNotification( title, message );
-      _notificationTimestamps[filter] = DateTime.now().millisecondsSinceEpoch;
+    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[isDanger] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
+      _showNotification( title, message, isDanger: isDanger );
+      _notificationTimestamps[isDanger] = DateTime.now().millisecondsSinceEpoch;
     }
   }
 
-  Future<void> _showNotification (String title, String message) async {
+  Future<void> _showNotification (String title, String message, {bool isDanger = false}) async {
     NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: widget.androidPlatformChannelSpecifics
+      android: isDanger
+          ? widget.androidPlatformDangerChannelSpecifics
+          : widget.androidPlatformWarningChannelSpecifics
     );
     await FlutterLocalNotificationsPlugin().show(
-        0, title, message, platformChannelSpecifics
+        isDanger ? -1 : -2,
+        title, message, platformChannelSpecifics
     );
   }
 
@@ -220,6 +259,7 @@ class _SensorViewState extends State<SensorView> {
     widget.device.disconnect();
     this._sensor?.shutdown();
     disableBackgroundExecution();
+    this.timer.cancel();
     super.dispose();
   }
 
@@ -234,6 +274,24 @@ class _SensorViewState extends State<SensorView> {
 
     disableBackgroundExecution();
     return false;
+  }
+
+  Widget _getActionIndicator() {
+    return _sensor != null
+        ? Container(
+          margin: EdgeInsets.only(right: 15),
+          child: IconButton(
+              onPressed: () => showSensorEventsDialog(context, widget.device.name),
+              icon: Icon(
+                Icons.circle_sharp,
+                color: !this.isConnected
+                    ? Colors.red
+                    : this._receivedData
+                    ? Colors.green.shade800
+                    : Colors.green.shade900,
+              ))
+        )
+        : Container();
   }
 
   /* UI update only */
@@ -268,6 +326,9 @@ class _SensorViewState extends State<SensorView> {
           ),
           appBar: AppBar(
             title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
+            actions: [
+              this._getActionIndicator()
+            ],
           ),
           body: Stack(
             children: [

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEvent.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 
 
@@ -18,6 +20,8 @@ class UserConfiguration {
   List<bool> _shouldSendThresholdNotifications;
   ///exposure notifications time interval
   Duration exposureNotificationsTimeInterval;
+  ///sensor events
+  Map<String, List<SensorEvent>> _sensorEvents;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
@@ -25,6 +29,7 @@ class UserConfiguration {
   static const String THRESHOLDS_KEY = "thresholdsValue";
   static const String ALERTS_KEY = "thresholdsAlertsValue";
   static const String NOTIFICATIONS_KEY = "notificationsValue";
+  static const String SENSOR_EVENTS_KEY = "sensorEventsKey";
 
   ///
   ///Constructor
@@ -32,7 +37,8 @@ class UserConfiguration {
     pmFilter: PMFilter.PM_2_5,
     Map<PMFilter, int> thresholds,
     List<bool> alerts,
-    Duration notificationsInterval: const Duration(minutes: 5)
+    Duration notificationsInterval: const Duration(minutes: 5),
+    List<SensorEvent> sensorEvents
   }) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;
@@ -43,6 +49,9 @@ class UserConfiguration {
     this._thresholdsValues = thresholds == null || thresholds.keys.length == 0
         ? PMFilterUtils.getThresholds()
         : thresholds;
+    this._sensorEvents = sensorEvents == null || _sensorEvents.keys.length == 0
+        ? {}
+        : sensorEvents;
   }
 
   ///
@@ -51,6 +60,18 @@ class UserConfiguration {
     this._timeFilter = TimeFilter.values[jsonMap[UserConfiguration.TIME_FILTER_KEY]];
     this._pmFilter = PMFilter.values[jsonMap[UserConfiguration.PM_FILTER_KEY]];
     this._shouldSendThresholdNotifications = jsonMap[UserConfiguration.ALERTS_KEY].cast<bool>();
+
+    Map<String, dynamic> eventValues = jsonMap[UserConfiguration.SENSOR_EVENTS_KEY];
+    Map<String, List<SensorEvent>> events = {};
+    eventValues.forEach((key, value) {
+      print(key);
+      List<SensorEvent> localEvents = [];
+      (value as List<dynamic>).forEach((element) {
+        localEvents.add(SensorEvent.fromJson(element));
+      });
+      events.putIfAbsent(key, () => localEvents);
+    });
+    this._sensorEvents = events;
 
     Map<String, dynamic> values = json.decode(jsonMap[UserConfiguration.THRESHOLDS_KEY]);
     Map<PMFilter, List<int>> thresholds = Map();
@@ -75,7 +96,8 @@ class UserConfiguration {
       UserConfiguration.PM_FILTER_KEY: this._pmFilter.index,
       UserConfiguration.THRESHOLDS_KEY: json.encode(jsonValues),
       UserConfiguration.ALERTS_KEY: this._shouldSendThresholdNotifications,
-      UserConfiguration.NOTIFICATIONS_KEY: this.exposureNotificationsTimeInterval.inMilliseconds
+      UserConfiguration.NOTIFICATIONS_KEY: this.exposureNotificationsTimeInterval.inMilliseconds,
+      UserConfiguration.SENSOR_EVENTS_KEY: this._sensorEvents
     };
   }
 
@@ -127,5 +149,20 @@ class UserConfiguration {
   }
   set showDangerNotifications (bool value) {
     this._shouldSendThresholdNotifications[1] = value;
+  }
+
+  List<SensorEvent> getSensorEvents(String deviceName) {
+    return this._sensorEvents[deviceName];
+  }
+  void addSensorEvent (String deviceName, SensorEventType event) {
+    if (this._sensorEvents[deviceName] == null) this._sensorEvents[deviceName] = [];
+    this._sensorEvents[deviceName].add( SensorEvent(event) );
+  }
+  void clearSensorEvents (String deviceName) {
+    DateTime now = DateTime.now();
+    print("Removing sensor events older than one week.");
+    this._sensorEvents[deviceName] =
+        this._sensorEvents[deviceName]
+            .where((element) => now.difference(element.time) < Duration(days: 7)).toList();
   }
 }

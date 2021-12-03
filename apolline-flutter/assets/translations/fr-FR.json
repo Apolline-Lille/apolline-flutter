@@ -25,7 +25,7 @@
   "temperature": "TEMPÉRATURE",
   "statsView": {
     "pauseGathering": "Mettre en pause l'affichage des données",
-    "startGathering": "Reprendre l'affichage des données"
+    "resumeGathering": "Reprendre l'affichage des données"
   },
   "mapView": {
     "timeFilters": {
@@ -60,9 +60,13 @@
     }
   },
   "notifications": {
-    "channel": {
-      "name": "Notifications d'exposition",
-      "description": "Recevez des alertes lorsque les taux de particules fines dépassent les seuils d'alerte définis dans l'application."
+    "warningChannel": {
+      "name": "Notifications d'exposition (alerte)",
+      "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils d'alerte définis dans l'application."
+    },
+    "dangerChannel": {
+      "name": "Notifications d'exposition (danger)",
+      "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils de danger définis dans l'application."
     },
     "warning": {
       "title": "Taux de {} préoccupant",
@@ -82,6 +86,7 @@
     "receiveWarning": "Recevoir des notifications d'alerte",
     "receiveDanger": "Recevoir des notifications de danger",
     "timeInterval": "Intervalle entre deux notifications",
+    "sameType": "du même type",
     "setTimeInterval": "Définir l'intervalle de temps",
     "setTimeIntervalBody": "Choisissez combien de temps doit s'écouler entre l'envoi de deux notifications.",
     "warning": {
@@ -97,5 +102,13 @@
     "home": "Mesures",
     "chart": "Graphique",
     "map": "Carte"
+  },
+  "events": {
+    "noEventsText": "Aucun événement enregistré pour ce périphérique.",
+    "types": {
+      "disconnection": "Déconnecté du capteur",
+      "connection": "Connecté au capteur",
+      "liveData": "Données de qualité de l'air reçues (live)"
+    }
   }
 }
