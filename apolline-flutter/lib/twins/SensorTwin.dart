@@ -263,8 +263,8 @@ class SensorTwin {
       currentPosition = _currentPosition;
       if (this._isUsingSatellitePositioning) {
         this._isUsingSatellitePositioning = false;
-        _startLocationService();
         this._locationService.start();
+        _startLocationService();
       }
     }
 
@@ -284,6 +284,7 @@ class SensorTwin {
     await synchronizeClock();
 
     this._locationService = SimpleLocationService();
+    this._locationService.start();
     _startLocationService();
 
     _initSynchronizationTimer();
