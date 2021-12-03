@@ -21,7 +21,6 @@ class SimpleLocationService {
       if(permission == geo.LocationPermission.denied || permission == geo.LocationPermission.deniedForever) {
         this._locationStream.add(Position());
       }
-      this.start();
     });
   }
 
