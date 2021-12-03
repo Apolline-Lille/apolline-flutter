@@ -50,7 +50,7 @@ class _PMMapViewState extends State<PMMapView> {
     this.updateCirclesFromData();
 
     this._sub = widget.sensorDataStream.listen((pModel) {
-      if(pModel.position.geohash != "no") {
+      if(pModel.position != null && pModel.position.geohash != "no") {
         this.addCircle(pModel);
         //manage the rendering frequency.
         if(this._circles.length % 10 == 0) {
