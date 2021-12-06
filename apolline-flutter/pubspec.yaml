@@ -44,7 +44,7 @@ dependencies:
   shared_preferences: ^2.0.6
   flutter_background: ^1.0.2+1
   easy_localization: ^3.0.0
-  grant_and_activate: ^0.0.5
+  grant_and_activate: ^0.0.6
   flutter_local_notifications: ^8.2.0
   flutter_speed_dial: ^4.3.0
   syncfusion_flutter_charts: ^19.2.62

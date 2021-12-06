@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/twins/SensorTwin.dart';
@@ -137,12 +138,12 @@ class _SensorViewState extends State<SensorView> {
   }
 
   void activateBackgroundExecution () async {
-    if (await FlutterBackground.hasPermissions)
+    if (Platform.isAndroid && await FlutterBackground.hasPermissions)
       FlutterBackground.enableBackgroundExecution();
   }
 
   void disableBackgroundExecution () {
-    if (FlutterBackground.isBackgroundExecutionEnabled)
+    if (Platform.isAndroid && FlutterBackground.isBackgroundExecutionEnabled)
       FlutterBackground.disableBackgroundExecution();
   }
 

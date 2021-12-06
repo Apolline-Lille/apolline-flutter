@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:apollineflutter/sensor_view.dart';
 import 'package:apollineflutter/settings_view.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
@@ -32,6 +34,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
   void setupBackgroundConfig () async {
+    if (!Platform.isAndroid) return;
     final androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: "notifications.background.title".tr(),
       notificationText: "notifications.background.body".tr(),
