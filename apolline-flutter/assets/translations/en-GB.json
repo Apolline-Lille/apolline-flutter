@@ -91,11 +91,13 @@
     "setTimeIntervalBody": "Set which duration must pass before a new notification is sent.",
     "warning": {
       "title": "Warning threshold",
-      "incorrect": "Must be inferior than danger value."
+      "incorrect": "Must be inferior than danger value.",
+      "toastMessage": "Warning value must be inferior to danger value."
     },
     "danger": {
       "title": "Danger threshold",
-      "incorrect": "Must be superior to warning value."
+      "incorrect": "Must be superior to warning value.",
+      "toastMessage": "Danger value must be superior to warning value."
     }
   },
   "navigation": {
