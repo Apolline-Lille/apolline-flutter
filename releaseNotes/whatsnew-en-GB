@@ -1,3 +1,3 @@
-An activity indicator shows connection state on sensor view.
-Sensor connection events are stored on the smartphone and visible by the user; those older than one
-week are automatically removed.
+Warning/danger thresholds are automatically saved when their value is updated by the user.
+Toast messages are displayed when a faulty value is entered.
+Phone's location is correctly used if sensor does not have an accurate GPS location.

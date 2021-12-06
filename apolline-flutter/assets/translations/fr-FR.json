@@ -91,11 +91,13 @@
     "setTimeIntervalBody": "Choisissez combien de temps doit s'écouler entre l'envoi de deux notifications.",
     "warning": {
       "title": "Seuil d'alerte",
-      "incorrect": "Doit être inférieur au seuil de danger."
+      "incorrect": "Doit être inférieur au seuil de danger.",
+      "toastMessage": "Le seuil d'alerte doit être inférieur au seuil de danger."
     },
     "danger": {
       "title": "Seuil de danger",
-      "incorrect": "Doit être supérieur au seuil d'alerte."
+      "incorrect": "Doit être supérieur au seuil d'alerte.",
+      "toastMessage": "Le seuil de danger doit être supérieur au seuil d'alerte."
     }
   },
   "navigation": {
