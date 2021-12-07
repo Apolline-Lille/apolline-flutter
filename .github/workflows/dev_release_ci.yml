@@ -1,0 +1,163 @@
+name: Development release CI
+on:
+  push:
+    branches:
+      - develop
+env:
+  FLUTTER_VERSION: '2.5.0'
+
+jobs:
+  lint:
+    name: "Static code analysis"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2.1.0
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Generate configuration file
+        env:
+          APOLLINE_API_URL: ${{ secrets.APOLLINE_API_URL }}
+          APOLLINE_PASSWORD: ${{ secrets.APOLLINE_PASSWORD }}
+          APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
+          APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
+        run: dart scripts/configuration_generation.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: apolline-flutter
+      - name: Run lint analysis
+        run: flutter analyze
+        working-directory: apolline-flutter
+
+
+  build-android:
+    name: "Build Android apk"
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2.1.0
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Generate configuration file
+        env:
+          APOLLINE_API_URL: ${{ secrets.APOLLINE_API_URL }}
+          APOLLINE_PASSWORD: ${{ secrets.APOLLINE_PASSWORD }}
+          APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
+          APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
+        run: dart scripts/configuration_generation.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: apolline-flutter
+
+      - name: Configure keystore
+        run: |
+          echo "${{ secrets.UPLOAD_KEYSTORE }}" > upload.keystore.asc
+          gpg -d --passphrase "${{ secrets.UPLOAD_KEYSTORE_PASSPHRASE }}" --batch upload.keystore.asc > app/upload-keystore.jks
+          echo "storeFile=upload-keystore.jks" >> key.properties
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> key.properties
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> key.properties
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> key.properties
+        env:
+          PLAY_STORE_UPLOAD_KEY: ${{ secrets.PLAY_STORE_UPLOAD_KEY }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+        working-directory: apolline-flutter/android
+
+      - name: Build Apolline APK
+        run: flutter build apk
+        working-directory: apolline-flutter
+        
+      - name: Get compilation time
+        id: date
+        run: echo "::set-output name=date::$(date +'%d-%m-%Y %H:%M:%S')"
+
+      - name: Save build artefact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Apolline.apk
+          path: apolline-flutter/build/app/outputs/apk/release/app-release.apk
+
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "apolline-flutter/build/app/outputs/apk/release/app-release.apk"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: android-dev-release
+          allowUpdates: true
+          body: This is the latest Android development version of the Apolline application (created on ${{ steps.date.outputs.date }}).
+
+
+  build-iOS:
+    name: Build iOS package
+    runs-on: macos-latest
+    needs:
+      - lint
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2.1.0
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - name: Generate configuration file
+        env:
+          APOLLINE_API_URL: ${{ secrets.APOLLINE_API_URL }}
+          APOLLINE_PASSWORD: ${{ secrets.APOLLINE_PASSWORD }}
+          APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
+          APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
+        run: dart scripts/configuration_generation.dart
+
+      - name: Build iOS Apolline package
+        run: flutter build ios --release --no-codesign
+        working-directory: apolline-flutter
+        
+      - name: Get compilation time
+        id: date
+        run: echo "::set-output name=date::$(date +'%d-%m-%Y %H:%M:%S')"
+
+      - name: Save build artefact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Apolline.app
+          path: apolline-flutter/build/ios/iphoneos/Runner.app
+
+      - name: Zip release
+        uses: papeloto/action-zip@v1
+        with:
+          files: apolline-flutter/build/ios/iphoneos/Runner.app
+          dest: Apolline-iOS.zip       
+          
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "Apolline-iOS.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ios-dev-release
+          allowUpdates: true
+          body: This is the latest iOS development version of the Apolline application (created on ${{ steps.date.outputs.date }}).

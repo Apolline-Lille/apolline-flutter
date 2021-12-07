@@ -3,7 +3,6 @@
 
 # Miscellaneous
 *.class
-*.lock
 *.log
 *.pyc
 *.swp
@@ -26,6 +25,7 @@
 **/doc/api/
 .dart_tool/
 .flutter-plugins
+.flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
@@ -144,8 +144,6 @@ fastlane/readme.md
 .dart_tool/
 .packages
 build/
-# If you're building an application, you may want to check-in your pubspec.lock
-pubspec.lock
 
 # Directory created by dartdoc
 # If you don't generate documentation locally you can remove this line.
@@ -407,8 +405,6 @@ fastlane/readme.md
 .dart_tool/
 .packages
 build/
-# If you're building an application, you may want to check-in your pubspec.lock
-pubspec.lock
 
 # Directory created by dartdoc
 # If you don't generate documentation locally you can remove this line.
@@ -888,3 +884,9 @@ DerivedData/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+
+### Configuration files
+apolline-flutter/assets/config*
+apolline-flutter/android/app/upload-keystore.jks
+apolline-flutter/android/key.properties

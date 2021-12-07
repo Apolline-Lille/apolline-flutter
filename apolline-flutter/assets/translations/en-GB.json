@@ -1,0 +1,116 @@
+{
+  "devicesView": {
+    "title": "Apolline - Sensors",
+    "permissionsPopUp": {
+      "title": "Missing permissions",
+      "message": "Activate both Bluetooth and geolocation to detect devices."
+    },
+    "pairedDevicesLabel": "Paired devices",
+    "availableDevicesLabel": "Available devices",
+    "noDevicesLabel": "No Bluetooth device detected.",
+    "analysisButton": {
+      "analyse": "Scan",
+      "cancel": "Cancel"
+    }
+  },
+  "connectionMessages":  {
+    "connecting": "Connecting to the device...",
+    "configuring": "Configuring device...",
+    "waiting": "Waiting for sensor data...",
+    "connected": "Sensor connected.",
+    "disconnected": "Sensor disconnected.",
+    "failed": "Unable to connect to this device.",
+    "incompatible": "This device is not compatible."
+  },
+  "temperature": "TEMPERATURE",
+  "statsView": {
+    "pauseGathering": "Pause data gathering",
+    "resumeGathering": "Resume data gathering"
+  },
+  "mapView": {
+    "timeFilters": {
+      "title": "Filter data by time range",
+      "lastMin": "Last minute",
+      "last5Mins": "Last 5 minutes",
+      "last15Mins": "Last 15 minutes",
+      "last30Mins": "Last 30 minutes",
+      "lastHour": "Last hour",
+      "last3Hours": "Last 3 hours",
+      "last6Hours": "Last 6 hours",
+      "last12Hours": "Last 12 hours",
+      "last24Hours": "Last 24 hours",
+      "today": "Today",
+      "thisWeek": "This week"
+    },
+    "sizeFilters": {
+      "title": "Filter data by particle size",
+      "PM1": "PM1",
+      "PM25": "PM2.5",
+      "PM10": "PM10",
+      "abovePM03": "PM above 0.3 µm",
+      "abovePM05": "PM above 0.5 µm",
+      "abovePM1": "PM above 1 µm",
+      "abovePM25": "PM above 2.5 µm",
+      "abovePM5": "PM above 5 µm",
+      "abovePM10": "PM above 10 µm"
+    },
+    "filters": {
+      "time": "Per time",
+      "size": "Per PM size"
+    }
+  },
+  "notifications": {
+    "warningChannel": {
+      "name": "Exposure notifications (warning)",
+      "description": "Get alerts when current PM values are above warning thresholds."
+    },
+    "dangerChannel": {
+      "name": "Exposure notifications (danger)",
+      "description": "Get alerts when current PM values are above danger thresholds."
+    },
+    "warning": {
+      "title": "Warning for {}",
+      "body": "{} µm/m³ value exceeds warning threshold."
+    },
+    "danger": {
+      "title": "Danger for {}",
+      "body": "{} µm/m³ value exceeds danger threshold."
+    },
+    "background": {
+      "title": "Sensor connected",
+      "body": "Apolline is currently collecting data."
+    }
+  },
+  "settings": {
+    "description": "Here, you can specify warning and danger thresholds.\nReceived values lower than warning limit will be considered as normal, values superior to danger limit will be considered as dangerous.",
+    "receiveWarning": "Receive warning notifications",
+    "receiveDanger": "Receive danger notifications",
+    "timeInterval": "Notifications time interval",
+    "sameType": "of same type",
+    "setTimeInterval": "Set time interval",
+    "setTimeIntervalBody": "Set which duration must pass before a new notification is sent.",
+    "warning": {
+      "title": "Warning threshold",
+      "incorrect": "Must be inferior than danger value.",
+      "toastMessage": "Warning value must be inferior to danger value."
+    },
+    "danger": {
+      "title": "Danger threshold",
+      "incorrect": "Must be superior to warning value.",
+      "toastMessage": "Danger value must be superior to warning value."
+    }
+  },
+  "navigation": {
+    "home": "Measures",
+    "chart": "Chart",
+    "map": "Map"
+  },
+  "events": {
+    "noEventsText": "No events registered for this device.",
+    "types": {
+      "disconnection": "Disconnected from sensor",
+      "connection": "Connected to sensor",
+      "liveData": "Air quality data received (live)"
+    }
+  }
+}
