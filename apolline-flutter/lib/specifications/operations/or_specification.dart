@@ -1,5 +1,5 @@
-import 'package:apollineflutter/specifications/AbstractCompositeSpecification.dart';
-import 'package:apollineflutter/specifications/Specification.dart';
+import 'package:apollineflutter/specifications/abstract_composite_specification.dart';
+import 'package:apollineflutter/specifications/specification.dart';
 
 class OrSpecification extends AbstractCompositeSpecification {
   Specification leftSpecification;
@@ -11,7 +11,7 @@ class OrSpecification extends AbstractCompositeSpecification {
   }
 
   @override
-  bool isSatisfiedBy(candidate) {
+  bool isSatisfiedBy(dynamic candidate) {
     return this.leftSpecification.isSatisfiedBy(candidate) || this.rightSpecification.isSatisfiedBy(candidate);
   }
 }

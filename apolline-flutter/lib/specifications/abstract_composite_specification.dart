@@ -1,7 +1,7 @@
-import 'package:apollineflutter/specifications/Specification.dart';
-import 'package:apollineflutter/specifications/operations/AndSpecification.dart';
-import 'package:apollineflutter/specifications/operations/NotSpecification.dart';
-import 'package:apollineflutter/specifications/operations/OrSpecification.dart';
+import 'package:apollineflutter/specifications/specification.dart';
+import 'package:apollineflutter/specifications/operations/and_specification.dart';
+import 'package:apollineflutter/specifications/operations/not_specification.dart';
+import 'package:apollineflutter/specifications/operations/or_specification.dart';
 
 abstract class AbstractCompositeSpecification implements Specification {
   Specification and(Specification specification) {

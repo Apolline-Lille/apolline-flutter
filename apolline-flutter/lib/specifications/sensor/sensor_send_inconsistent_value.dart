@@ -1,4 +1,4 @@
-import 'package:apollineflutter/specifications/operations/LeafSpecification.dart';
+import 'package:apollineflutter/specifications/operations/leaf_specification.dart';
 
 class SensorSendInconsistentValue extends LeafSpecification {
   int inconsistentThreshold;

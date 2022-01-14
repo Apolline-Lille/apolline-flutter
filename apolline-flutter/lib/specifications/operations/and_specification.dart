@@ -1,5 +1,5 @@
-import 'package:apollineflutter/specifications/Specification.dart';
-import 'package:apollineflutter/specifications/AbstractCompositeSpecification.dart';
+import 'package:apollineflutter/specifications/specification.dart';
+import 'package:apollineflutter/specifications/abstract_composite_specification.dart';
 
 class AndSpecification extends AbstractCompositeSpecification {
   Specification leftSpecification;

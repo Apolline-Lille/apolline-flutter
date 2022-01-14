@@ -1,4 +1,4 @@
-import 'package:apollineflutter/specifications/operations/LeafSpecification.dart';
+import 'package:apollineflutter/specifications/operations/leaf_specification.dart';
 
 class SensorSendDangerousValue extends LeafSpecification {
   int dangerThreshold ;
