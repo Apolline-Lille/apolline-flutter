@@ -68,6 +68,14 @@
       "name": "Exposure notifications (danger)",
       "description": "Get alerts when current PM values are above danger thresholds."
     },
+    "informationChannel": {
+      "name": "Exposure notifications (inconsistent)",
+      "description": "Gets alerts when current PM values seems inconsistent in order to contextualize your situation."
+    },
+    "errorChannel": {
+      "name": "Error notifications",
+      "description": "Gets alerts when we detect an error in your sensor values."
+    },
     "warning": {
       "title": "Warning for {}",
       "body": "{} µm/m³ value exceeds warning threshold."
@@ -75,6 +83,14 @@
     "danger": {
       "title": "Danger for {}",
       "body": "{} µm/m³ value exceeds danger threshold."
+    },
+    "information": {
+      "title": "Information for {}",
+      "body": "{} µm/m³ value seems inconsistent."
+    },
+    "error": {
+      "title": "Error for {}",
+      "body": "Sensor send an error value. If this happens again, have your sensor checked."
     },
     "background": {
       "title": "Sensor connected",
@@ -111,6 +127,15 @@
       "disconnection": "Disconnected from sensor",
       "connection": "Connected to sensor",
       "liveData": "Air quality data received (live)"
+    }
+  },
+  "inconsistentReport": {
+    "title": "Give us the context of this value",
+    "message": "An inconsistent value has been detected, please give us more details about the situation you where when the captor send this value",
+    "form": {
+      "error": "Please enter some text",
+      "valid": "Thanks for your report !",
+      "button": "Submit"
     }
   }
 }

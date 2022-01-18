@@ -68,6 +68,14 @@
       "name": "Notifications d'exposition (danger)",
       "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils de danger définis dans l'application."
     },
+    "informationChannel": {
+      "name": "Notifications d'exposition (incohérente)",
+      "description": "Recevez des notifications lorsque le taux de particule fines semblent incohérent afin de contextualiser votre situation."
+    },
+    "errorChannel": {
+      "name": "Notifications d'erreur",
+      "description": "Recevez des notifications lorsque nous détéctons une erreur dans les valeurs renvoyées par votre capteur."
+    },
     "warning": {
       "title": "Taux de {} préoccupant",
       "body": "La mesure de {} µm/m³ dépasse le seuil d'alerte."
@@ -75,6 +83,14 @@
     "danger": {
       "title": "Alerte : {}",
       "body": "La mesure de {} µm/m³ dépasse le seuil de danger."
+    },
+    "information": {
+      "title": "Information : {}",
+      "body": "La mesure de {} µm/m³ semble incohérente."
+    },
+    "error": {
+      "title": "Erreur : {}",
+      "body": "Votre capteur à envoyer une valeur négative. Si cela se reproduit, faites verifier votre capteur."
     },
     "background": {
       "title": "Capteur connecté",
@@ -111,6 +127,15 @@
       "disconnection": "Déconnecté du capteur",
       "connection": "Connecté au capteur",
       "liveData": "Données de qualité de l'air reçues (live)"
+    }
+  },
+  "inconsistentReport": {
+    "title": "Donnez nous le contexte de la valeur absurde",
+    "message": "Une valeur absurde a été détectée par votre capteur, pouvez-vous nous donnez plus d'information sur votre situation au moment de cette captation ?",
+    "form": {
+      "error": "Le champs de texte ne peux pas être vide.",
+      "valid": "Merci beaucoup pour votre rapport !",
+      "button": "Envoyer"
     }
   }
 }

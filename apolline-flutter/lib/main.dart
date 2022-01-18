@@ -1,3 +1,5 @@
+import 'package:apollineflutter/inconsistent_value_report_view.dart';
+import 'package:apollineflutter/services/navigator_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -33,6 +35,7 @@ class ApollineApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: NavigatorService.navigatorKey,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
@@ -72,6 +75,10 @@ Future<void> setupNotificationService () async {
 
 Future selectNotification(String payload) async {
   if (payload != null) {
+    if(payload == "inconsistentNotification") {
+      debugPrint("HERE open new view to let user enter a context of his activity");
+      _openInconsistentReportView();
+    }
     debugPrint('notification payload: $payload');
   }
 }
@@ -80,3 +87,7 @@ Future onDidReceiveLocalNotification (
 ) async {
   debugPrint('notification payload: $payload');
 }
+
+ _openInconsistentReportView() {
+   Navigator.of(NavigatorService.navigatorKey.currentContext).push(MaterialPageRoute(builder: (context) => const InconsistentValueReportView()));
+ }
