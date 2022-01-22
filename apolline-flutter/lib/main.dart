@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apollineflutter/inconsistent_value_report_view.dart';
 import 'package:apollineflutter/services/navigator_service.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -41,14 +43,14 @@ class ApollineApp extends StatelessWidget {
       locale: context.locale,
       title: 'Apolline',
       theme: ThemeData(
-        primaryColor: mainColor,
-        backgroundColor: mainColor,
-        appBarTheme: AppBarTheme(backgroundColor: mainColor),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: secondaryColor),
-        tabBarTheme: TabBarTheme(
-          unselectedLabelColor: tertiaryColor
-        ),
-        toggleableActiveColor: tertiaryColor
+          primaryColor: mainColor,
+          backgroundColor: mainColor,
+          appBarTheme: AppBarTheme(backgroundColor: mainColor),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: secondaryColor),
+          tabBarTheme: TabBarTheme(
+              unselectedLabelColor: tertiaryColor
+          ),
+          toggleableActiveColor: tertiaryColor
       ),
       home: BluetoothDevicesPage(),
     );
@@ -60,7 +62,7 @@ Future<void> setupNotificationService () async {
 
   const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_apolline_notification');
   final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+    onDidReceiveLocalNotification: onDidReceiveLocalNotification,
   );
   final MacOSInitializationSettings initializationSettingsMacOS = MacOSInitializationSettings();
   final InitializationSettings initializationSettings = InitializationSettings(
@@ -75,19 +77,21 @@ Future<void> setupNotificationService () async {
 
 Future selectNotification(String payload) async {
   if (payload != null) {
-    if(payload == "inconsistentNotification") {
-      debugPrint("HERE open new view to let user enter a context of his activity");
-      _openInconsistentReportView();
+    Map<String, dynamic> jsonPayload = jsonDecode(payload);
+    if(jsonPayload["name"] == "inconsistentNotification") {
+      _openInconsistentReportView(jsonPayload);
     }
     debugPrint('notification payload: $payload');
   }
 }
 Future onDidReceiveLocalNotification (
     int id, String title, String body, String payload
-) async {
+    ) async {
   debugPrint('notification payload: $payload');
 }
 
- _openInconsistentReportView() {
-   Navigator.of(NavigatorService.navigatorKey.currentContext).push(MaterialPageRoute(builder: (context) => const InconsistentValueReportView()));
- }
+_openInconsistentReportView(Map<String, dynamic> payload) {
+  String captor = payload["captor"];
+  double value = payload["value"];
+  Navigator.of(NavigatorService.navigatorKey.currentContext).push(MaterialPageRoute(builder: (context) => InconsistentValueReportView(captor: captor, value: value)));
+}

@@ -86,7 +86,7 @@
     },
     "information": {
       "title": "Information for {}",
-      "body": "{} µm/m³ value seems inconsistent."
+      "body": "{} µm/m³ value seems inconsistent. Click here to report your situation"
     },
     "error": {
       "title": "Error for {}",
@@ -131,11 +131,24 @@
   },
   "inconsistentReport": {
     "title": "Give us the context of this value",
-    "message": "An inconsistent value has been detected, please give us more details about the situation you where when the captor send this value",
+    "message": "An inconsistent value ({} µm/m³) has been detected by the captor : {}, please give us more details about the situation you where when the captor send this value",
     "form": {
-      "error": "Please enter some text",
+      "outdoor": "Outdoor",
+      "indoor": "Indoor",
+      "inOutdoorLabel": "What environment were you in? ",
+      "contextLabel": "Define the action that best defines your situation ",
       "valid": "Thanks for your report !",
       "button": "Submit"
+    }
+  },
+  "userActions": {
+    "indoor": {
+      "kitchen": "Kitchen",
+      "aspirator": "Aspirator"
+    },
+    "outdoor": {
+      "subway": "Subway",
+      "trafficJam": "Traffic jam"
     }
   }
 }

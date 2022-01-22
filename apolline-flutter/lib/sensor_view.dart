@@ -205,7 +205,9 @@ class _SensorViewState extends State<SensorView> {
         _checkNotification(
             "notifications.information.title".tr(args: [value.getLabelKey().tr()]),
             'notifications.information.body'.tr(args: [collectedValue.toString()]),
-            NotificationType.Information
+            NotificationType.Information,
+            captorName: value.name,
+            captorValue: collectedValue
         );
       }
 
@@ -271,18 +273,18 @@ class _SensorViewState extends State<SensorView> {
     ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
   }
 
-  Future<void> _checkNotification (String title, String message, NotificationType typeOfNotification) async {
+  Future<void> _checkNotification (String title, String message, NotificationType typeOfNotification, {String captorName, double captorValue}) async {
     if (!_notificationTimestamps.containsKey(typeOfNotification)) {
-      _showNotification( title, message, typeOfNotification: typeOfNotification );
+      _showNotification( title, message, typeOfNotification: typeOfNotification, captorName: captorName, captorValue: captorValue );
       _notificationTimestamps[typeOfNotification] = DateTime.now().millisecondsSinceEpoch;
     }
     if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[typeOfNotification] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
-      _showNotification( title, message, typeOfNotification: typeOfNotification );
+      _showNotification( title, message, typeOfNotification: typeOfNotification, captorName: captorName, captorValue: captorValue );
       _notificationTimestamps[typeOfNotification] = DateTime.now().millisecondsSinceEpoch;
     }
   }
 
-  Future<void> _showNotification (String title, String message, {NotificationType typeOfNotification = NotificationType.Error}) async {
+  Future<void> _showNotification (String title, String message, {NotificationType typeOfNotification = NotificationType.Error, String captorName, double captorValue}) async {
     AndroidNotificationDetails androidNotificationDetails;
     int notificationId;
     String payload;
@@ -299,7 +301,11 @@ class _SensorViewState extends State<SensorView> {
       case NotificationType.Information:
         androidNotificationDetails = widget.androidPlatformInformationChannelSpecifics;
         notificationId = -3;
-        payload = "inconsistentNotification";
+        payload = "{"
+                      "\"name\": \"inconsistentNotification\","
+                      "\"captor\": \"$captorName\","
+                      "\"value\": $captorValue"
+                  "}";
         break;
       case NotificationType.Error:
         androidNotificationDetails = widget.androidPlatformErrorChannelSpecifics;
