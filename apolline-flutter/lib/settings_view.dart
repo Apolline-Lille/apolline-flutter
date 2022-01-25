@@ -1,3 +1,4 @@
+import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/pm_card.dart';
@@ -7,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+
+import 'models/server_model.dart';
 
 class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
@@ -26,16 +29,15 @@ class _SettingsPanelState extends State<SettingsPanel> {
     new List<String>.generate(24, (i) => (i).toString() + 'h'),
     new List<String>.generate(60, (i) => (i).toString() + 'min')
   ];
-  SqfLiteService _sqfLiteService;
-  List<Map<String, dynamic>> _serverEndpoints = [];
-  Map<String, dynamic> _dropdownValue;
+  ServerModel _dropdownValue = ServerEndpointHandler().currentServerEndpoint;
+  Future<List<ServerModel>> _serverEndpoints;
 
   @override
   initState () {
     this._showWarningNotifications = widget.ucS.userConf.showWarningNotifications;
     this._showDangerNotifications = widget.ucS.userConf.showDangerNotifications;
     this._notificationIntervalDuration = widget.ucS.userConf.exposureNotificationsTimeInterval;
-    this._sqfLiteService = SqfLiteService();
+    _serverEndpoints = SqfLiteService().getAllServerEndpoints();
     super.initState();
   }
 
@@ -137,56 +139,110 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
   Widget _buildEndpointSelector() {
     List<Widget> widgets = [];
-    if(_serverEndpoints.isNotEmpty) {
-      _dropdownValue = _serverEndpoints[0];
-      widgets.add(
-          DropdownButton( // encapsuler dans un future builder
-            value: _dropdownValue[SqfLiteService.columnId],
-            items: _serverEndpoints.map<String>((Map<String, dynamic> value){
-              return value[SqfLiteService.columnDBName];
-            }).toList()
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem(
-                value: value,
-                child: Row(
-                    children: <Widget>[
-                      Text(value),
-                      IconButton(
-                        icon: Icon(
-                            Icons.delete_forever,
-                            color: Colors.redAccent
-                        ),
-                        onPressed: () => {
-                          print("$value pressed")
-                          // todo delete endpoint
-                        },
-                      )
-                    ]
-                ),
-              );
-            }).toList(),
-            onChanged: (dynamic newValue) {
-              setState(() {
-              });
-            },
-          )
-      );
-    }
 
     widgets.add(
-        ElevatedButton(
-          child: Text("Scan endpoint qr-code"), // todo translate
-          onPressed: () => {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
-            // todo add endpoint
+        FutureBuilder<List<ServerModel>>(
+          future: _serverEndpoints,
+          builder: (BuildContext context, AsyncSnapshot<List<ServerModel>> snapshot) {
+            if(snapshot.hasData) {
+              print(snapshot.data.length);
+              return DropdownButton(
+                  value: _dropdownValue,
+                  onChanged: (value) {
+                    setState(() {
+                      _dropdownValue = value;
+                    });
+                    if(ServerEndpointHandler().changeCurrentServerEndpoint(value)){
+                      print("AAAAAAAAAH");
+                      SnackBar snackBar = SnackBar(content: Text("endpoint changed"));// todo translate
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      print("OH NOOOO");
+                      SnackBar snackBar = SnackBar(content: Text("Error on changing endpoint, unable to ping the new server. Returning to previous endpoint"));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+
+                  },
+                  items: snapshot.data
+                      .map<DropdownMenuItem<ServerModel>>((ServerModel endpoint) {
+                    return DropdownMenuItem<ServerModel>(
+                        value: endpoint,
+                        child: Row(
+                            children: <Widget>[
+                              Text(endpoint.dbName),
+                              IconButton(
+                                icon: Icon(
+                                    Icons.delete_forever,
+                                    color: Colors.redAccent
+                                ),
+                                onPressed: () {
+                                  SqfLiteService().deleteEndpoint(endpoint);
+                                },
+                              )
+                            ]
+                        )
+                    );
+                  }).toList()
+              );
+            }
+            else if(snapshot.hasError) {
+              print("[DEBUG] error on loading endpoints : ${snapshot.error}");
+              return Text("Impossible to load data");
+            }
+            return CircularProgressIndicator();
           },
         )
     );
 
+    widgets.add(
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget> [
+              ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                    if(states.contains(MaterialState.pressed)) {
+                      return Theme
+                          .of(context)
+                          .primaryColor
+                          .withOpacity(0.5);
+                    }
+                    return Theme.of(context).primaryColor;
+                  })),
+                  child: Row(
+                      children: <Widget>[
+                        Text("scan qr code config"),
+                        Icon(Icons.qr_code_scanner_outlined)
+                      ]
+                  ),
+                  onPressed: () => {
+                    // todo add endpoint
+                  }
+              ),
+
+              ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                    if(states.contains(MaterialState.pressed)) {
+                      return Theme
+                          .of(context)
+                          .primaryColor
+                          .withOpacity(0.5);
+                    }
+                    return Theme.of(context).primaryColor;
+                  })),
+                  onPressed: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
+                    // todo add endpoint
+                  },
+                  child: Text("manually enter config") // todo translate
+              )
+            ])
+    );
+
     return Column(children: widgets);
   }
+
 
   @override
   Widget build(BuildContext context)  {

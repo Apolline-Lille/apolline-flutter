@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:apollineflutter/models/data_point_model.dart';
+import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,7 +13,7 @@ class SqfLiteService {
   // This is the actual database filename that is saved in the docs directory.
   static final _databaseName = "apolline.db";
   // Increment this version when you need to change the schema.
-  static final _databaseVersion = 1;
+  static final _databaseVersion = 3;
   // database table sensor and column names
   static final dataPointTableName = 'DataPointModel';
   static final columnId = 'id';
@@ -32,6 +33,7 @@ class SqfLiteService {
   static final columnPassword = 'password';
   static final columnUsername = 'username';
   static final columnDBName = 'dbName';
+  static final columnIsDefault = "isDefault";
 
   // Make this a singleton class.
   SqfLiteService._privateConstructor();
@@ -56,7 +58,6 @@ class SqfLiteService {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     // Open the database, can also add an onUpdate callback parameter.
-    print("DEBUG : ---------- $path --------------");
     return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
   }
 
@@ -79,12 +80,12 @@ class SqfLiteService {
     await db.execute(querySensor);
     querySensor = '''
        CREATE TABLE $serverEndpointTableName (
-        $columnId INTEGER PRIMARY KEY,
-        $columnApiUrl TEXT NOT NULL,
+        $columnApiUrl TEXT NOT NULL PRIMARY KEY,
         $columnPingUrl TEXT NOT NULL,
         $columnPassword TEXT NOT NULL,
         $columnUsername TEXT NOT NULL,
-        $columnDBName TEXT NOT NULL
+        $columnDBName TEXT NOT NULL,
+        $columnIsDefault INTEGER DEFAULT 0
       )
     ''';
 
@@ -153,20 +154,40 @@ class SqfLiteService {
     print("Removed $rowsCount data points older than one week.");
   }
 
-  Future<Map<String, dynamic>> addServerEndpoint(Map<String, dynamic> serverEndpoint) async {
+  Future<ServerModel> addServerEndpoint(ServerModel serverEndpoint) async {
     Database db = await database;
-    var id = db.insert(serverEndpointTableName, serverEndpoint);
-    id.then((value) =>   print("[DEBUG] $value stored"));
+    print("server model ${serverEndpoint.dbName}");
+    db.insert(serverEndpointTableName, serverEndpoint.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
 
     return serverEndpoint;
   }
 
-  Future<List<Map<String, dynamic>>> getAllServerEndpoints() async {
+  Future<List<ServerModel>> getAllServerEndpoints() async {
     Database db = await database;
 
-    var res = await db.query(serverEndpointTableName, columns: null);
+    List<Map<String, dynamic>> res = await db.query(serverEndpointTableName, columns: null);
 
-    return res;
+    return res.map<ServerModel>((Map<String, dynamic> value) {
+      return ServerModel.fromJson(value);
+    }).toList();
+  }
+
+  Future<ServerModel> getDefaultEndpoint() async {
+    Database db = await database;
+    var res = await db.query(serverEndpointTableName, columns: null, where: "$columnIsDefault = TRUE", limit: 1);
+    return ServerModel.fromJson(res[0]);
+  }
+
+  Future<int> deleteAllEndpoints() async {
+    Database db = await database;
+    int id = await db.delete(serverEndpointTableName);
+    return id;
+  }
+
+  Future<int> deleteEndpoint(ServerModel serverModel) async {
+    Database db = await database;
+    int id = await db.delete(serverEndpointTableName, where: "$columnApiUrl = ?", whereArgs: [serverModel.apiURL]);
+    return id;
   }
 
   // SQL close database

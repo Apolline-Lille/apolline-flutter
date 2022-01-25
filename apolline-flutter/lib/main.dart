@@ -1,9 +1,12 @@
+import 'package:apollineflutter/models/server_endpoint_handler.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 import 'bluetoothDevicesPage.dart';
+import 'models/server_model.dart';
 import 'services/service_locator.dart';
 
 void main() async {
@@ -32,6 +35,8 @@ class ApollineApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SqfLiteService().addServerEndpoint(ServerEndpointHandler().currentServerEndpoint);
+
     return MaterialApp(
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
