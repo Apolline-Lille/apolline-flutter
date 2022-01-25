@@ -25,6 +25,13 @@ class SqfLiteService {
   static final columnSynchro = 'synchronisation';
   static final columnValues = 'value';
 
+  // database table server endpoints and column names
+  static final serverEndpointTableName = 'ServerEndpointModel';
+  static final columnApiUrl = 'apiUrl';
+  static final columnPingUrl = 'pingUrl';
+  static final columnPassword = 'password';
+  static final columnUsername = 'username';
+  static final columnDBName = 'dbName';
 
   // Make this a singleton class.
   SqfLiteService._privateConstructor();
@@ -49,11 +56,13 @@ class SqfLiteService {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     // Open the database, can also add an onUpdate callback parameter.
+    print("DEBUG : ---------- $path --------------");
     return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
   }
 
   // SQL string to create the database
   Future _onCreate(Database db, int version) async {
+    print("[DEBUG] : On create db");
     String querySensor = '''
           CREATE TABLE $dataPointTableName (
             $columnId INTEGER PRIMARY KEY,
@@ -67,6 +76,18 @@ class SqfLiteService {
             $columnValues TEXT NOT NULL
           )
           ''';
+    await db.execute(querySensor);
+    querySensor = '''
+       CREATE TABLE $serverEndpointTableName (
+        $columnId INTEGER PRIMARY KEY,
+        $columnApiUrl TEXT NOT NULL,
+        $columnPingUrl TEXT NOT NULL,
+        $columnPassword TEXT NOT NULL,
+        $columnUsername TEXT NOT NULL,
+        $columnDBName TEXT NOT NULL
+      )
+    ''';
+
     await db.execute(querySensor);
   }
 
@@ -100,7 +121,7 @@ class SqfLiteService {
 
     var jsonres = await db.query(dataPointTableName, columns: null, where: "$columnDate >= ?", whereArgs: [time]);
     jsonres.forEach((pJson) { models.add(DataPointModel.fromJson(pJson)); });
-    
+
     return models;
   }
 
@@ -132,6 +153,21 @@ class SqfLiteService {
     print("Removed $rowsCount data points older than one week.");
   }
 
+  Future<Map<String, dynamic>> addServerEndpoint(Map<String, dynamic> serverEndpoint) async {
+    Database db = await database;
+    var id = db.insert(serverEndpointTableName, serverEndpoint);
+    id.then((value) =>   print("[DEBUG] $value stored"));
+
+    return serverEndpoint;
+  }
+
+  Future<List<Map<String, dynamic>>> getAllServerEndpoints() async {
+    Database db = await database;
+
+    var res = await db.query(serverEndpointTableName, columns: null);
+
+    return res;
+  }
 
   // SQL close database
   Future close() async {

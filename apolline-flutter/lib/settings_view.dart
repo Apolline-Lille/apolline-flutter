@@ -1,6 +1,8 @@
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
+import 'package:apollineflutter/widgets/server_endpoint_selector_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,12 +26,16 @@ class _SettingsPanelState extends State<SettingsPanel> {
     new List<String>.generate(24, (i) => (i).toString() + 'h'),
     new List<String>.generate(60, (i) => (i).toString() + 'min')
   ];
+  SqfLiteService _sqfLiteService;
+  List<Map<String, dynamic>> _serverEndpoints = [];
+  Map<String, dynamic> _dropdownValue;
 
   @override
   initState () {
     this._showWarningNotifications = widget.ucS.userConf.showWarningNotifications;
     this._showDangerNotifications = widget.ucS.userConf.showDangerNotifications;
     this._notificationIntervalDuration = widget.ucS.userConf.exposureNotificationsTimeInterval;
+    this._sqfLiteService = SqfLiteService();
     super.initState();
   }
 
@@ -68,37 +74,37 @@ class _SettingsPanelState extends State<SettingsPanel> {
     };
 
     return Container (
-      margin: EdgeInsets.only(top: 30),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text("settings.receiveWarning").tr(),
-            onTap: () => updateWarningState(!_showWarningNotifications),
-            trailing: Checkbox(
-              value: _showWarningNotifications,
-              onChanged: updateWarningState,
+        margin: EdgeInsets.only(top: 30),
+        child: Column(
+          children: [
+            ListTile(
+              title: Text("settings.receiveWarning").tr(),
+              onTap: () => updateWarningState(!_showWarningNotifications),
+              trailing: Checkbox(
+                value: _showWarningNotifications,
+                onChanged: updateWarningState,
+              ),
             ),
-          ),
-          ListTile(
-            title: Text("settings.receiveDanger").tr(),
-            onTap: () => updateDangerState(!_showDangerNotifications),
-            trailing: Checkbox(
-              value: _showDangerNotifications,
-              onChanged: updateDangerState,
+            ListTile(
+              title: Text("settings.receiveDanger").tr(),
+              onTap: () => updateDangerState(!_showDangerNotifications),
+              trailing: Checkbox(
+                value: _showDangerNotifications,
+                onChanged: updateDangerState,
+              ),
             ),
-          ),
-          ListTile(
-            enabled: _showWarningNotifications || _showDangerNotifications,
-            title: Text("settings.timeInterval").tr(),
-            subtitle: Text('(' + "settings.sameType".tr() + ')'),
-            trailing: Container(
-              margin: EdgeInsets.only(right: 6),
-                child: Text(_printDuration(_notificationIntervalDuration))
-            ),
-            onTap: () => showPickerModal(context)
-          )
-        ],
-      )
+            ListTile(
+                enabled: _showWarningNotifications || _showDangerNotifications,
+                title: Text("settings.timeInterval").tr(),
+                subtitle: Text('(' + "settings.sameType".tr() + ')'),
+                trailing: Container(
+                    margin: EdgeInsets.only(right: 6),
+                    child: Text(_printDuration(_notificationIntervalDuration))
+                ),
+                onTap: () => showPickerModal(context)
+            )
+          ],
+        )
     );
   }
 
@@ -118,8 +124,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
           String minutesValue = pickerData[1][value[1]];
 
           Duration newDuration = Duration(
-            hours: int.parse(hoursValue.substring(0, hoursValue.length-1)),
-            minutes: int.parse(minutesValue.substring(0, minutesValue.length-3))
+              hours: int.parse(hoursValue.substring(0, hoursValue.length-1)),
+              minutes: int.parse(minutesValue.substring(0, minutesValue.length-3))
           );
 
           setState(() => _notificationIntervalDuration = newDuration);
@@ -129,19 +135,73 @@ class _SettingsPanelState extends State<SettingsPanel> {
     ).showModal(context); //_scaffoldKey.currentState);
   }
 
+  Widget _buildEndpointSelector() {
+    List<Widget> widgets = [];
+    if(_serverEndpoints.isNotEmpty) {
+      _dropdownValue = _serverEndpoints[0];
+      widgets.add(
+          DropdownButton( // encapsuler dans un future builder
+            value: _dropdownValue[SqfLiteService.columnId],
+            items: _serverEndpoints.map<String>((Map<String, dynamic> value){
+              return value[SqfLiteService.columnDBName];
+            }).toList()
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem(
+                value: value,
+                child: Row(
+                    children: <Widget>[
+                      Text(value),
+                      IconButton(
+                        icon: Icon(
+                            Icons.delete_forever,
+                            color: Colors.redAccent
+                        ),
+                        onPressed: () => {
+                          print("$value pressed")
+                          // todo delete endpoint
+                        },
+                      )
+                    ]
+                ),
+              );
+            }).toList(),
+            onChanged: (dynamic newValue) {
+              setState(() {
+              });
+            },
+          )
+      );
+    }
+
+    widgets.add(
+        ElevatedButton(
+          child: Text("Scan endpoint qr-code"), // todo translate
+          onPressed: () => {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
+            // todo add endpoint
+          },
+        )
+    );
+
+    return Column(children: widgets);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     List<Widget> widgets = [
       _buildInformationWidget(),
       _buildNotificationConfigurationWidget(),
+      _buildEndpointSelector(),
       Divider(height: 70)
     ];
     widgets.addAll(_buildAllPMCards());
 
     return Container(
       child: ListView(
-        children: widgets,
-        padding: widget.padding
+          children: widgets,
+          padding: widget.padding
       ),
     );
   }
