@@ -63,7 +63,6 @@ class SqfLiteService {
 
   // SQL string to create the database
   Future _onCreate(Database db, int version) async {
-    print("[DEBUG] : On create db");
     String querySensor = '''
           CREATE TABLE $dataPointTableName (
             $columnId INTEGER PRIMARY KEY,
@@ -156,7 +155,6 @@ class SqfLiteService {
 
   Future<ServerModel> addServerEndpoint(ServerModel serverEndpoint) async {
     Database db = await database;
-    print("server model ${serverEndpoint.dbName}");
     db.insert(serverEndpointTableName, serverEndpoint.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
 
     return serverEndpoint;

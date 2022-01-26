@@ -54,7 +54,6 @@ class InfluxDBAPI {
     try {
       this.ping();
     } on LostConnectionException catch (_) {
-      print("error");
       return false;
     }
     return true;

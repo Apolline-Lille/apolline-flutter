@@ -11,7 +11,6 @@ class ServerModel {
   String get password => _password;
 
   set password(String value) {
-    print("[DEBUG] password changed");
     _password = value;
   }
 
