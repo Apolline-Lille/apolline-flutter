@@ -6,7 +6,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 import 'bluetoothDevicesPage.dart';
-import 'models/server_model.dart';
 import 'services/service_locator.dart';
 
 void main() async {
@@ -35,7 +34,7 @@ class ApollineApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SqfLiteService().addServerEndpoint(ServerEndpointHandler().currentServerEndpoint);
+    SqfLiteService().addServerEndpoint(ServerEndpointHandler().currentServerEndpoint); // insert/update default config endpoint from config file in local db
 
     return MaterialApp(
       localizationsDelegates: context.localizationDelegates,

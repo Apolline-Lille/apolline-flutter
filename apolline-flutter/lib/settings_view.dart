@@ -3,7 +3,8 @@ import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
-import 'package:apollineflutter/widgets/server_endpoint_selector_dialog.dart';
+import 'package:apollineflutter/widgets/endpointSelector/server_endpoint_selector_dialog.dart';
+import 'package:apollineflutter/widgets/endpointSelector/server_endpoint_selector_qr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -145,7 +146,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
           future: _serverEndpoints,
           builder: (BuildContext context, AsyncSnapshot<List<ServerModel>> snapshot) {
             if(snapshot.hasData) {
-              print(snapshot.data.length);
               return DropdownButton(
                   value: _dropdownValue,
                   onChanged: (value) {
@@ -153,15 +153,12 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       _dropdownValue = value;
                     });
                     if(ServerEndpointHandler().changeCurrentServerEndpoint(value)){
-                      print("AAAAAAAAAH");
-                      SnackBar snackBar = SnackBar(content: Text("endpoint changed"));// todo translate
+                      SnackBar snackBar = SnackBar(content: Text("settings.endpointSelector.confirmationSnackbar".tr()));
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     } else {
-                      print("OH NOOOO");
-                      SnackBar snackBar = SnackBar(content: Text("Error on changing endpoint, unable to ping the new server. Returning to previous endpoint"));
+                      SnackBar snackBar = SnackBar(content: Text("settings.endpointSelector.errorSnackbar".tr()));
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
-
                   },
                   items: snapshot.data
                       .map<DropdownMenuItem<ServerModel>>((ServerModel endpoint) {
@@ -186,7 +183,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
               );
             }
             else if(snapshot.hasError) {
-              print("[DEBUG] error on loading endpoints : ${snapshot.error}");
               return Text("Impossible to load data");
             }
             return CircularProgressIndicator();
@@ -210,12 +206,14 @@ class _SettingsPanelState extends State<SettingsPanel> {
                   })),
                   child: Row(
                       children: <Widget>[
-                        Text("scan qr code config"),
+                        Text("settings.endpointSelector.qrCodeButton".tr()),
                         Icon(Icons.qr_code_scanner_outlined)
                       ]
                   ),
                   onPressed: () => {
-                    // todo add endpoint
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => ServerEndpointSelectorQr(), fullscreenDialog: false))
                   }
               ),
 
@@ -233,9 +231,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
-                    // todo add endpoint
                   },
-                  child: Text("manually enter config") // todo translate
+                  child: Text("settings.endpointSelector.manualButton".tr())
               )
             ])
     );

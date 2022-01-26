@@ -49,6 +49,7 @@ dependencies:
   flutter_speed_dial: ^4.3.0
   syncfusion_flutter_charts: ^19.2.62
   flutter_picker: ^2.0.2
+  qr_code_scanner: ^0.6.1
 
 
 
