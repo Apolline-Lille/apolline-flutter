@@ -1,5 +1,6 @@
 import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
+import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,7 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("Select endpoint dialog") // Todo translate
+            title: Text("endpointDialog.title".tr())
         ),
         body: Form(
           key: _formKey,
@@ -36,12 +37,12 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                 controller: apiURLController,
                 validator: (value) {
                   if(value == null || value.isEmpty) {
-                    return "Please enter some text";
+                    return "endpointDialog.form.emptyField".tr();
                   }
                   return null;
                 },
                 decoration: InputDecoration(
-                    label: Text("URL :"),
+                    label: Text("endpointDialog.form.apiUrl".tr()),
                     border: OutlineInputBorder()
                 ),
               ),
@@ -49,12 +50,12 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                 controller: pingURLController,
                 validator: (value) {
                   if(value == null || value.isEmpty) {
-                    return "Please enter some text";
+                    return "endpointDialog.form.emptyField".tr();
                   }
                   return null;
                 },
                 decoration: InputDecoration(
-                    label: Text("ping url :"),
+                    label: Text("endpointDialog.form.pingUrl".tr()),
                     border: OutlineInputBorder()
                 ),
               ),
@@ -62,12 +63,12 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                 controller: usernameController,
                 validator: (value) {
                   if(value == null || value.isEmpty) {
-                    return "Please enter some text";
+                    return "endpointDialog.form.emptyField".tr();
                   }
                   return null;
                 },
                 decoration: InputDecoration(
-                    label: Text("username :"),
+                    label: Text("endpointDialog.form.username".tr()),
                     border: OutlineInputBorder()
                 ),
               ),
@@ -75,12 +76,12 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                 controller: passwordController,
                 validator: (value) {
                   if(value == null || value.isEmpty) {
-                    return "Please enter some text";
+                    return "endpointDialog.form.emptyField".tr();
                   }
                   return null;
                 },
                 decoration: InputDecoration(
-                    label: Text("password :"),
+                    label: Text("endpointDialog.form.password".tr()),
                     border: OutlineInputBorder()
                 ),
               ),
@@ -88,12 +89,12 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                 controller: dbController,
                 validator: (value) {
                   if(value == null || value.isEmpty) {
-                    return "Please enter some text";
+                    return "endpointDialog.form.emptyField".tr();
                   }
                   return null;
                 },
                 decoration: InputDecoration(
-                    label: Text("db name :"),
+                    label: Text("endpointDialog.form.dbname".tr()),
                     border: OutlineInputBorder()
                 ),
               ),
@@ -105,7 +106,7 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                       Navigator.pop(context);
                     }
                   },
-                  child: Text("submit"))
+                  child: Text("endpointDialog.form.confirm"))
             ],
           ),
         )

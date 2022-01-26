@@ -98,6 +98,12 @@
       "title": "Seuil de danger",
       "incorrect": "Doit être supérieur au seuil d'alerte.",
       "toastMessage": "Le seuil de danger doit être supérieur au seuil d'alerte."
+    },
+    "endpointSelector": {
+      "confirmationSnackbar": "Le serveur à bien été modifié",
+      "errorSnackbar": "Impossible de ping le nouveau serveur. Retour sur l'ancienne configuration.",
+      "qrCodeButton": "Scanner un QR-code",
+      "manualButton": "Renseigner une configuration"
     }
   },
   "navigation": {
@@ -112,5 +118,23 @@
       "connection": "Connecté au capteur",
       "liveData": "Données de qualité de l'air reçues (live)"
     }
+  },
+  "endpointDialog": {
+    "title": "Enregistrez un nouveau serveur",
+    "form" : {
+      "emptyField": "Ce champs ne doit pas être vide",
+      "apiUrl": "URL de votre serveur :",
+      "pingUrl": "URL de ping :",
+      "username": "Nom d'utilisateur :",
+      "password": "Mot de passe :",
+      "dbname": "Nom de la base de données :",
+      "confirm": "Enregistrer"
+    }
+  },
+  "endpointQRScanner": {
+    "title:": "Scannez un QR code",
+    "permissionRequired": "Permission d'accès à la caméra nécessaire.",
+    "codeTypeError": "Vous devez scanner QR code.",
+    "codeDataError": "Les données du QR code ne sont pas au bon format."
   }
 }
