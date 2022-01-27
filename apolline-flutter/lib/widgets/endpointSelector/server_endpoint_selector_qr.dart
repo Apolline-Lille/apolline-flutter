@@ -136,7 +136,9 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        qrController.pauseCamera();
         _addEndpoint();
+        qrController.resumeCamera();
       });
     });
   }
