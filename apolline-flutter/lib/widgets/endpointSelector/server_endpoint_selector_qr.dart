@@ -162,18 +162,23 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
   }
 
   _addEndpoint() {
-    Map<String, dynamic> qrCodeContent;
+    dynamic qrCodeContent;
     try {
       qrCodeContent = json.decode(result.code);
+
+      if(qrCodeContent is Map<String, dynamic>) {
+        ServerModel server = ServerModel.fromJson(qrCodeContent);
+        SqfLiteService().addServerEndpoint(server);
+        Navigator.pop(
+            context);
+      } else {
+        SnackBar snackBar = SnackBar(content: Text("endpointQRScanner.codeDataError".tr()));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     } on FormatException catch (_) {
       SnackBar snackBar = SnackBar(content: Text("endpointQRScanner.codeDataError".tr()));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-
-    ServerModel server = ServerModel.fromJson(qrCodeContent);
-    SqfLiteService().addServerEndpoint(server);
-    Navigator.pop(
-        context);
   }
 
   // In order to get hot reload to work we need to pause the camera if the platform
