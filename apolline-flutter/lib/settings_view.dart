@@ -206,7 +206,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
                   })),
                   child: Row(
                       children: <Widget>[
-                        Text("settings.endpointSelector.qrCodeButton".tr()),
+                        Text("settings.endpointSelector.qrCodeButton".tr(),
+                        overflow: TextOverflow.ellipsis),
                         Icon(Icons.qr_code_scanner_outlined)
                       ]
                   ),
@@ -232,7 +233,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
                         context,
                         MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
                   },
-                  child: Text("settings.endpointSelector.manualButton".tr())
+                  child: Text("settings.endpointSelector.manualButton".tr(),
+                  overflow: TextOverflow.ellipsis,)
               )
             ])
     );

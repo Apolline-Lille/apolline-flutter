@@ -30,85 +30,87 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
             title: Text("endpointDialog.title".tr())
         ),
         body: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: apiURLController,
-                validator: (value) {
-                  if(value == null || value.isEmpty) {
-                    return "endpointDialog.form.emptyField".tr();
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                    label: Text("endpointDialog.form.apiUrl".tr()),
-                    border: OutlineInputBorder()
-                ),
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: apiURLController,
+                    validator: (value) {
+                      if(value == null || value.isEmpty) {
+                        return "endpointDialog.form.emptyField".tr();
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        label: Text("endpointDialog.form.apiUrl".tr()),
+                        border: OutlineInputBorder()
+                    ),
+                  ),
+                  TextFormField(
+                    controller: pingURLController,
+                    validator: (value) {
+                      if(value == null || value.isEmpty) {
+                        return "endpointDialog.form.emptyField".tr();
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        label: Text("endpointDialog.form.pingUrl".tr()),
+                        border: OutlineInputBorder()
+                    ),
+                  ),
+                  TextFormField(
+                    controller: usernameController,
+                    validator: (value) {
+                      if(value == null || value.isEmpty) {
+                        return "endpointDialog.form.emptyField".tr();
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        label: Text("endpointDialog.form.username".tr()),
+                        border: OutlineInputBorder()
+                    ),
+                  ),
+                  TextFormField(
+                    controller: passwordController,
+                    validator: (value) {
+                      if(value == null || value.isEmpty) {
+                        return "endpointDialog.form.emptyField".tr();
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        label: Text("endpointDialog.form.password".tr()),
+                        border: OutlineInputBorder()
+                    ),
+                  ),
+                  TextFormField(
+                    controller: dbController,
+                    validator: (value) {
+                      if(value == null || value.isEmpty) {
+                        return "endpointDialog.form.emptyField".tr();
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        label: Text("endpointDialog.form.dbname".tr()),
+                        border: OutlineInputBorder()
+                    ),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        if(_formKey.currentState.validate()) {
+                          ServerModel serverEndpoint = ServerModel(apiURLController.text, pingURLController.text, usernameController.text, passwordController.text, dbController.text);
+                          SqfLiteService().addServerEndpoint(serverEndpoint);
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text("endpointDialog.form.confirm".tr()))
+                ],
               ),
-              TextFormField(
-                controller: pingURLController,
-                validator: (value) {
-                  if(value == null || value.isEmpty) {
-                    return "endpointDialog.form.emptyField".tr();
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                    label: Text("endpointDialog.form.pingUrl".tr()),
-                    border: OutlineInputBorder()
-                ),
-              ),
-              TextFormField(
-                controller: usernameController,
-                validator: (value) {
-                  if(value == null || value.isEmpty) {
-                    return "endpointDialog.form.emptyField".tr();
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                    label: Text("endpointDialog.form.username".tr()),
-                    border: OutlineInputBorder()
-                ),
-              ),
-              TextFormField(
-                controller: passwordController,
-                validator: (value) {
-                  if(value == null || value.isEmpty) {
-                    return "endpointDialog.form.emptyField".tr();
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                    label: Text("endpointDialog.form.password".tr()),
-                    border: OutlineInputBorder()
-                ),
-              ),
-              TextFormField(
-                controller: dbController,
-                validator: (value) {
-                  if(value == null || value.isEmpty) {
-                    return "endpointDialog.form.emptyField".tr();
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                    label: Text("endpointDialog.form.dbname".tr()),
-                    border: OutlineInputBorder()
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    if(_formKey.currentState.validate()) {
-                      ServerModel serverEndpoint = ServerModel(apiURLController.text, pingURLController.text, usernameController.text, passwordController.text, dbController.text);
-                      SqfLiteService().addServerEndpoint(serverEndpoint);
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text("endpointDialog.form.confirm"))
-            ],
-          ),
+            )
         )
     );
   }
