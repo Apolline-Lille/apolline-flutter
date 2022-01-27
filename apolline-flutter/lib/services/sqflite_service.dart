@@ -13,7 +13,7 @@ class SqfLiteService {
   // This is the actual database filename that is saved in the docs directory.
   static final _databaseName = "apolline.db";
   // Increment this version when you need to change the schema.
-  static final _databaseVersion = 3;
+  static final _databaseVersion = 4;
   // database table sensor and column names
   static final dataPointTableName = 'DataPointModel';
   static final columnId = 'id';
@@ -58,7 +58,7 @@ class SqfLiteService {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     // Open the database, can also add an onUpdate callback parameter.
-    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate, onUpgrade: _onUpgrade);
   }
 
   // SQL string to create the database
@@ -86,9 +86,25 @@ class SqfLiteService {
         $columnDBName TEXT NOT NULL,
         $columnIsDefault INTEGER DEFAULT 0
       )
-    ''';
+      ''';
 
     await db.execute(querySensor);
+  }
+
+  _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if(oldVersion < newVersion) {
+      String querySensor = '''
+       CREATE TABLE $serverEndpointTableName (
+        $columnApiUrl TEXT NOT NULL PRIMARY KEY,
+        $columnPingUrl TEXT NOT NULL,
+        $columnPassword TEXT NOT NULL,
+        $columnUsername TEXT NOT NULL,
+        $columnDBName TEXT NOT NULL,
+        $columnIsDefault INTEGER DEFAULT 0
+      )
+      ''';
+      await db.execute(querySensor);
+    }
   }
 
   // SQL save DataPointModel
