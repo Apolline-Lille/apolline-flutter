@@ -174,6 +174,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                 ),
                                 onPressed: () {
                                   SqfLiteService().deleteEndpoint(endpoint);
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${endpoint.dbName} removed")));
                                 },
                               )
                             ]
