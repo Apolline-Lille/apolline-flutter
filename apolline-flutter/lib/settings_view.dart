@@ -204,11 +204,12 @@ class _SettingsPanelState extends State<SettingsPanel> {
                     }
                     return Theme.of(context).primaryColor;
                   })),
-                  child: Row(
+                  child: Column(
                       children: <Widget>[
+                        Icon(Icons.qr_code_scanner_outlined),
                         Text("settings.endpointSelector.qrCodeButton".tr(),
-                        overflow: TextOverflow.ellipsis),
-                        Icon(Icons.qr_code_scanner_outlined)
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 12),)
                       ]
                   ),
                   onPressed: () => {
@@ -217,24 +218,26 @@ class _SettingsPanelState extends State<SettingsPanel> {
                         MaterialPageRoute(builder: (_) => ServerEndpointSelectorQr(), fullscreenDialog: false))
                   }
               ),
-
-              ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                    if(states.contains(MaterialState.pressed)) {
-                      return Theme
-                          .of(context)
-                          .primaryColor
-                          .withOpacity(0.5);
-                    }
-                    return Theme.of(context).primaryColor;
-                  })),
-                  onPressed: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
-                  },
-                  child: Text("settings.endpointSelector.manualButton".tr(),
-                  overflow: TextOverflow.ellipsis,)
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: ElevatedButton(
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                      if(states.contains(MaterialState.pressed)) {
+                        return Theme
+                            .of(context)
+                            .primaryColor
+                            .withOpacity(0.5);
+                      }
+                      return Theme.of(context).primaryColor;
+                    })),
+                    onPressed: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
+                    },
+                    child: Text("settings.endpointSelector.manualButton".tr(),
+                      overflow: TextOverflow.ellipsis,)
+                )
               )
             ])
     );
