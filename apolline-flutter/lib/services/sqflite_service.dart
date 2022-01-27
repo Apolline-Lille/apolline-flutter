@@ -92,7 +92,7 @@ class SqfLiteService {
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if(oldVersion < newVersion) {
+    if(oldVersion < 4) {
       String querySensor = '''
        CREATE TABLE $serverEndpointTableName (
         $columnApiUrl TEXT NOT NULL PRIMARY KEY,
