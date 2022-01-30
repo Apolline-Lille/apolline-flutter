@@ -1,3 +1,4 @@
+import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:easy_localization/src/public_ext.dart';
@@ -115,6 +116,7 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                                 if(_formKey.currentState.validate()) {
                                   ServerModel serverEndpoint = ServerModel(apiURLController.text, pingURLController.text, usernameController.text, passwordController.text, dbController.text);
                                   SqfLiteService().addServerEndpoint(serverEndpoint);
+                                  ServerEndpointHandler().changeCurrentServerEndpoint(serverEndpoint);
                                   Navigator.pop<String>(
                                       context, "endpoint.configAddConfirm".tr(args: [serverEndpoint.dbName]));
                                 }

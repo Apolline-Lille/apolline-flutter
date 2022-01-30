@@ -140,6 +140,7 @@
   "endpoint": {
     "configAddConfirm": "{} has been added.",
     "remove": "{} has been removed.",
+    "removeError": "Unable to remove default config",
     "dataLoadError": "Unable to load configs"
   }
 }

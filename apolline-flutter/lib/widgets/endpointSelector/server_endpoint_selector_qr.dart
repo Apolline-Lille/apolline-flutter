@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:easy_localization/src/public_ext.dart';
@@ -169,6 +170,7 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
       if(qrCodeContent is Map<String, dynamic>) {
         ServerModel server = ServerModel.fromJson(qrCodeContent);
         SqfLiteService().addServerEndpoint(server);
+        ServerEndpointHandler().changeCurrentServerEndpoint(server);
         Navigator.pop<String>(
             context, "endpoint.configAddConfirm".tr(args: [server.dbName]));
       } else {

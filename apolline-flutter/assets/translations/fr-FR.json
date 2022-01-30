@@ -140,6 +140,7 @@
   "endpoint": {
     "configAddConfirm": "{} a bien été enregistré.",
     "remove": "{} a bien été retiré.",
+    "removeError": "Impossible de supprimer une configuration par défaut",
     "dataLoadError": "Impossible de récupérer les configurations."
   }
 }

@@ -150,15 +150,13 @@ class _SettingsPanelState extends State<SettingsPanel> {
               return DropdownButton(
                   value: _dropdownValue,
                   onChanged: (value) {
-                    setState(() {
-                      _dropdownValue = value;
-                    });
                     if(ServerEndpointHandler().changeCurrentServerEndpoint(value)){
-                      SnackBar snackBar = SnackBar(content: Text("settings.endpointSelector.confirmationSnackbar".tr()));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      _updateDropdown();
+                      print("dropdownValue ${_dropdownValue.dbName} data :");
+                      snapshot.data.forEach((element) {print(element.dbName);});
+                      Fluttertoast.showToast(msg: "settings.endpointSelector.confirmationSnackbar".tr());
                     } else {
-                      SnackBar snackBar = SnackBar(content: Text("settings.endpointSelector.errorSnackbar".tr()));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      Fluttertoast.showToast(msg: "settings.endpointSelector.errorSnackbar".tr());
                     }
                   },
                   items: snapshot.data
@@ -174,8 +172,19 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                     color: Colors.redAccent
                                 ),
                                 onPressed: () {
-                                  SqfLiteService().deleteEndpoint(endpoint);
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("endpoint.remove".tr(args: [endpoint.dbName]))));
+                                  SqfLiteService().deleteEndpoint(endpoint).then((numberOfRowsDeleted) {
+                                    if(numberOfRowsDeleted >= 1) {
+                                      _updateDropdown();
+                                      Fluttertoast.showToast(
+                                          msg: "endpoint.remove".tr(
+                                              args: [endpoint.dbName]));
+                                      Navigator.pop(
+                                          context); // close dropdown menu
+                                    } else {
+                                      Fluttertoast.showToast(msg: "endpoint.removeError".tr());
+                                    }
+                                  });
+
                                 },
                               )
                             ]
@@ -222,7 +231,15 @@ class _SettingsPanelState extends State<SettingsPanel> {
                         .then((value) {
                       if(value != null) {
                         Fluttertoast.showToast(msg: value.toString());
+                        _updateDropdown();
                       }
+                      setState(() {
+                        var s = ServerModel("http://www.google.fr", "http://www.google.fr/ping", "test", "test", "test");
+                        SqfLiteService().addServerEndpoint(s).then((v) {
+                          _dropdownValue = s;
+                          _serverEndpoints = SqfLiteService().getAllServerEndpoints();
+                        });
+                      });
                     })
                   }
               ),
@@ -245,6 +262,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                             .then((value) {
                           if(value != null) {
                             Fluttertoast.showToast(msg: value.toString());
+                            _updateDropdown();
                           }
                         })
                       },
@@ -256,6 +274,15 @@ class _SettingsPanelState extends State<SettingsPanel> {
     );
 
     return Column(children: widgets);
+  }
+
+  void _updateDropdown() {
+    setState(() {
+      SqfLiteService().getDefaultEndpoint().then((value) {
+        _dropdownValue = value;
+      });
+      _serverEndpoints = SqfLiteService().getAllServerEndpoints();
+    });
   }
 
 

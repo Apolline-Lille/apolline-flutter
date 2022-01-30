@@ -176,6 +176,12 @@ class SqfLiteService {
     return serverEndpoint;
   }
 
+  Future<int> setDefaultEndpoint(ServerModel server) async {
+    Database db = await database;
+    db.update(serverEndpointTableName, {columnIsDefault: 0});// unset previous default config
+    return db.update(serverEndpointTableName, {columnIsDefault: 1}, where: "$columnApiUrl = ?", whereArgs: [server.apiURL]); // set new config to default;
+  }
+
   Future<List<ServerModel>> getAllServerEndpoints() async {
     Database db = await database;
 
@@ -188,8 +194,11 @@ class SqfLiteService {
 
   Future<ServerModel> getDefaultEndpoint() async {
     Database db = await database;
-    var res = await db.query(serverEndpointTableName, columns: null, where: "$columnIsDefault = TRUE", limit: 1);
-    return ServerModel.fromJson(res[0]);
+    var res = await db.query(serverEndpointTableName, columns: null, where: "$columnIsDefault = 1", limit: 1);
+    if(res.isNotEmpty)
+      return ServerModel.fromJson(res[0]);
+
+    return null;
   }
 
   Future<int> deleteAllEndpoints() async {
@@ -200,8 +209,8 @@ class SqfLiteService {
 
   Future<int> deleteEndpoint(ServerModel serverModel) async {
     Database db = await database;
-    int id = await db.delete(serverEndpointTableName, where: "$columnApiUrl = ?", whereArgs: [serverModel.apiURL]);
-    return id;
+    int numberOfRowsDeleted = await db.delete(serverEndpointTableName, where: "$columnApiUrl = ? AND $columnIsDefault = ?", whereArgs: [serverModel.apiURL, 0]); // delete if not default
+    return numberOfRowsDeleted;
   }
 
   // SQL close database
