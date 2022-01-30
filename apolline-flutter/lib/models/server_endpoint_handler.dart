@@ -31,7 +31,9 @@ class ServerEndpointHandler {
     } else {
       currentServerEndpoint = defaultConfig;
     }
+
     SqfLiteService().addServerEndpoint(mainConfig); // met à jour la config du ficher config_dev.json ou l'ajoute dans la bdd si premier lancement de l'appli
+    InfluxDBAPI().changeEndpointConfiguration();
   }
 
   bool changeCurrentServerEndpoint(ServerModel newEndpoint) {
