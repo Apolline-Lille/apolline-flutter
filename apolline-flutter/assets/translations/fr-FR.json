@@ -136,5 +136,10 @@
     "permissionRequired": "Permission d'accès à la caméra nécessaire.",
     "codeTypeError": "Vous devez scanner QR code.",
     "codeDataError": "Les données du QR code ne sont pas au bon format."
+  },
+  "endpoint": {
+    "configAddConfirm": "{} a bien été enregistré.",
+    "remove": "{} a bien été retiré.",
+    "dataLoadError": "Impossible de récupérer les configurations."
   }
 }

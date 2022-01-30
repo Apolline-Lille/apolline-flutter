@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'models/server_model.dart';
 
@@ -174,7 +175,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                 ),
                                 onPressed: () {
                                   SqfLiteService().deleteEndpoint(endpoint);
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${endpoint.dbName} removed")));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("endpoint.remove".tr(args: [endpoint.dbName]))));
                                 },
                               )
                             ]
@@ -184,7 +185,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               );
             }
             else if(snapshot.hasError) {
-              return Text("Impossible to load data");
+              return Text("endpoint.dataLoadError".tr());
             }
             return CircularProgressIndicator();
           },
@@ -210,35 +211,46 @@ class _SettingsPanelState extends State<SettingsPanel> {
                         Icon(Icons.qr_code_scanner_outlined),
                         Text("settings.endpointSelector.qrCodeButton".tr(),
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12),)
+                            style: TextStyle(fontSize: 12)
+                        )
                       ]
                   ),
                   onPressed: () => {
                     Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => ServerEndpointSelectorQr(), fullscreenDialog: false))
+                        .then((value) {
+                      if(value != null) {
+                        Fluttertoast.showToast(msg: value.toString());
+                      }
+                    })
                   }
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
-                child: ElevatedButton(
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                      if(states.contains(MaterialState.pressed)) {
-                        return Theme
-                            .of(context)
-                            .primaryColor
-                            .withOpacity(0.5);
-                      }
-                      return Theme.of(context).primaryColor;
-                    })),
-                    onPressed: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
-                    },
-                    child: Text("settings.endpointSelector.manualButton".tr(),
-                      overflow: TextOverflow.ellipsis,)
-                )
+                  width: MediaQuery.of(context).size.width / 2,
+                  child: ElevatedButton(
+                      style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                        if(states.contains(MaterialState.pressed)) {
+                          return Theme
+                              .of(context)
+                              .primaryColor
+                              .withOpacity(0.5);
+                        }
+                        return Theme.of(context).primaryColor;
+                      })),
+                      onPressed: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
+                            .then((value) {
+                          if(value != null) {
+                            Fluttertoast.showToast(msg: value.toString());
+                          }
+                        })
+                      },
+                      child: Text("settings.endpointSelector.manualButton".tr(),
+                        overflow: TextOverflow.ellipsis,)
+                  )
               )
             ])
     );

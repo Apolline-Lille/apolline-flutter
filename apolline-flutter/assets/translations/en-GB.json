@@ -136,5 +136,10 @@
     "permissionRequired": "Access to the camera permission is required.",
     "codeTypeError": "You must to scan a QR code.",
     "codeDataError": "Wrong format for the QR code data."
+  },
+  "endpoint": {
+    "configAddConfirm": "{} has been added.",
+    "remove": "{} has been removed.",
+    "dataLoadError": "Unable to load configs"
   }
 }

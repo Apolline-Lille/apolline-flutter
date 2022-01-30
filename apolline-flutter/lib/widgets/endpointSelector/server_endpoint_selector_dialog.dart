@@ -115,7 +115,8 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                                 if(_formKey.currentState.validate()) {
                                   ServerModel serverEndpoint = ServerModel(apiURLController.text, pingURLController.text, usernameController.text, passwordController.text, dbController.text);
                                   SqfLiteService().addServerEndpoint(serverEndpoint);
-                                  Navigator.pop(context);
+                                  Navigator.pop<String>(
+                                      context, "endpoint.configAddConfirm".tr(args: [serverEndpoint.dbName]));
                                 }
                               },
                               style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {

@@ -169,8 +169,8 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
       if(qrCodeContent is Map<String, dynamic>) {
         ServerModel server = ServerModel.fromJson(qrCodeContent);
         SqfLiteService().addServerEndpoint(server);
-        Navigator.pop(
-            context);
+        Navigator.pop<String>(
+            context, "endpoint.configAddConfirm".tr(args: [server.dbName]));
       } else {
         SnackBar snackBar = SnackBar(content: Text("endpointQRScanner.codeDataError".tr()));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
