@@ -178,7 +178,7 @@ class SqfLiteService {
 
   Future<int> setDefaultEndpoint(ServerModel server) async {
     Database db = await database;
-    db.update(serverEndpointTableName, {columnIsDefault: 0});// unset previous default config
+    db.update(serverEndpointTableName, {columnIsDefault: 0}); // unset previous default config
     return db.update(serverEndpointTableName, {columnIsDefault: 1}, where: "$columnApiUrl = ?", whereArgs: [server.apiURL]); // set new config to default;
   }
 

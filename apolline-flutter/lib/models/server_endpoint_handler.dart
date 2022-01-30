@@ -38,7 +38,7 @@ class ServerEndpointHandler {
     //ServerModel tmp = currentServerEndpoint;
     currentServerEndpoint = newEndpoint;
     if(InfluxDBAPI().changeEndpointConfiguration()) {
-      //SqfLiteService().setDefaultEndpoint(newEndpoint);
+      SqfLiteService().setDefaultEndpoint(newEndpoint);
       return true;
     } //else { // erreur lors du changement d'endpoint
     //   currentServerEndpoint = tmp;

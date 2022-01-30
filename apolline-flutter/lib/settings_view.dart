@@ -152,8 +152,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
                   onChanged: (value) {
                     if(ServerEndpointHandler().changeCurrentServerEndpoint(value)){
                       _updateDropdown();
-                      print("dropdownValue ${_dropdownValue.dbName} data :");
-                      snapshot.data.forEach((element) {print(element.dbName);});
                       Fluttertoast.showToast(msg: "settings.endpointSelector.confirmationSnackbar".tr());
                     } else {
                       Fluttertoast.showToast(msg: "settings.endpointSelector.errorSnackbar".tr());
@@ -224,22 +222,18 @@ class _SettingsPanelState extends State<SettingsPanel> {
                         )
                       ]
                   ),
-                  onPressed: () => {
+                  onPressed: () =>
+                  {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => ServerEndpointSelectorQr(), fullscreenDialog: false))
+                        MaterialPageRoute(
+                            builder: (_) => ServerEndpointSelectorQr(),
+                            fullscreenDialog: false))
                         .then((value) {
-                      if(value != null) {
+                      if (value != null) {
                         Fluttertoast.showToast(msg: value.toString());
                         _updateDropdown();
                       }
-                      setState(() {
-                        var s = ServerModel("http://www.google.fr", "http://www.google.fr/ping", "test", "test", "test");
-                        SqfLiteService().addServerEndpoint(s).then((v) {
-                          _dropdownValue = s;
-                          _serverEndpoints = SqfLiteService().getAllServerEndpoints();
-                        });
-                      });
                     })
                   }
               ),
