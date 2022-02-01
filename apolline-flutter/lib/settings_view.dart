@@ -1,6 +1,7 @@
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
+import 'package:apollineflutter/utils/icons/custom_icons_icons.dart';
 import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/widgets/endpointSelector/server_endpoint_selector_dialog.dart';
@@ -199,73 +200,79 @@ class _SettingsPanelState extends State<SettingsPanel> {
         )
     );
 
-    widgets.add(
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget> [
-              ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                    if(states.contains(MaterialState.pressed)) {
-                      return Theme
-                          .of(context)
-                          .primaryColor
-                          .withOpacity(0.5);
-                    }
-                    return Theme.of(context).primaryColor;
-                  })),
-                  child: Column(
-                      children: <Widget>[
-                        Icon(Icons.qr_code_scanner_outlined),
-                        Text("settings.endpointSelector.qrCodeButton".tr(),
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12)
-                        )
-                      ]
-                  ),
-                  onPressed: () =>
-                  {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => ServerEndpointSelectorQr(),
-                            fullscreenDialog: false))
-                        .then((value) {
-                      if (value != null) {
-                        Fluttertoast.showToast(msg: value.toString());
-                        _updateDropdown();
-                      }
-                    })
-                  }
+    widgets.addAll(
+        <Widget> [
+          ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                if(states.contains(MaterialState.pressed)) {
+                  return Theme
+                      .of(context)
+                      .primaryColor
+                      .withOpacity(0.5);
+                }
+                return Theme.of(context).primaryColor;
+              })),
+              child: SizedBox(
+                width: 200,
+                child: Row(
+                    children: <Widget>[
+                      Icon(Icons.qr_code_2),
+                      Padding(padding: EdgeInsets.only(right: 10)),
+                      Text("settings.endpointSelector.qrCodeButton".tr(),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ]
+                ),
               ),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
-                  child: ElevatedButton(
-                      style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                        if(states.contains(MaterialState.pressed)) {
-                          return Theme
-                              .of(context)
-                              .primaryColor
-                              .withOpacity(0.5);
-                        }
-                        return Theme.of(context).primaryColor;
-                      })),
-                      onPressed: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
-                            .then((value) {
-                          if(value != null) {
-                            Fluttertoast.showToast(msg: value.toString());
-                            _updateDropdown();
-                          }
-                        })
-                      },
-                      child: Text("settings.endpointSelector.manualButton".tr(),
-                        overflow: TextOverflow.ellipsis,)
+              onPressed: () =>
+              {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ServerEndpointSelectorQr(),
+                        fullscreenDialog: false))
+                    .then((value) {
+                  if (value != null) {
+                    Fluttertoast.showToast(msg: value.toString());
+                    _updateDropdown();
+                  }
+                })
+              }
+          ),
+          ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                if(states.contains(MaterialState.pressed)) {
+                  return Theme
+                      .of(context)
+                      .primaryColor
+                      .withOpacity(0.5);
+                }
+                return Theme.of(context).primaryColor;
+              })),
+              onPressed: () => {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
+                    .then((value) {
+                  if(value != null) {
+                    Fluttertoast.showToast(msg: value.toString());
+                    _updateDropdown();
+                  }
+                })
+              },
+              child: SizedBox(
+                  width: 200,
+                  child: Row(
+                      children: <Widget> [
+                        Icon(CustomIcons.pencil, color: Colors.white),
+                        Padding(padding: EdgeInsets.only(right: 10)),
+                        Text("settings.endpointSelector.manualButton".tr(),
+                          overflow: TextOverflow.ellipsis,)
+                      ]
                   )
               )
-            ])
-    );
+          )
+        ]);
 
     return Column(children: widgets);
   }
@@ -279,16 +286,37 @@ class _SettingsPanelState extends State<SettingsPanel> {
     });
   }
 
+  _divider(String sectionName) {
+    return Row(
+        children: <Widget>[
+          Expanded(child: Divider(height: 50)),
+          Text(
+              sectionName,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  fontSize: 20)
+          ),
+          Expanded(child: Divider(height: 50)),
+        ]
+    );
+  }
 
   @override
   Widget build(BuildContext context)  {
     List<Widget> widgets = [
+      _divider("settings.sectionDivider.notification".tr()),
       _buildInformationWidget(),
       _buildNotificationConfigurationWidget(),
-      _buildEndpointSelector(),
-      Divider(height: 70)
+      _divider("settings.sectionDivider.threshold".tr()),
     ];
+
     widgets.addAll(_buildAllPMCards());
+
+    widgets.addAll([
+      _divider("settings.sectionDivider.configuration".tr()),
+      _buildEndpointSelector(),
+    ]);
 
     return Container(
       child: ListView(

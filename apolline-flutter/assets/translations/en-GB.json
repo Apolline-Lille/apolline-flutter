@@ -104,6 +104,11 @@
       "errorSnackbar": "Unable to access new server, old config has been restored.",
       "qrCodeButton": "Scan a QR code",
       "manualButton": "Enter a config"
+    },
+    "sectionDivider": {
+      "notification": "Notification",
+      "threshold": "Particle threshold ",
+      "configuration": "Configuration"
     }
   },
   "navigation": {

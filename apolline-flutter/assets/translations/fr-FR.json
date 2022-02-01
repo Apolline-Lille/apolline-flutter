@@ -103,7 +103,12 @@
       "confirmationSnackbar": "La configuration du serveur a bien été mise à jour.",
       "errorSnackbar": "Le nouveau serveur n'est pas accessible, l'ancienne configuration a été restaurée.",
       "qrCodeButton": "Scanner un code QR",
-      "manualButton": "Renseigner une configuration"
+      "manualButton": "Saisir une configuration"
+    },
+    "sectionDivider": {
+      "notification": "Notification",
+      "threshold": "Seuils de particule",
+      "configuration": "Configuration"
     }
   },
   "navigation": {
