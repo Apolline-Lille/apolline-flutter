@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 class PMCard extends StatefulWidget {
@@ -63,20 +64,23 @@ class _PMCardState extends State<PMCard> {
                   inputFormatters: widget.formatters,
                   onChanged: (value) {
                     if (value.isEmpty) return;
+                    bool _isDangerValueCorrect = int.parse(value) < dangerThresholdValue;
+                    bool _isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
+
+                    if (!_isDangerValueCorrect || !_isWarningValueCorrect) {
+                      Fluttertoast.showToast(msg: "settings.warning.toastMessage".tr());
+                    }
+
                     setState(() {
-                      isWarningValueCorrect = int.parse(value) < dangerThresholdValue;
-                      isDangerValueCorrect = int.parse(value) < dangerThresholdValue;
-                    });
-                  },
-                  initialValue: warningThresholdValue.toString(),
-                  onFieldSubmitted: (value) {
-                    if (value.isEmpty) return;
-                    setState(() {
+                      isDangerValueCorrect = _isDangerValueCorrect;
+                      isWarningValueCorrect = _isWarningValueCorrect;
                       warningThresholdValue = int.parse(value);
                     });
+
                     widget.ucS.userConf.updatePMThreshold(widget.indicator, 0, int.parse(value));
                     widget.ucS.update();
                   },
+                  initialValue: warningThresholdValue.toString(),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "15",
@@ -95,20 +99,23 @@ class _PMCardState extends State<PMCard> {
                   inputFormatters: widget.formatters,
                   onChanged: (value) {
                     if (value.isEmpty) return;
+                    bool _isDangerValueCorrect = int.parse(value) > warningThresholdValue;
+                    bool _isWarningValueCorrect = int.parse(value) > warningThresholdValue;
+
+                    if (!_isDangerValueCorrect || !_isWarningValueCorrect) {
+                      Fluttertoast.showToast(msg: "settings.danger.toastMessage".tr());
+                    }
+
                     setState(() {
-                      isDangerValueCorrect = int.parse(value) > warningThresholdValue;
-                      isWarningValueCorrect = int.parse(value) > warningThresholdValue;
-                    });
-                  },
-                  initialValue: dangerThresholdValue.toString(),
-                  onFieldSubmitted: (value) {
-                    if (value.isEmpty) return;
-                    setState(() {
+                      isDangerValueCorrect = _isDangerValueCorrect;
+                      isWarningValueCorrect = _isWarningValueCorrect;
                       dangerThresholdValue = int.parse(value);
                     });
+
                     widget.ucS.userConf.updatePMThreshold(widget.indicator, 1, int.parse(value));
                     widget.ucS.update();
                   },
+                  initialValue: dangerThresholdValue.toString(),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "30",

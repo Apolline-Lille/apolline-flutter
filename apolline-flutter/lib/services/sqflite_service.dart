@@ -123,6 +123,15 @@ class SqfLiteService {
     await db.execute(query, ids);
   }
 
+  /// Deletes models that are more than one-week-old.
+  /// Models that have not been synchronized with the backend are ignored.
+  Future removeOldModels() async {
+    Database db = await database;
+    var time = DateTime.now().subtract(Duration(days: 7)).millisecondsSinceEpoch;
+    int rowsCount = await db.delete(dataPointTableName, where: "$columnDate <= ? AND $columnSynchro = 1", whereArgs: [time]);
+    print("Removed $rowsCount data points older than one week.");
+  }
+
 
   // SQL close database
   Future close() async {

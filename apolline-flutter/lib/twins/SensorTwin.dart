@@ -8,6 +8,7 @@ import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -42,7 +43,9 @@ class SensorTwin {
   Timer _syncTimer;
 
   SimpleLocationService _locationService;
+  StreamSubscription _locationSubscription;
   Position _currentPosition;
+  bool _isUsingSatellitePositioning;
 
 
   SensorTwin({@required BluetoothDevice device, @required Duration syncTiming}) {
@@ -53,6 +56,7 @@ class SensorTwin {
     this._service = InfluxDBAPI();
     this._sqfLiteService = SqfLiteService();
     this._synchronizationTiming = syncTiming;
+    this._isUsingSatellitePositioning = false;
   }
 
 
@@ -166,11 +170,15 @@ class SensorTwin {
     return true;
   }
 
-  void _initLocationService () {
-    this._locationService = SimpleLocationService();
-    this._locationService.locationStream.listen((p) {
+  void _startLocationService () {
+    this._locationSubscription = this._locationService.locationStream.listen((p) {
       this._currentPosition = p;
     });
+  }
+  void _stopLocationService() {
+    this._locationSubscription?.cancel();
+    this._locationSubscription = null;
+    this._locationService.close();
   }
 
   void _initSynchronizationTimer () {
@@ -179,6 +187,8 @@ class SensorTwin {
 
   /// Retrieves all data points from local database that have not been sent
   /// to InfluxDB yet, and sends them.
+  /// Points that have been sent to backend are marked as synchronized, and are
+  /// deleted from local database if they're more than one-week-old.
   void _synchronizationCallback () async {
     // find not-synchronized data
     List<DataPointModel> dataPoints = await _sqfLiteService.getNotSynchronizedModels();
@@ -205,22 +215,62 @@ class SensorTwin {
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();
-      _sqfLiteService.setModelsAsSynchronized(ids);
+      await _sqfLiteService.setModelsAsSynchronized(ids);
     }
+
+    // Avoiding using too much disk space
+    _sqfLiteService.removeOldModels();
   }
 
   /// Called when data is received from the sensor
   DataPointModel _handleSensorUpdate (String message) {
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
-    List<String> values = message.split(';');
-
-    var model = DataPointModel(values: values, sensorName: this.name, position: _currentPosition);
+    DataPointModel model = this._getPointWithPosition(message.split(';'));
     _dataService.update(model);
     /* insert to sqflite */
     _sqfLiteService.addDataPoint(model.toJSON());
 
     return model;
+  }
+
+  /// Returns a data point with the current location.
+  /// Current location is either:
+  ///   * sensor location, if it currently has access to GPS signal;
+  ///   * phone location otherwise.
+  ///
+  /// If 3 satellites or more are accessible by the sensor, this will switch
+  /// to using sensor locations, and will turn off phone location service to
+  /// save battery usage.
+  /// Else, phone location service is started.
+  DataPointModel _getPointWithPosition (List<String> values) {
+    double sensorLongitude = double.parse(values[DataPointModel.SENSOR_LONGITUDE]);
+    double sensorLatitude = double.parse(values[DataPointModel.SENSOR_LATITUDE]);
+    double satellitesCount = double.parse(values[DataPointModel.SENSOR_GPS_SATELLITES_COUNT]);
+
+    Position currentPosition;
+    bool shouldUseSatellitePositioning = satellitesCount >= 3 && sensorLongitude != 0 && sensorLatitude != 0;
+
+    if (shouldUseSatellitePositioning) {
+      currentPosition = Position(
+          provider: "sensor",
+          geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
+      if (!this._isUsingSatellitePositioning) {
+        this._isUsingSatellitePositioning = true;
+        _stopLocationService();
+      }
+    } else {
+      currentPosition = _currentPosition;
+      if (this._isUsingSatellitePositioning) {
+        this._isUsingSatellitePositioning = false;
+        this._locationService.start();
+        _startLocationService();
+      }
+    }
+
+    print('Using position from ${shouldUseSatellitePositioning ? 'satellites' : 'phone'}.');
+
+    return DataPointModel(values: values, sensorName: this.name, position: currentPosition);
   }
 
   /// Sets up listeners and synchronises sensor clock.
@@ -232,7 +282,11 @@ class SensorTwin {
 
     await _setUpListeners();
     await synchronizeClock();
-    _initLocationService();
+
+    this._locationService = SimpleLocationService();
+    this._locationService.start();
+    _startLocationService();
+
     _initSynchronizationTimer();
     return true;
   }
@@ -243,7 +297,7 @@ class SensorTwin {
     this._syncTimer?.cancel();
     this._service.client?.close();
     this._dataService?.stop();
-    this._locationService?.close();
+    _stopLocationService();
     try {
       this._device.disconnect();
     } catch (err) {

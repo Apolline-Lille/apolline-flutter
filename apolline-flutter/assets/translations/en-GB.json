@@ -24,7 +24,8 @@
   },
   "temperature": "TEMPERATURE",
   "statsView": {
-    "noData": "No chart data available."
+    "pauseGathering": "Pause data gathering",
+    "resumeGathering": "Resume data gathering"
   },
   "mapView": {
     "timeFilters": {
@@ -59,9 +60,13 @@
     }
   },
   "notifications": {
-    "channel": {
-      "name": "Exposure notifications",
-      "description": "Get alerts when current PM values are above warning/danger thresholds."
+    "warningChannel": {
+      "name": "Exposure notifications (warning)",
+      "description": "Get alerts when current PM values are above warning thresholds."
+    },
+    "dangerChannel": {
+      "name": "Exposure notifications (danger)",
+      "description": "Get alerts when current PM values are above danger thresholds."
     },
     "warning": {
       "title": "Warning for {}",
@@ -81,20 +86,31 @@
     "receiveWarning": "Receive warning notifications",
     "receiveDanger": "Receive danger notifications",
     "timeInterval": "Notifications time interval",
+    "sameType": "of same type",
     "setTimeInterval": "Set time interval",
     "setTimeIntervalBody": "Set which duration must pass before a new notification is sent.",
     "warning": {
       "title": "Warning threshold",
-      "incorrect": "Must be inferior than danger value."
+      "incorrect": "Must be inferior than danger value.",
+      "toastMessage": "Warning value must be inferior to danger value."
     },
     "danger": {
       "title": "Danger threshold",
-      "incorrect": "Must be superior to warning value."
+      "incorrect": "Must be superior to warning value.",
+      "toastMessage": "Danger value must be superior to warning value."
     }
   },
   "navigation": {
     "home": "Measures",
     "chart": "Chart",
     "map": "Map"
+  },
+  "events": {
+    "noEventsText": "No events registered for this device.",
+    "types": {
+      "disconnection": "Disconnected from sensor",
+      "connection": "Connected to sensor",
+      "liveData": "Air quality data received (live)"
+    }
   }
 }

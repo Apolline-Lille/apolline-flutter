@@ -3,8 +3,8 @@ import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:duration_picker/duration_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
@@ -20,6 +20,10 @@ class _SettingsPanelState extends State<SettingsPanel> {
   bool _showWarningNotifications = true;
   bool _showDangerNotifications = true;
   Duration _notificationIntervalDuration = Duration(minutes: 5);
+  List<List<String>> pickerData = [
+    new List<String>.generate(24, (i) => (i).toString() + 'h'),
+    new List<String>.generate(60, (i) => (i).toString() + 'min')
+  ];
 
   @override
   initState () {
@@ -86,49 +90,43 @@ class _SettingsPanelState extends State<SettingsPanel> {
           ListTile(
             enabled: _showWarningNotifications || _showDangerNotifications,
             title: Text("settings.timeInterval").tr(),
+            subtitle: Text('(' + "settings.sameType".tr() + ')'),
             trailing: Container(
               margin: EdgeInsets.only(right: 6),
                 child: Text(_printDuration(_notificationIntervalDuration))
             ),
-            onTap: () => showDialog(context: context, builder: (context) => AlertDialog(
-              title: const Text('settings.setTimeInterval').tr(),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: <Widget>[
-                    Container (
-                      margin: EdgeInsets.only(bottom: 30),
-                      child: Text("settings.setTimeIntervalBody").tr()
-                    ),
-                    DurationPicker(
-                      duration: _notificationIntervalDuration,
-                      onChange: (val) {
-                        setState(() => _notificationIntervalDuration = val);
-                        widget.ucS.userConf.exposureNotificationsTimeInterval = val;
-                        widget.ucS.update();
-                      }
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('devicesView.analysisButton.cancel').tr(),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-              )),
+            onTap: () => showPickerModal(context)
           )
         ],
       )
     );
+  }
+
+  showPickerModal(BuildContext context) {
+    new Picker(
+        adapter: PickerDataAdapter<String>(pickerdata: pickerData, isArray: true),
+        changeToFirst: true,
+        hideHeader: false,
+        confirmText: 'OK',
+        cancelText: 'devicesView.analysisButton.cancel'.tr(),
+        selecteds: [
+          _notificationIntervalDuration.inHours,
+          _notificationIntervalDuration.inMinutes % 60
+        ],
+        onConfirm: (Picker picker, List value) {
+          String hoursValue = pickerData[0][value[0]];
+          String minutesValue = pickerData[1][value[1]];
+
+          Duration newDuration = Duration(
+            hours: int.parse(hoursValue.substring(0, hoursValue.length-1)),
+            minutes: int.parse(minutesValue.substring(0, minutesValue.length-3))
+          );
+
+          setState(() => _notificationIntervalDuration = newDuration);
+          widget.ucS.userConf.exposureNotificationsTimeInterval = newDuration;
+          widget.ucS.update();
+        }
+    ).showModal(context); //_scaffoldKey.currentState);
   }
 
   @override

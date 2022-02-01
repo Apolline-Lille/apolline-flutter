@@ -55,7 +55,7 @@ class ApollineApp extends StatelessWidget {
 Future<void> setupNotificationService () async {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('logo_apolline');
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_apolline_notification');
   final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: onDidReceiveLocalNotification,
   );

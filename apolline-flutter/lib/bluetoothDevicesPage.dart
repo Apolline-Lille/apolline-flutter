@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:apollineflutter/sensor_view.dart';
 import 'package:apollineflutter/settings_view.dart';
 import 'package:apollineflutter/utils/device_connection_status.dart';
@@ -32,11 +34,12 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
   void setupBackgroundConfig () async {
+    if (!Platform.isAndroid) return;
     final androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: "notifications.background.title".tr(),
       notificationText: "notifications.background.body".tr(),
-      notificationImportance: AndroidNotificationImportance.Default,
-      notificationIcon: AndroidResource(name: 'logo_apolline', defType: 'drawable'),
+      notificationImportance: AndroidNotificationImportance.Max,
+      notificationIcon: AndroidResource(name: 'ic_apolline_notification', defType: 'drawable'),
     );
     FlutterBackground.initialize(androidConfig: androidConfig);
   }
@@ -55,6 +58,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///Permet de tester si le bluetooth est activé ou pas
   Future<void> initializeDevice() async {
     Result result = await checkPermissionsAndActivateServices([Feature.Bluetooth, Feature.Location]);
+    print(result);
     if (result.allOk) {
       _performDetection();
     } else {
