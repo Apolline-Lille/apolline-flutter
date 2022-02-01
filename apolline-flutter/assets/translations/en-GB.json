@@ -100,9 +100,9 @@
       "toastMessage": "Danger value must be superior to warning value."
     },
     "endpointSelector": {
-      "confirmationSnackbar": "Server endpoint updated",
-      "errorSnackbar": "Unable to ping new server. Back to the old config",
-      "qrCodeButton": "Scan a QR-code",
+      "confirmationSnackbar": "Server configuration has been updated.",
+      "errorSnackbar": "Unable to access new server, old config has been restored.",
+      "qrCodeButton": "Scan a QR code",
       "manualButton": "Enter a config"
     }
   },
@@ -121,13 +121,13 @@
   },
   "endpointDialog": {
     "title": "Register a new server endpoint",
-    "form" : {
+    "form": {
       "emptyField": "Please enter some text",
-      "apiUrl": "Your server endpoint URL :",
-      "pingUrl": "Ping URL :",
-      "username": "Username :",
-      "password": "Password :",
-      "dbname": "Database name : ",
+      "apiUrl": "Your server endpoint URL:",
+      "pingUrl": "Ping URL:",
+      "username": "Username:",
+      "password": "Password:",
+      "dbname": "Database name: ",
       "confirm": "Save"
     }
   },

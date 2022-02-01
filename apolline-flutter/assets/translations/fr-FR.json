@@ -100,9 +100,9 @@
       "toastMessage": "Le seuil de danger doit être supérieur au seuil d'alerte."
     },
     "endpointSelector": {
-      "confirmationSnackbar": "Le serveur à bien été modifié",
-      "errorSnackbar": "Impossible de ping le nouveau serveur. Retour sur l'ancienne configuration.",
-      "qrCodeButton": "Scanner un QR-code",
+      "confirmationSnackbar": "La configuration du serveur a bien été mise à jour.",
+      "errorSnackbar": "Le nouveau serveur n'est pas accessible, l'ancienne configuration a été restaurée.",
+      "qrCodeButton": "Scanner un code QR",
       "manualButton": "Renseigner une configuration"
     }
   },
@@ -122,7 +122,7 @@
   "endpointDialog": {
     "title": "Enregistrez un nouveau serveur",
     "form" : {
-      "emptyField": "Ce champs ne doit pas être vide",
+      "emptyField": "Ce champ ne doit pas être vide",
       "apiUrl": "URL de votre serveur :",
       "pingUrl": "URL de ping :",
       "username": "Nom d'utilisateur :",
@@ -134,8 +134,8 @@
   "endpointQRScanner": {
     "title": "Scannez un QR code",
     "permissionRequired": "Permission d'accès à la caméra nécessaire.",
-    "codeTypeError": "Vous devez scanner QR code.",
-    "codeDataError": "Les données du QR code ne sont pas au bon format."
+    "codeTypeError": "Vous devez scanner code QR.",
+    "codeDataError": "Les données du code QR ne sont pas au bon format."
   },
   "endpoint": {
     "configAddConfirm": "{} a bien été enregistré.",
