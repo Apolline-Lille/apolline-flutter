@@ -1,0 +1,5 @@
+Les seuils d'avertissement/danger sont sauvegardés automatiquement dès que leur valeur est changée
+par l'utilisateur.
+Des messages d'alerte sont affichés si une valeur entrée est incorrecte.
+La position du téléphone est correctement utilisée si le capteur n'a pas une position GPS
+satisfaisante.

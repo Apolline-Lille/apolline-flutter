@@ -1,0 +1,117 @@
+name: Flutter CI
+on:
+  push:
+    branches-ignore:
+      - master
+      - develop
+env:
+  FLUTTER_VERSION: '2.5.0'
+
+jobs:
+  lint:
+    name: "Static code analysis"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2.1.0
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Generate configuration file
+        env:
+          APOLLINE_API_URL: ${{ secrets.APOLLINE_API_URL }}
+          APOLLINE_PASSWORD: ${{ secrets.APOLLINE_PASSWORD }}
+          APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
+          APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
+        run: dart scripts/configuration_generation.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: apolline-flutter
+      - name: Run lint analysis
+        run: flutter analyze
+        working-directory: apolline-flutter
+
+
+  build-android:
+    name: "Build Android apk"
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2.1.0
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Generate configuration file
+        env:
+          APOLLINE_API_URL: ${{ secrets.APOLLINE_API_URL }}
+          APOLLINE_PASSWORD: ${{ secrets.APOLLINE_PASSWORD }}
+          APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
+          APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
+        run: dart scripts/configuration_generation.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: apolline-flutter
+
+      - name: Build Apolline APK
+        run: flutter build apk --debug
+        working-directory: apolline-flutter
+
+      - name: Save build artefact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Apolline.apk
+          path: apolline-flutter/build/app/outputs/apk/debug/app-debug.apk
+
+
+  build-iOS:
+    name: Build iOS package
+    runs-on: macos-latest
+    needs:
+      - lint
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2.1.0
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - name: Generate configuration file
+        env:
+          APOLLINE_API_URL: ${{ secrets.APOLLINE_API_URL }}
+          APOLLINE_PASSWORD: ${{ secrets.APOLLINE_PASSWORD }}
+          APOLLINE_USERNAME: ${{ secrets.APOLLINE_USERNAME }}
+          APOLLINE_DBNAME: ${{ secrets.APOLLINE_DBNAME }}
+        run: dart scripts/configuration_generation.dart
+
+      - name: Build iOS Apolline package
+        run: flutter build ios --release --no-codesign
+        working-directory: apolline-flutter
+
+      - name: Save build artefact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Apolline.app
+          path: apolline-flutter/build/ios/iphoneos/Runner.app

@@ -1,0 +1,116 @@
+{
+  "devicesView": {
+    "title": "Apolline - Capteurs",
+    "permissionsPopUp": {
+      "title": "Permissions insuffisantes",
+      "message": "Activez le Bluetooth et la géolocalisation pour permettre la détection de périphériques."
+    },
+    "pairedDevicesLabel": "Périphériques appairés",
+    "availableDevicesLabel": "Périphériques disponibles",
+    "noDevicesLabel": "Aucun périphérique Bluetooth détecté.",
+    "analysisButton": {
+      "analyse": "Scanner",
+      "cancel": "Annuler"
+    }
+  },
+  "connectionMessages":  {
+    "connecting": "Connection au périphérique...",
+    "configuring": "Configuration du périphérique...",
+    "waiting": "En attente de données...",
+    "connected": "Connexion avec le capteur établie.",
+    "disconnected": "Connexion avec le capteur perdue.",
+    "failed": "Impossible de se connecter à ce périphérique.",
+    "incompatible": "Ce périphérique n'est pas compatible avec l'application."
+  },
+  "temperature": "TEMPÉRATURE",
+  "statsView": {
+    "pauseGathering": "Mettre en pause l'affichage des données",
+    "resumeGathering": "Reprendre l'affichage des données"
+  },
+  "mapView": {
+    "timeFilters": {
+      "title": "Filtrer par ancienneté",
+      "lastMin": "Dernière minute",
+      "last5Mins": "Dernières 5 minutes",
+      "last15Mins": "Dernières 15 minutes",
+      "last30Mins": "Dernières 30 minutes",
+      "lastHour": "Dernière heure",
+      "last3Hours": "Dernières 3 heures",
+      "last6Hours": "Dernières 6 heures",
+      "last12Hours": "Dernières 12 heures",
+      "last24Hours": "Dernières 24 heures",
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette semaine"
+    },
+    "sizeFilters": {
+      "title": "Filtrer par taille de particule",
+      "PM1": "PM1",
+      "PM25": "PM2.5",
+      "PM10": "PM10",
+      "abovePM03": "PM plus grandes que 0.3 µm",
+      "abovePM05": "PM plus grandes que 0.5 µm",
+      "abovePM1": "PM plus grandes que 1 µm",
+      "abovePM25": "PM plus grandes que 2.5 µm",
+      "abovePM5": "PM plus grandes que 5 µm",
+      "abovePM10": "PM plus grandes que 10 µm"
+    },
+    "filters": {
+      "time": "Par temps",
+      "size": "Par taille"
+    }
+  },
+  "notifications": {
+    "warningChannel": {
+      "name": "Notifications d'exposition (alerte)",
+      "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils d'alerte définis dans l'application."
+    },
+    "dangerChannel": {
+      "name": "Notifications d'exposition (danger)",
+      "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils de danger définis dans l'application."
+    },
+    "warning": {
+      "title": "Taux de {} préoccupant",
+      "body": "La mesure de {} µm/m³ dépasse le seuil d'alerte."
+    },
+    "danger": {
+      "title": "Alerte : {}",
+      "body": "La mesure de {} µm/m³ dépasse le seuil de danger."
+    },
+    "background": {
+      "title": "Capteur connecté",
+      "body": "Apolline est actuellement en train de récupérer des données."
+    }
+  },
+  "settings": {
+    "description": "Vous pouvez spécifier ici des seuils d'alerte et de danger.\nLes valeurs reçues inférieures au seuil d'alerte seront considérées comme normales, celles supérieures au seuil de danger comme dangereuses.",
+    "receiveWarning": "Recevoir des notifications d'alerte",
+    "receiveDanger": "Recevoir des notifications de danger",
+    "timeInterval": "Intervalle entre deux notifications",
+    "sameType": "du même type",
+    "setTimeInterval": "Définir l'intervalle de temps",
+    "setTimeIntervalBody": "Choisissez combien de temps doit s'écouler entre l'envoi de deux notifications.",
+    "warning": {
+      "title": "Seuil d'alerte",
+      "incorrect": "Doit être inférieur au seuil de danger.",
+      "toastMessage": "Le seuil d'alerte doit être inférieur au seuil de danger."
+    },
+    "danger": {
+      "title": "Seuil de danger",
+      "incorrect": "Doit être supérieur au seuil d'alerte.",
+      "toastMessage": "Le seuil de danger doit être supérieur au seuil d'alerte."
+    }
+  },
+  "navigation": {
+    "home": "Mesures",
+    "chart": "Graphique",
+    "map": "Carte"
+  },
+  "events": {
+    "noEventsText": "Aucun événement enregistré pour ce périphérique.",
+    "types": {
+      "disconnection": "Déconnecté du capteur",
+      "connection": "Connecté au capteur",
+      "liveData": "Données de qualité de l'air reçues (live)"
+    }
+  }
+}
