@@ -25,6 +25,17 @@ Then, you can set variables in the `apolline-flutter/assets/config_dev.json` fil
 
 #### Android
 
+##### CI build
+
+On `develop` push, CI will build an APK and try to push it as beta release on the Play Store.
+
+Before merging a branch on `develop`, make sure:
+* release notes have been updated
+* application version has been increased (minor/patch)
+
+If you want to make a public release on Play Store, you must mark a previously-uploaded beta release
+as ready for production in the Play console (https://play.google.com/console).
+
 ##### Manual build
 
 1. Create a keystore with an upload key (https://flutter.dev/docs/deployment/android#create-an-upload-keystore);
