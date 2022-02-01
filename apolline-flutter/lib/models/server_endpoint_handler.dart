@@ -22,9 +22,9 @@ class ServerEndpointHandler {
         GlobalConfiguration().get(ApollineConf.USERNAME),
         GlobalConfiguration().get(ApollineConf.PASSWORD),
         GlobalConfiguration().get(ApollineConf.DBNAME)
-    ); // Récupération de la config du fichier config_dev.json
+    ); // Retrieving config of config_dev.json file
 
-    ServerModel defaultConfig = await SqfLiteService().getDefaultEndpoint(); // Si une configuration par defaut à déjà été enregistré, on la met sinon on met la config du fichier config_dev.json
+    ServerModel defaultConfig = await SqfLiteService().getDefaultEndpoint(); // If any default config has been saved, she become current config. Else, setting current config as mainConfig
     if(defaultConfig == null) {
       mainConfig.isDefault = 1;
       currentServerEndpoint = mainConfig;
@@ -32,7 +32,7 @@ class ServerEndpointHandler {
       currentServerEndpoint = defaultConfig;
     }
 
-    SqfLiteService().addServerEndpoint(mainConfig); // met à jour la config du ficher config_dev.json ou l'ajoute dans la bdd si premier lancement de l'appli
+    SqfLiteService().addServerEndpoint(mainConfig); // Updates the main config or add it in local database (first opening app)
     InfluxDBAPI().changeEndpointConfiguration();
   }
 
@@ -42,10 +42,10 @@ class ServerEndpointHandler {
     if(InfluxDBAPI().changeEndpointConfiguration()) {
       SqfLiteService().setDefaultEndpoint(newEndpoint);
       return true;
-    } //else { // erreur lors du changement d'endpoint
+    } //else { // change endpoint error
     //   currentServerEndpoint = tmp;
     //   InfluxDBAPI().changeEndpointConfiguration();
-    //   return false; // On essaye de retourner sur l'ancien. Si cela échoue, on ne boucle pas. (prévenir utilisateur)
+    //   return false; // Trying to return to the last config
     // }
     SqfLiteService().setDefaultEndpoint(newEndpoint);
 
