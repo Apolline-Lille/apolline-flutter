@@ -1,8 +1,7 @@
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
-import 'package:easy_localization/src/public_ext.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ServerEndpointSelectorDialog extends StatefulWidget {

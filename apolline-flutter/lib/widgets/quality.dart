@@ -2,7 +2,6 @@ import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/widgets/charts/BatteryLevelIndicator.dart';
 import 'package:apollineflutter/widgets/charts/RadialGauge.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 

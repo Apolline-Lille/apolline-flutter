@@ -4,15 +4,9 @@ class ServerModel {
   String apiURL;
   String pingURL;
   String username;
-  String _password;
+  String password;
   String dbName;
-  int isDefault; // 0 false | 1 true
-
-  String get password => _password;
-
-  set password(String value) {
-    _password = value;
-  }
+  int isDefault;
 
   ServerModel(this.apiURL, this.pingURL, this.username, String password, this.dbName, {int isDefault = 0}) {
     this.password = password;

@@ -4,8 +4,7 @@ import 'dart:io';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
-import 'package:easy_localization/src/public_ext.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
