@@ -67,7 +67,7 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
                                   }
                                 }
                                 else if (snapshot.hasError){
-                                  return Text("error : ${snapshot.error}");
+                                  return Icon(Icons.flash_off_outlined);
                                 } else {
                                   return CircularProgressIndicator();
                                 }
