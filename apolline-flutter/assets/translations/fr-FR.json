@@ -137,7 +137,7 @@
     }
   },
   "endpointQRScanner": {
-    "title": "Scannez un QR code",
+    "title": "Scannez un code QR",
     "permissionRequired": "Permission d'accès à la caméra nécessaire.",
     "codeTypeError": "Vous devez scanner code QR.",
     "codeDataError": "Les données du code QR ne sont pas au bon format."
