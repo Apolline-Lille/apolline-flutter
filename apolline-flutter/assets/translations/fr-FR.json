@@ -98,6 +98,17 @@
       "title": "Seuil de danger",
       "incorrect": "Doit être supérieur au seuil d'alerte.",
       "toastMessage": "Le seuil de danger doit être supérieur au seuil d'alerte."
+    },
+    "endpointSelector": {
+      "confirmationSnackbar": "La configuration du serveur a bien été mise à jour.",
+      "errorSnackbar": "Le nouveau serveur n'est pas accessible, l'ancienne configuration a été restaurée.",
+      "qrCodeButton": "Scanner un code QR",
+      "manualButton": "Saisir une configuration"
+    },
+    "sectionDivider": {
+      "notification": "Notification",
+      "threshold": "Seuils de particule",
+      "configuration": "Configuration"
     }
   },
   "navigation": {
@@ -112,5 +123,29 @@
       "connection": "Connecté au capteur",
       "liveData": "Données de qualité de l'air reçues (live)"
     }
+  },
+  "endpointDialog": {
+    "title": "Enregistrez un nouveau serveur",
+    "form" : {
+      "emptyField": "Ce champ ne doit pas être vide",
+      "apiUrl": "URL de votre serveur :",
+      "pingUrl": "URL de ping :",
+      "username": "Nom d'utilisateur :",
+      "password": "Mot de passe :",
+      "dbname": "Nom de la base de données :",
+      "confirm": "Enregistrer"
+    }
+  },
+  "endpointQRScanner": {
+    "title": "Scannez un code QR",
+    "permissionRequired": "Permission d'accès à la caméra nécessaire.",
+    "codeTypeError": "Vous devez scanner code QR.",
+    "codeDataError": "Les données du code QR ne sont pas au bon format."
+  },
+  "endpoint": {
+    "configAddConfirm": "{} a bien été enregistré.",
+    "remove": "{} a bien été retiré.",
+    "removeError": "Impossible de supprimer une configuration par défaut",
+    "dataLoadError": "Impossible de récupérer les configurations."
   }
 }

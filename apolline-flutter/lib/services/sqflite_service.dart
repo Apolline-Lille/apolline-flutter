@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:apollineflutter/models/data_point_model.dart';
+import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/utils/time_filter.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,7 +13,7 @@ class SqfLiteService {
   // This is the actual database filename that is saved in the docs directory.
   static final _databaseName = "apolline.db";
   // Increment this version when you need to change the schema.
-  static final _databaseVersion = 1;
+  static final _databaseVersion = 4;
   // database table sensor and column names
   static final dataPointTableName = 'DataPointModel';
   static final columnId = 'id';
@@ -25,6 +26,14 @@ class SqfLiteService {
   static final columnSynchro = 'synchronisation';
   static final columnValues = 'value';
 
+  // database table server endpoints and column names
+  static final serverEndpointTableName = 'ServerEndpointModel';
+  static final columnApiUrl = 'apiUrl';
+  static final columnPingUrl = 'pingUrl';
+  static final columnPassword = 'password';
+  static final columnUsername = 'username';
+  static final columnDBName = 'dbName';
+  static final columnIsDefault = "isDefault";
 
   // Make this a singleton class.
   SqfLiteService._privateConstructor();
@@ -49,7 +58,7 @@ class SqfLiteService {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     // Open the database, can also add an onUpdate callback parameter.
-    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate, onUpgrade: _onUpgrade);
   }
 
   // SQL string to create the database
@@ -68,6 +77,34 @@ class SqfLiteService {
           )
           ''';
     await db.execute(querySensor);
+    querySensor = '''
+       CREATE TABLE $serverEndpointTableName (
+        $columnApiUrl TEXT NOT NULL PRIMARY KEY,
+        $columnPingUrl TEXT NOT NULL,
+        $columnPassword TEXT NOT NULL,
+        $columnUsername TEXT NOT NULL,
+        $columnDBName TEXT NOT NULL,
+        $columnIsDefault INTEGER DEFAULT 0
+      )
+      ''';
+
+    await db.execute(querySensor);
+  }
+
+  _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if(oldVersion < 4) {
+      String querySensor = '''
+       CREATE TABLE $serverEndpointTableName (
+        $columnApiUrl TEXT NOT NULL PRIMARY KEY,
+        $columnPingUrl TEXT NOT NULL,
+        $columnPassword TEXT NOT NULL,
+        $columnUsername TEXT NOT NULL,
+        $columnDBName TEXT NOT NULL,
+        $columnIsDefault INTEGER DEFAULT 0
+      )
+      ''';
+      await db.execute(querySensor);
+    }
   }
 
   // SQL save DataPointModel
@@ -100,7 +137,7 @@ class SqfLiteService {
 
     var jsonres = await db.query(dataPointTableName, columns: null, where: "$columnDate >= ?", whereArgs: [time]);
     jsonres.forEach((pJson) { models.add(DataPointModel.fromJson(pJson)); });
-    
+
     return models;
   }
 
@@ -132,6 +169,49 @@ class SqfLiteService {
     print("Removed $rowsCount data points older than one week.");
   }
 
+  Future<ServerModel> addServerEndpoint(ServerModel serverEndpoint) async {
+    Database db = await database;
+    db.insert(serverEndpointTableName, serverEndpoint.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+
+    return serverEndpoint;
+  }
+
+  Future<int> setDefaultEndpoint(ServerModel server) async {
+    Database db = await database;
+    db.update(serverEndpointTableName, {columnIsDefault: 0}); // unset previous default config
+    return db.update(serverEndpointTableName, {columnIsDefault: 1}, where: "$columnApiUrl = ?", whereArgs: [server.apiURL]); // set new config to default;
+  }
+
+  Future<List<ServerModel>> getAllServerEndpoints() async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> res = await db.query(serverEndpointTableName, columns: null);
+
+    return res.map<ServerModel>((Map<String, dynamic> value) {
+      return ServerModel.fromJson(value);
+    }).toList();
+  }
+
+  Future<ServerModel> getDefaultEndpoint() async {
+    Database db = await database;
+    var res = await db.query(serverEndpointTableName, columns: null, where: "$columnIsDefault = 1", limit: 1);
+    if(res.isNotEmpty)
+      return ServerModel.fromJson(res[0]);
+
+    return null;
+  }
+
+  Future<int> deleteAllEndpoints() async {
+    Database db = await database;
+    int id = await db.delete(serverEndpointTableName);
+    return id;
+  }
+
+  Future<int> deleteEndpoint(ServerModel serverModel) async {
+    Database db = await database;
+    int numberOfRowsDeleted = await db.delete(serverEndpointTableName, where: "$columnApiUrl = ? AND $columnIsDefault = ?", whereArgs: [serverModel.apiURL, 0]); // delete if not default
+    return numberOfRowsDeleted;
+  }
 
   // SQL close database
   Future close() async {

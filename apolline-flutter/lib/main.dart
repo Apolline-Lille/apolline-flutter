@@ -1,3 +1,4 @@
+import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -30,8 +31,13 @@ class ApollineApp extends StatelessWidget {
   final Color secondaryColor = Color.fromRGBO(123, 137, 191, 1);
   final Color tertiaryColor = Color.fromRGBO(181, 187, 217, 1);
 
+  ApollineApp() {
+    ServerEndpointHandler().setDefaultConfig();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

@@ -98,6 +98,17 @@
       "title": "Danger threshold",
       "incorrect": "Must be superior to warning value.",
       "toastMessage": "Danger value must be superior to warning value."
+    },
+    "endpointSelector": {
+      "confirmationSnackbar": "Server configuration has been updated.",
+      "errorSnackbar": "Unable to access new server, old config has been restored.",
+      "qrCodeButton": "Scan a QR code",
+      "manualButton": "Enter a config"
+    },
+    "sectionDivider": {
+      "notification": "Notification",
+      "threshold": "Particle threshold ",
+      "configuration": "Configuration"
     }
   },
   "navigation": {
@@ -112,5 +123,29 @@
       "connection": "Connected to sensor",
       "liveData": "Air quality data received (live)"
     }
+  },
+  "endpointDialog": {
+    "title": "Register a new server endpoint",
+    "form": {
+      "emptyField": "Please enter some text",
+      "apiUrl": "Your server endpoint URL:",
+      "pingUrl": "Ping URL:",
+      "username": "Username:",
+      "password": "Password:",
+      "dbname": "Database name: ",
+      "confirm": "Save"
+    }
+  },
+  "endpointQRScanner": {
+    "title": "Scan QR code",
+    "permissionRequired": "Access to the camera permission is required.",
+    "codeTypeError": "You must to scan a QR code.",
+    "codeDataError": "Wrong format for the QR code data."
+  },
+  "endpoint": {
+    "configAddConfirm": "{} has been added.",
+    "remove": "{} has been removed.",
+    "removeError": "Unable to remove default config",
+    "dataLoadError": "Unable to load configs"
   }
 }
