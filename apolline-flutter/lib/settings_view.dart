@@ -6,7 +6,6 @@ import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/widgets/endpointSelector/server_endpoint_selector_dialog.dart';
 import 'package:apollineflutter/widgets/endpointSelector/server_endpoint_selector_qr.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/flutter_picker.dart';

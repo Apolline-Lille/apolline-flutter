@@ -2,7 +2,6 @@ import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 final UserConfigurationService ucS = locator<UserConfigurationService>();
