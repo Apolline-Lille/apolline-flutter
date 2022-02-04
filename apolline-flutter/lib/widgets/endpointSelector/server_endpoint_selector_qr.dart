@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:apollineflutter/exception/server_credentials_exception.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:apollineflutter/models/server_model.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
@@ -169,7 +170,14 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
       qrCodeContent = json.decode(result.code);
 
       if(qrCodeContent is Map<String, dynamic>) {
-        ServerModel server = ServerModel.fromJson(qrCodeContent);
+        ServerModel server;
+        try {
+           server = ServerModel.fromJson(qrCodeContent);
+        } on ServerCredentialsException {
+          Navigator.pop(context,
+          "endpoint.configAddError".tr());
+          return;
+        }
         SqfLiteService().addServerEndpoint(server);
         ServerEndpointHandler().changeCurrentServerEndpoint(server);
         Navigator.pop<String>(
@@ -178,7 +186,7 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
         SnackBar snackBar = SnackBar(content: Text("endpointQRScanner.codeDataError".tr()));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
-    } on FormatException catch (_) {
+    } on FormatException {
       SnackBar snackBar = SnackBar(content: Text("endpointQRScanner.codeDataError".tr()));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:apollineflutter/exception/bad_request_exception.dart';
 import 'package:apollineflutter/exception/lost_connection_exception.dart';
+import 'package:apollineflutter/exception/server_credentials_exception.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,6 +18,8 @@ class InfluxDBAPI {
   String _username = ServerEndpointHandler().currentServerEndpoint.username;
   ///the password.
   String _password = ServerEndpointHandler().currentServerEndpoint.password;
+  ///the token
+  String _token = ServerEndpointHandler().currentServerEndpoint.token;
   ///the health url
   String _pingUrl = ServerEndpointHandler().currentServerEndpoint.pingURL;
 
@@ -36,7 +39,14 @@ class InfluxDBAPI {
   ///
   ///write data to influx database
   Future<void> write(String data) async {
-    return await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data);
+    if(_token != null) {
+      Map<String, String> header = {"Authorization":"Token $_token"};
+      return await client.postSilent("$_connectionString/write?db=$_db", headers: header, body: data);
+    } else if(_password != null) {
+      return await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data);
+    } else {
+      throw ServerCredentialsException("Error in database login credentials: No password or token was found.");
+    }
   }
 
   ///
@@ -50,6 +60,7 @@ class InfluxDBAPI {
     _db = ServerEndpointHandler().currentServerEndpoint.dbName;
     _username = ServerEndpointHandler().currentServerEndpoint.username;
     _password = ServerEndpointHandler().currentServerEndpoint.password;
+    _token = ServerEndpointHandler().currentServerEndpoint.token;
     _pingUrl = ServerEndpointHandler().currentServerEndpoint.pingURL;
     try {
       this.ping();

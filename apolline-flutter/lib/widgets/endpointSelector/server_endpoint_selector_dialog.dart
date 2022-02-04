@@ -17,11 +17,12 @@ class ServerEndpointSelectorDialog extends StatefulWidget {
 
 class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelectorDialog> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController apiURLController = TextEditingController();
-  TextEditingController pingURLController = TextEditingController();
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController dbController = TextEditingController();
+  TextEditingController _apiURLController = TextEditingController();
+  TextEditingController _pingURLController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _tokenController = TextEditingController();
+  TextEditingController _dbController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                         children: [
                           SizedBox(height: 20),
                           TextFormField(
-                            controller: apiURLController,
+                            controller: _apiURLController,
                             validator: (value) {
                               if(value == null || value.isEmpty) {
                                 return "endpointDialog.form.emptyField".tr();
@@ -54,7 +55,7 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                           ),
                           SizedBox(height: 10),
                           TextFormField(
-                            controller: pingURLController,
+                            controller: _pingURLController,
                             validator: (value) {
                               if(value == null || value.isEmpty) {
                                 return "endpointDialog.form.emptyField".tr();
@@ -68,7 +69,7 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                           ),
                           SizedBox(height: 10),
                           TextFormField(
-                            controller: usernameController,
+                            controller: _usernameController,
                             validator: (value) {
                               if(value == null || value.isEmpty) {
                                 return "endpointDialog.form.emptyField".tr();
@@ -82,10 +83,10 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                           ),
                           SizedBox(height: 10),
                           TextFormField(
-                            controller: passwordController,
+                            controller: _passwordController,
                             validator: (value) {
-                              if(value == null || value.isEmpty) {
-                                return "endpointDialog.form.emptyField".tr();
+                              if((value == null || value.isEmpty) && (_tokenController.text == null || _tokenController.text.isEmpty)) {
+                                return "endpointDialog.form.credentialsError".tr();
                               }
                               return null;
                             },
@@ -97,7 +98,21 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                           ),
                           SizedBox(height: 10),
                           TextFormField(
-                            controller: dbController,
+                            controller: _tokenController,
+                            validator: (value) {
+                              if((value == null || value.isEmpty) && (_passwordController.text == null || _passwordController.text.isEmpty)) {
+                                return "endpointDialog.form.credentialsError".tr();
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                                label: Text("endpointDialog.form.token".tr()),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10)))
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          TextFormField(
+                            controller: _dbController,
                             validator: (value) {
                               if(value == null || value.isEmpty) {
                                 return "endpointDialog.form.emptyField".tr();
@@ -113,7 +128,15 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                           ElevatedButton(
                               onPressed: () {
                                 if(_formKey.currentState.validate()) {
-                                  ServerModel serverEndpoint = ServerModel(apiURLController.text, pingURLController.text, usernameController.text, passwordController.text, dbController.text);
+
+                                  ServerModel serverEndpoint = ServerModel(
+                                      _apiURLController.text,
+                                      _pingURLController.text,
+                                      _usernameController.text,
+                                      _dbController.text,
+                                      password: _passwordController.text,
+                                      token: _tokenController.text);
+
                                   SqfLiteService().addServerEndpoint(serverEndpoint);
                                   ServerEndpointHandler().changeCurrentServerEndpoint(serverEndpoint);
                                   Navigator.pop<String>(

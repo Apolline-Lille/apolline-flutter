@@ -128,10 +128,12 @@
     "title": "Register a new server endpoint",
     "form": {
       "emptyField": "Please enter some text",
+      "credentialsError": "You must provide at least one token or password",
       "apiUrl": "Your server endpoint URL:",
       "pingUrl": "Ping URL:",
       "username": "Username:",
       "password": "Password:",
+      "token": "Token:",
       "dbname": "Database name: ",
       "confirm": "Save"
     }
@@ -144,6 +146,7 @@
   },
   "endpoint": {
     "configAddConfirm": "{} has been added.",
+    "configAddError": "Either a password or a token is required (or both).",
     "remove": "{} has been removed.",
     "removeError": "Unable to remove default config",
     "dataLoadError": "Unable to load configs"
