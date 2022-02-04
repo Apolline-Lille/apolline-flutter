@@ -20,8 +20,9 @@ class ServerEndpointHandler {
         GlobalConfiguration().get(ApollineConf.API_URL),
         GlobalConfiguration().get(ApollineConf.PING_URL),
         GlobalConfiguration().get(ApollineConf.USERNAME),
-        GlobalConfiguration().get(ApollineConf.PASSWORD),
-        GlobalConfiguration().get(ApollineConf.DBNAME)
+        GlobalConfiguration().get(ApollineConf.DBNAME),
+        password: GlobalConfiguration().get(ApollineConf.PASSWORD),
+        token: null
     ); // Retrieving config of config_dev.json file
 
     ServerModel defaultConfig = await SqfLiteService().getDefaultEndpoint(); // If any default config has been saved, she become current config. Else, setting current config as mainConfig

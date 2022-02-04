@@ -1,3 +1,4 @@
+import 'package:apollineflutter/exception/server_credentials_exception.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 
 class ServerModel {
@@ -5,11 +6,18 @@ class ServerModel {
   String pingURL;
   String username;
   String password;
+  String token;
   String dbName;
   int isDefault;
 
-  ServerModel(this.apiURL, this.pingURL, this.username, String password, this.dbName, {int isDefault = 0}) {
-    this.password = password;
+  ServerModel(this.apiURL, this.pingURL, this.username, this.dbName, {int isDefault = 0, String password, String token}) {
+    if(password == null && token == null) {
+      throw new ServerCredentialsException("Need to have either token or password");
+    } else {
+      this.password = password;
+      this.token = token;
+    }
+
     this.isDefault = isDefault;
   }
 
@@ -18,9 +26,10 @@ class ServerModel {
           serverConfig[SqfLiteService.columnApiUrl],
           serverConfig[SqfLiteService.columnPingUrl],
           serverConfig[SqfLiteService.columnUsername],
-          serverConfig[SqfLiteService.columnPassword],
           serverConfig[SqfLiteService.columnDBName],
-          isDefault : serverConfig[SqfLiteService.columnIsDefault]
+          isDefault : serverConfig[SqfLiteService.columnIsDefault],
+          password : serverConfig[SqfLiteService.columnPassword],
+          token : serverConfig[SqfLiteService.columnToken]
       );
 
   Map<String, dynamic> toJson() {
@@ -28,9 +37,10 @@ class ServerModel {
       SqfLiteService.columnApiUrl: this.apiURL,
       SqfLiteService.columnPingUrl: this.pingURL,
       SqfLiteService.columnUsername: this.username,
-      SqfLiteService.columnPassword: this.password,
       SqfLiteService.columnDBName: this.dbName,
-      SqfLiteService.columnIsDefault: this.isDefault
+      SqfLiteService.columnIsDefault: this.isDefault,
+      SqfLiteService.columnPassword: this.password,
+      SqfLiteService.columnToken: this.token
     };
   }
 
@@ -43,6 +53,7 @@ class ServerModel {
             pingURL == other.pingURL &&
             username == other.username &&
             password == other.password &&
+            token == other.token &&
             dbName == other.dbName;
   }
 
