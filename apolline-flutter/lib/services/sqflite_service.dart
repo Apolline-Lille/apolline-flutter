@@ -13,7 +13,7 @@ class SqfLiteService {
   // This is the actual database filename that is saved in the docs directory.
   static final _databaseName = "apolline.db";
   // Increment this version when you need to change the schema.
-  static final _databaseVersion = 4;
+  static final _databaseVersion = 5;
   // database table sensor and column names
   static final dataPointTableName = 'DataPointModel';
   static final columnId = 'id';
@@ -31,6 +31,7 @@ class SqfLiteService {
   static final columnApiUrl = 'apiUrl';
   static final columnPingUrl = 'pingUrl';
   static final columnPassword = 'password';
+  static final columnToken = 'token';
   static final columnUsername = 'username';
   static final columnDBName = 'dbName';
   static final columnIsDefault = "isDefault";
@@ -77,14 +78,17 @@ class SqfLiteService {
           )
           ''';
     await db.execute(querySensor);
+
     querySensor = '''
        CREATE TABLE $serverEndpointTableName (
         $columnApiUrl TEXT NOT NULL PRIMARY KEY,
         $columnPingUrl TEXT NOT NULL,
-        $columnPassword TEXT NOT NULL,
+        $columnPassword TEXT,
+        $columnToken TEXT,
         $columnUsername TEXT NOT NULL,
         $columnDBName TEXT NOT NULL,
-        $columnIsDefault INTEGER DEFAULT 0
+        $columnIsDefault INTEGER DEFAULT 0,
+        CHECK ($columnPassword NOT NULL OR $columnToken NOT NULL)
       )
       ''';
 
@@ -92,8 +96,9 @@ class SqfLiteService {
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    String querySensor;
     if(oldVersion < 4) {
-      String querySensor = '''
+      querySensor = '''
        CREATE TABLE $serverEndpointTableName (
         $columnApiUrl TEXT NOT NULL PRIMARY KEY,
         $columnPingUrl TEXT NOT NULL,
@@ -104,6 +109,42 @@ class SqfLiteService {
       )
       ''';
       await db.execute(querySensor);
+    }
+
+    if(oldVersion < 5) {
+      String tmpTable = "tmp_table";
+
+      String newTableQuery = '''      
+      CREATE TABLE $serverEndpointTableName (
+          $columnApiUrl TEXT NOT NULL PRIMARY KEY,
+          $columnPingUrl TEXT NOT NULL,
+          $columnPassword TEXT,
+          $columnToken TEXT,
+          $columnUsername TEXT NOT NULL,
+          $columnDBName TEXT NOT NULL,
+          $columnIsDefault INTEGER DEFAULT 0,
+          CHECK ($columnPassword NOT NULL OR $columnToken NOT NULL)
+      );
+      ''';
+
+      String transfertDataQuery = '''
+      INSERT INTO $serverEndpointTableName ($columnApiUrl, $columnPingUrl, $columnPassword, $columnUsername, $columnDBName, $columnIsDefault)
+        SELECT $columnApiUrl, $columnPingUrl, $columnPassword, $columnUsername, $columnDBName, $columnIsDefault
+        FROM $tmpTable;
+      ''';
+
+      String dropTmpTableQuery = '''
+        DROP TABLE $tmpTable;
+      ''';
+
+      await db.execute("PRAGMA foreign_keys=off;");
+      await db.execute("BEGIN TRANSACTION;");
+      await db.execute("ALTER TABLE $serverEndpointTableName RENAME TO $tmpTable;");
+      await db.execute(newTableQuery);
+      await db.execute(transfertDataQuery);
+      await db.execute(dropTmpTableQuery);
+      await db.execute("COMMIT;");
+      await db.execute("PRAGMA foreign_keys=on;");
     }
   }
 
