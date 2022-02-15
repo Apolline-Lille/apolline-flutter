@@ -1,14 +1,20 @@
+import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/models/indoor_user_actions.dart';
 import 'package:apollineflutter/models/outdoor_user_actions.dart';
+import 'package:apollineflutter/services/influxdb_client.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import 'gattsample.dart';
+
 class InconsistentValueReportView extends StatefulWidget {
   final String captor;
   final double value;
+  final int time;
 
-  InconsistentValueReportView({Key key, this.captor, this.value}) : super(key: key);
+  InconsistentValueReportView({Key key, this.captor, this.value, this.time}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -88,8 +94,7 @@ class InconsistentValueReportViewState extends State<InconsistentValueReportView
               if(_formKey.currentState.validate()) {
                 SnackBar snackBar = SnackBar(content: Text("inconsistentReport.form.valid".tr()));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                //TODO send data to db
-                print("data : {'isOutdoor': $_isOutdoor, 'activity': $_userCurrentAction}");
+                _sendReport();
                 Navigator.of(context).pop();
               }
             },
@@ -119,6 +124,69 @@ class InconsistentValueReportViewState extends State<InconsistentValueReportView
           child: Text(value)
       );
     }).toList();
+  }
+
+  _sendReport() async {
+    InfluxDBAPI db = InfluxDBAPI();
+    List<DataPointModel> models = await SqfLiteService().getDataPointsWithDate(widget.time);
+
+    if(models.length > 0) {
+      DataPointModel model = models[0];
+      String captorName = _getCaptorDBName();
+      String unit = _getUnit();
+
+      String data = "$captorName,"
+          "uuid=${BlueSensorAttributes.dustSensorServiceUUID},"
+          "device=${model.sensorName},provider=${model.position.provider},"
+          "geohash=${model.position.geohash},"
+          "transport=${model.position.transport},"
+          "unit=$unit,outdoor=$_isOutdoor,"
+          "activity=$_userCurrentAction value=${widget.value} ${model.date}";
+      db.write(data);
+    }
+  }
+
+  String _getCaptorDBName() {
+    switch(widget.captor) {
+      case "PM_1":
+        return "pm.01.value";
+      case "PM_2_5":
+        return "pm.2_5.value";
+      case "PM_10":
+        return "pm.10.value";
+      case "PM_ABOVE_0_3":
+        return "pm.0_3.above";
+      case "PM_ABOVE_0_5":
+        return "pm.0_5.above";
+      case "PM_ABOVE_1":
+        return "pm.1.above";
+      case "PM_ABOVE_2_5":
+        return "pm.2_5.above";
+      case "PM_ABOVE_5":
+        return "pm.5.above";
+      case "PM_ABOVE_10":
+        return "pm.10.above";
+      default:
+        return "ERROR";
+    }
+  }
+
+  String _getUnit() {
+    switch (widget.captor) {
+      case "PM_1":
+      case "PM_2_5":
+      case "PM_10":
+        return Units.CONCENTRATION_UG_M3;
+      case "PM_ABOVE_0_3":
+      case "PM_ABOVE_0_5":
+      case "PM_ABOVE_1":
+      case "PM_ABOVE_2_5":
+      case "PM_ABOVE_5":
+      case "PM_ABOVE_10":
+        return Units.CONCENTRATION_ABOVE;
+      default:
+        return "ERROR";
+    }
   }
 
 }

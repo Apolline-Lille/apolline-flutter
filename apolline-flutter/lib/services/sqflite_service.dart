@@ -104,6 +104,17 @@ class SqfLiteService {
     return models;
   }
 
+  Future<List<DataPointModel>> getDataPointsWithDate(int date) async {
+    List<DataPointModel> models = [];
+    Database db = await database;
+    int begin = (date ~/ 100) * 100;
+
+    var jsonres = await db.query(dataPointTableName, columns: null, where: "$columnDate >= ? and $columnDate <= ?", whereArgs: [begin, date]);
+    jsonres.forEach((pJson) { models.add(DataPointModel.fromJson(pJson)); });
+
+    return models;
+  }
+
 
   /// Returns all models that have not been sent to backend yet
   /// (materialized with $columnSynchro == 0).

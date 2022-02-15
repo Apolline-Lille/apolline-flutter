@@ -304,7 +304,8 @@ class _SensorViewState extends State<SensorView> {
         payload = "{"
                       "\"name\": \"inconsistentNotification\","
                       "\"captor\": \"$captorName\","
-                      "\"value\": $captorValue"
+                      "\"value\": $captorValue,"
+                      "\"time\": ${DateTime.now().millisecondsSinceEpoch}"
                   "}";
         break;
       case NotificationType.Error:

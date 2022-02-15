@@ -93,5 +93,6 @@ Future onDidReceiveLocalNotification (
 _openInconsistentReportView(Map<String, dynamic> payload) {
   String captor = payload["captor"];
   double value = payload["value"];
-  Navigator.of(NavigatorService.navigatorKey.currentContext).push(MaterialPageRoute(builder: (context) => InconsistentValueReportView(captor: captor, value: value)));
+  int time = payload["time"];
+  Navigator.of(NavigatorService.navigatorKey.currentContext).push(MaterialPageRoute(builder: (context) => InconsistentValueReportView(captor: captor, value: value, time: time)));
 }
