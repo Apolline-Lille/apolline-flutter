@@ -1,10 +1,17 @@
+import 'package:apollineflutter/models/server_endpoint_handler.dart';
+import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
+import 'package:apollineflutter/utils/icons/custom_icons_icons.dart';
 import 'package:apollineflutter/utils/pm_card.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:apollineflutter/widgets/endpointSelector/server_endpoint_selector_dialog.dart';
+import 'package:apollineflutter/widgets/endpointSelector/server_endpoint_selector_qr.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'models/server_model.dart';
 
 class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
@@ -24,12 +31,15 @@ class _SettingsPanelState extends State<SettingsPanel> {
     new List<String>.generate(24, (i) => (i).toString() + 'h'),
     new List<String>.generate(60, (i) => (i).toString() + 'min')
   ];
+  ServerModel _dropdownValue = ServerEndpointHandler().currentServerEndpoint;
+  Future<List<ServerModel>> _serverEndpoints;
 
   @override
   initState () {
     this._showWarningNotifications = widget.ucS.userConf.showWarningNotifications;
     this._showDangerNotifications = widget.ucS.userConf.showDangerNotifications;
     this._notificationIntervalDuration = widget.ucS.userConf.exposureNotificationsTimeInterval;
+    _serverEndpoints = SqfLiteService().getAllServerEndpoints();
     super.initState();
   }
 
@@ -68,37 +78,37 @@ class _SettingsPanelState extends State<SettingsPanel> {
     };
 
     return Container (
-      margin: EdgeInsets.only(top: 30),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text("settings.receiveWarning").tr(),
-            onTap: () => updateWarningState(!_showWarningNotifications),
-            trailing: Checkbox(
-              value: _showWarningNotifications,
-              onChanged: updateWarningState,
+        margin: EdgeInsets.only(top: 30),
+        child: Column(
+          children: [
+            ListTile(
+              title: Text("settings.receiveWarning").tr(),
+              onTap: () => updateWarningState(!_showWarningNotifications),
+              trailing: Checkbox(
+                value: _showWarningNotifications,
+                onChanged: updateWarningState,
+              ),
             ),
-          ),
-          ListTile(
-            title: Text("settings.receiveDanger").tr(),
-            onTap: () => updateDangerState(!_showDangerNotifications),
-            trailing: Checkbox(
-              value: _showDangerNotifications,
-              onChanged: updateDangerState,
+            ListTile(
+              title: Text("settings.receiveDanger").tr(),
+              onTap: () => updateDangerState(!_showDangerNotifications),
+              trailing: Checkbox(
+                value: _showDangerNotifications,
+                onChanged: updateDangerState,
+              ),
             ),
-          ),
-          ListTile(
-            enabled: _showWarningNotifications || _showDangerNotifications,
-            title: Text("settings.timeInterval").tr(),
-            subtitle: Text('(' + "settings.sameType".tr() + ')'),
-            trailing: Container(
-              margin: EdgeInsets.only(right: 6),
-                child: Text(_printDuration(_notificationIntervalDuration))
-            ),
-            onTap: () => showPickerModal(context)
-          )
-        ],
-      )
+            ListTile(
+                enabled: _showWarningNotifications || _showDangerNotifications,
+                title: Text("settings.timeInterval").tr(),
+                subtitle: Text('(' + "settings.sameType".tr() + ')'),
+                trailing: Container(
+                    margin: EdgeInsets.only(right: 6),
+                    child: Text(_printDuration(_notificationIntervalDuration))
+                ),
+                onTap: () => showPickerModal(context)
+            )
+          ],
+        )
     );
   }
 
@@ -118,8 +128,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
           String minutesValue = pickerData[1][value[1]];
 
           Duration newDuration = Duration(
-            hours: int.parse(hoursValue.substring(0, hoursValue.length-1)),
-            minutes: int.parse(minutesValue.substring(0, minutesValue.length-3))
+              hours: int.parse(hoursValue.substring(0, hoursValue.length-1)),
+              minutes: int.parse(minutesValue.substring(0, minutesValue.length-3))
           );
 
           setState(() => _notificationIntervalDuration = newDuration);
@@ -129,19 +139,188 @@ class _SettingsPanelState extends State<SettingsPanel> {
     ).showModal(context); //_scaffoldKey.currentState);
   }
 
+  Widget _buildEndpointSelector() {
+    List<Widget> widgets = [];
+
+    widgets.add(
+        FutureBuilder<List<ServerModel>>(
+          future: _serverEndpoints,
+          builder: (BuildContext context, AsyncSnapshot<List<ServerModel>> snapshot) {
+            if(snapshot.hasData) {
+              return DropdownButton(
+                  value: _dropdownValue,
+                  onChanged: (value) {
+                    if(ServerEndpointHandler().changeCurrentServerEndpoint(value)){
+                      _updateDropdown();
+                      Fluttertoast.showToast(msg: "settings.endpointSelector.confirmationSnackbar".tr());
+                    } else {
+                      Fluttertoast.showToast(msg: "settings.endpointSelector.errorSnackbar".tr());
+                    }
+                  },
+                  items: snapshot.data
+                      .map<DropdownMenuItem<ServerModel>>((ServerModel endpoint) {
+                    return DropdownMenuItem<ServerModel>(
+                        value: endpoint,
+                        child: Row(
+                            children: <Widget>[
+                              Text(endpoint.dbName),
+                              IconButton(
+                                icon: Icon(
+                                    Icons.delete_forever,
+                                    color: Colors.redAccent
+                                ),
+                                onPressed: () {
+                                  SqfLiteService().deleteEndpoint(endpoint).then((numberOfRowsDeleted) {
+                                    if(numberOfRowsDeleted >= 1) {
+                                      _updateDropdown();
+                                      Fluttertoast.showToast(
+                                          msg: "endpoint.remove".tr(
+                                              args: [endpoint.dbName]));
+                                      Navigator.pop(
+                                          context); // close dropdown menu
+                                    } else {
+                                      Fluttertoast.showToast(msg: "endpoint.removeError".tr());
+                                    }
+                                  });
+
+                                },
+                              )
+                            ]
+                        )
+                    );
+                  }).toList()
+              );
+            }
+            else if(snapshot.hasError) {
+              return Text("endpoint.dataLoadError".tr());
+            }
+            return CircularProgressIndicator();
+          },
+        )
+    );
+
+    widgets.addAll(
+        <Widget> [
+          ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                if(states.contains(MaterialState.pressed)) {
+                  return Theme
+                      .of(context)
+                      .primaryColor
+                      .withOpacity(0.5);
+                }
+                return Theme.of(context).primaryColor;
+              })),
+              child: SizedBox(
+                width: 200,
+                child: Row(
+                    children: <Widget>[
+                      Icon(Icons.qr_code_2),
+                      Padding(padding: EdgeInsets.only(right: 10)),
+                      Text("settings.endpointSelector.qrCodeButton".tr(),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ]
+                ),
+              ),
+              onPressed: () =>
+              {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ServerEndpointSelectorQr(),
+                        fullscreenDialog: false))
+                    .then((value) {
+                  if (value != null) {
+                    Fluttertoast.showToast(msg: value.toString());
+                    _updateDropdown();
+                  }
+                })
+              }
+          ),
+          ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                if(states.contains(MaterialState.pressed)) {
+                  return Theme
+                      .of(context)
+                      .primaryColor
+                      .withOpacity(0.5);
+                }
+                return Theme.of(context).primaryColor;
+              })),
+              onPressed: () => {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
+                    .then((value) {
+                  if(value != null) {
+                    Fluttertoast.showToast(msg: value.toString());
+                    _updateDropdown();
+                  }
+                })
+              },
+              child: SizedBox(
+                  width: 200,
+                  child: Row(
+                      children: <Widget> [
+                        Icon(CustomIcons.pencil, color: Colors.white),
+                        Padding(padding: EdgeInsets.only(right: 10)),
+                        Text("settings.endpointSelector.manualButton".tr(),
+                          overflow: TextOverflow.ellipsis,)
+                      ]
+                  )
+              )
+          )
+        ]);
+
+    return Column(children: widgets);
+  }
+
+  void _updateDropdown() {
+    setState(() {
+      SqfLiteService().getDefaultEndpoint().then((value) {
+        _dropdownValue = value;
+      });
+      _serverEndpoints = SqfLiteService().getAllServerEndpoints();
+    });
+  }
+
+  _divider(String sectionName) {
+    return Row(
+        children: <Widget>[
+          Expanded(child: Divider(height: 50)),
+          Text(
+              sectionName,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  fontSize: 20)
+          ),
+          Expanded(child: Divider(height: 50)),
+        ]
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     List<Widget> widgets = [
+      _divider("settings.sectionDivider.notification".tr()),
       _buildInformationWidget(),
       _buildNotificationConfigurationWidget(),
-      Divider(height: 70)
+      _divider("settings.sectionDivider.threshold".tr()),
     ];
+
     widgets.addAll(_buildAllPMCards());
+
+    widgets.addAll([
+      _divider("settings.sectionDivider.configuration".tr()),
+      _buildEndpointSelector(),
+    ]);
 
     return Container(
       child: ListView(
-        children: widgets,
-        padding: widget.padding
+          children: widgets,
+          padding: widget.padding
       ),
     );
   }
