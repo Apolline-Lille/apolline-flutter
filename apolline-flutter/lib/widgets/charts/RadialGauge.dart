@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class RadialGauge extends StatefulWidget {

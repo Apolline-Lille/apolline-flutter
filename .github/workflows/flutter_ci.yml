@@ -4,6 +4,8 @@ on:
     branches-ignore:
       - master
       - develop
+  pull_request:
+
 env:
   FLUTTER_VERSION: '2.5.0'
 

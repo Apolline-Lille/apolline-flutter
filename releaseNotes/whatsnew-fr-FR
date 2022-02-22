@@ -1,5 +1,3 @@
-Les seuils d'avertissement/danger sont sauvegardés automatiquement dès que leur valeur est changée
-par l'utilisateur.
-Des messages d'alerte sont affichés si une valeur entrée est incorrecte.
-La position du téléphone est correctement utilisée si le capteur n'a pas une position GPS
-satisfaisante.
+Possibilité d'ajouter des configurations vers d'autres serveurs afin d'y récupérer les données envoyés par le capteur.
+L'ajout de configuration peut se faire soit en entrant les données manuellement dans un formulaire, soit en scannant un code QR.
+Les configurations sont sauvegardées dans une base de données locale.

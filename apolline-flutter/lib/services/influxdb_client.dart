@@ -3,24 +3,23 @@ import 'dart:async';
 import 'dart:io';
 import 'package:apollineflutter/exception/bad_request_exception.dart';
 import 'package:apollineflutter/exception/lost_connection_exception.dart';
+import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:http/http.dart' as http;
-import 'package:global_configuration/global_configuration.dart';
-import 'package:apollineflutter/configuration_key_name.dart';
 
 ///Author (Issagha Barry)
 ///Influx db api.
 class InfluxDBAPI {
   ///the address where to save data.
-  final String _connectionString = GlobalConfiguration().get(ApollineConf.API_URL);
+  String _connectionString = ServerEndpointHandler().currentServerEndpoint.apiURL;
   ///the name of database.
-  final String _db = GlobalConfiguration().get(ApollineConf.DBNAME);
+  String _db = ServerEndpointHandler().currentServerEndpoint.dbName;
   ///the user.
-  final String _username = GlobalConfiguration().get(ApollineConf.USERNAME);
+  String _username = ServerEndpointHandler().currentServerEndpoint.username;
   ///the password.
-  final String _password = GlobalConfiguration().get(ApollineConf.PASSWORD);
+  String _password = ServerEndpointHandler().currentServerEndpoint.password;
   ///the health url
-  final String _pingUrl = GlobalConfiguration().get(ApollineConf.PING_URL);
-  
+  String _pingUrl = ServerEndpointHandler().currentServerEndpoint.pingURL;
+
   static final InfluxDBAPI _instance = InfluxDBAPI._internal();
   _InfluxDBClient client = _InfluxDBClient(http.Client());
 
@@ -33,7 +32,7 @@ class InfluxDBAPI {
   factory InfluxDBAPI() {
     return _instance;
   }
-  
+
   ///
   ///write data to influx database
   Future<void> write(String data) async {
@@ -43,7 +42,21 @@ class InfluxDBAPI {
   ///
   ///check the address [address].
   Future<void> ping() async {
-   return client.pingSilent("$_pingUrl"); //utilisation de /health car la v2.0 le contient déjà. actu sur v1.8.x
+    return client.pingSilent("$_pingUrl"); //utilisation de /health car la v2.0 le contient déjà. actu sur v1.8.x
+  }
+
+  bool changeEndpointConfiguration() {
+    _connectionString = ServerEndpointHandler().currentServerEndpoint.apiURL;
+    _db = ServerEndpointHandler().currentServerEndpoint.dbName;
+    _username = ServerEndpointHandler().currentServerEndpoint.username;
+    _password = ServerEndpointHandler().currentServerEndpoint.password;
+    _pingUrl = ServerEndpointHandler().currentServerEndpoint.pingURL;
+    try {
+      this.ping();
+    } on LostConnectionException catch (_) {
+      return false;
+    }
+    return true;
   }
 }
 
@@ -52,7 +65,7 @@ class InfluxDBAPI {
 class _InfluxDBClient extends http.BaseClient {
   static const OKSTATUS = [204, 200];
   http.Client _inner;
-  
+
   ///
   ///constructor
   _InfluxDBClient(this._inner);
@@ -74,7 +87,7 @@ class _InfluxDBClient extends http.BaseClient {
     } on SocketException catch(_) {
       throw LostConnectionException("server is unavailable");
     }
-    
+
     if(!OKSTATUS.contains(resp.statusCode) ) {
       throw LostConnectionException("server is unavailable");
     }
@@ -89,7 +102,7 @@ class _InfluxDBClient extends http.BaseClient {
     } on SocketException catch(e) {
       throw LostConnectionException("server is unavailable ${e.toString()}");
     }
-    
+
     if(!OKSTATUS.contains(resp.statusCode) ) {
       throw BadRequestException("Server not access with status code ${resp.statusCode} and body ${resp.body}");
     }

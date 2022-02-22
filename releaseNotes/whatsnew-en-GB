@@ -1,3 +1,3 @@
-Warning/danger thresholds are automatically saved when their value is updated by the user.
-Toast messages are displayed when a faulty value is entered.
-Phone's location is correctly used if sensor does not have an accurate GPS location.
+Ability to add configurations to other servers to retrieve data sent by the sensor.
+Adding new configuration can be done either by submit form or by scanning QR code.
+Configurations are stored in local database.
