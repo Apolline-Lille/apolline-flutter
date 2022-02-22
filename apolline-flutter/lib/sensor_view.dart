@@ -206,7 +206,7 @@ class _SensorViewState extends State<SensorView> {
             "notifications.information.title".tr(args: [value.getLabelKey().tr()]),
             'notifications.information.body'.tr(args: [collectedValue.toString()]),
             NotificationType.Information,
-            captorName: value.name,
+            captorName: value.toString().substring(value.toString().indexOf(".") + 1),
             captorValue: collectedValue
         );
       }
