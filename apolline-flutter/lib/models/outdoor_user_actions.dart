@@ -12,6 +12,8 @@ extension OutdoorUserActionExtenion on OutdoorUserAction {
         return "userActions.outdoor.subway".tr();
       case OutdoorUserAction.TrafficJam:
         return "userActions.outdoor.trafficJam".tr();
+      default:
+        return "userActions.outdoor.subway".tr();
     }
   }
 }

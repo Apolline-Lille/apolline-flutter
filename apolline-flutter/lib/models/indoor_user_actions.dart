@@ -12,6 +12,8 @@ extension IndoorUserActionExtenion on IndoorUserAction {
         return "userActions.indoor.kitchen".tr();
       case IndoorUserAction.Aspirator:
         return "userActions.indoor.aspirator".tr();
+      default:
+        return "userActions.indoor.kitchen".tr();
     }
   }
 }
