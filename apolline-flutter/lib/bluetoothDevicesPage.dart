@@ -33,7 +33,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///user configuration in the ui
   UserConfigurationService ucS = locator<UserConfigurationService>();
 
-  void setupBackgroundConfig () async {
+  Future<void> setupBackgroundConfig () async {
     if (!Platform.isAndroid) return;
     final androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: "notifications.background.title".tr(),
@@ -41,17 +41,16 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       notificationImportance: AndroidNotificationImportance.Max,
       notificationIcon: AndroidResource(name: 'ic_apolline_notification', defType: 'drawable'),
     );
-    FlutterBackground.initialize(androidConfig: androidConfig);
+    await FlutterBackground.initialize(androidConfig: androidConfig);
   }
 
   @override
   void initState() {
     super.initState();
-    setupBackgroundConfig();
     this.ucS.addListener(() {
       LocalKeyValuePersistance.saveObject(UserConfigurationService.USER_CONF_KEY, ucS.userConf.toJson());
     });
-    initializeDevice();
+    setupBackgroundConfig().then((_) => initializeDevice());
   }
 
   ///
