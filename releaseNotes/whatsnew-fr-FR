@@ -1,3 +1,2 @@
-Possibilité d'ajouter des configurations vers d'autres serveurs afin d'y récupérer les données envoyés par le capteur.
-L'ajout de configuration peut se faire soit en entrant les données manuellement dans un formulaire, soit en scannant un code QR.
-Les configurations sont sauvegardées dans une base de données locale.
+Le service de fonctionnement en arrière-plan est correctement initialisé avant la configuration de la
+connexion au capteur.

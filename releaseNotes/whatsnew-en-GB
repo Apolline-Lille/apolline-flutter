@@ -1,3 +1,1 @@
-Ability to add configurations to other servers to retrieve data sent by the sensor.
-Adding new configuration can be done either by submit form or by scanning QR code.
-Configurations are stored in local database.
+Background service initialisation is now completed before initializing sensor connection.
