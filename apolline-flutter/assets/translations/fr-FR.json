@@ -162,29 +162,30 @@
     "outdoor": {
       "subway": "Métro",
       "trafficJam": "Embouteillage"
+    },
+    "endpointDialog": {
+      "title": "Enregistrez un nouveau serveur",
+      "form" : {
+        "emptyField": "Ce champ ne doit pas être vide",
+        "apiUrl": "URL de votre serveur :",
+        "pingUrl": "URL de ping :",
+        "username": "Nom d'utilisateur :",
+        "password": "Mot de passe :",
+        "dbname": "Nom de la base de données :",
+        "confirm": "Enregistrer"
+      }
+    },
+    "endpointQRScanner": {
+      "title": "Scannez un code QR",
+      "permissionRequired": "Permission d'accès à la caméra nécessaire.",
+      "codeTypeError": "Vous devez scanner code QR.",
+      "codeDataError": "Les données du code QR ne sont pas au bon format."
+    },
+    "endpoint": {
+      "configAddConfirm": "{} a bien été enregistré.",
+      "remove": "{} a bien été retiré.",
+      "removeError": "Impossible de supprimer une configuration par défaut",
+      "dataLoadError": "Impossible de récupérer les configurations."
     }
-  "endpointDialog": {
-    "title": "Enregistrez un nouveau serveur",
-    "form" : {
-      "emptyField": "Ce champ ne doit pas être vide",
-      "apiUrl": "URL de votre serveur :",
-      "pingUrl": "URL de ping :",
-      "username": "Nom d'utilisateur :",
-      "password": "Mot de passe :",
-      "dbname": "Nom de la base de données :",
-      "confirm": "Enregistrer"
-    }
-  },
-  "endpointQRScanner": {
-    "title": "Scannez un code QR",
-    "permissionRequired": "Permission d'accès à la caméra nécessaire.",
-    "codeTypeError": "Vous devez scanner code QR.",
-    "codeDataError": "Les données du code QR ne sont pas au bon format."
-  },
-  "endpoint": {
-    "configAddConfirm": "{} a bien été enregistré.",
-    "remove": "{} a bien été retiré.",
-    "removeError": "Impossible de supprimer une configuration par défaut",
-    "dataLoadError": "Impossible de récupérer les configurations."
   }
 }
