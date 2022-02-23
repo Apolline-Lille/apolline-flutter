@@ -97,7 +97,7 @@ class SensorTwin {
 
   /// Starts sending data stored on the SD card.
   /// Does nothing if history transmission is already in progress.
-  launchHistoryTransmission () {
+  launchHistoryTransmission () async {
     if(_isSendingHistory) return null;
     _isSendingHistory = true;
     _readSensorSD();
@@ -330,7 +330,7 @@ class SensorTwin {
     _sqfLiteService.removeOldModels();
   }
 
-  _setPeriodicData({Duration duration = const Duration(seconds: 10)}) {
+  _setPeriodicData({Duration duration = const Duration(minutes: 5)}) {
     _historyTimer = Timer.periodic(duration, (timer) {
       _readSensorSD();
     });
