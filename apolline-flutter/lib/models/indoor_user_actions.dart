@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 
+/// Enum that represents indoors user actions
+/// TODO complete with the Jérôme's list (see meeting of 21/01/2022)
 enum IndoorUserAction {
   Kitchen,
   Aspirator

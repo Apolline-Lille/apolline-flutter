@@ -96,6 +96,8 @@ Future onDidReceiveLocalNotification (
   debugPrint('notification payload: $payload');
 }
 
+///
+/// Open Inconsistent page when user click on the inconsistent notification.
 _openInconsistentReportView(Map<String, dynamic> payload) {
   String captor = payload["captor"];
   double value = payload["value"];

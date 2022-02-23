@@ -9,6 +9,9 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'gattsample.dart';
 
+///
+/// This class manage inconsistent view.
+/// This view allow user to specify his situation when an inconsistent value is returned by the captor.
 class InconsistentValueReportView extends StatefulWidget {
   final String captor;
   final double value;
@@ -105,6 +108,10 @@ class InconsistentValueReportViewState extends State<InconsistentValueReportView
     );
   }
 
+  /// Return a list of possible action depends of the user position (indoor or outdoor)
+  ///
+  /// If user is outdoors, values of returned list are the values of the OutdoorUserAction enum.
+  /// else, values of the returned list are the values of the IndoorUserAction enum.
   List<DropdownMenuItem<String>> _getDropdownItems() {
     List<String> availableActions = [];
     if(_isOutdoor) {
@@ -126,6 +133,10 @@ class InconsistentValueReportViewState extends State<InconsistentValueReportView
     }).toList();
   }
 
+  /// Gets DataPointModel from the local database and rewrites this line in InfluxDB with new information.
+  ///
+  /// Overwrites the line that contains the inconsistent value with isOutdoor and activity tags.
+  /// All other values stay unchanged.
   _sendReport() async {
     InfluxDBAPI db = InfluxDBAPI();
     List<DataPointModel> models = await SqfLiteService().getDataPointsWithDate(widget.time);
@@ -146,6 +157,7 @@ class InconsistentValueReportViewState extends State<InconsistentValueReportView
     }
   }
 
+  /// Gets influxDB fields by the captor name.
   String _getCaptorDBName() {
     switch(widget.captor) {
       case "PM_1":
@@ -171,6 +183,7 @@ class InconsistentValueReportViewState extends State<InconsistentValueReportView
     }
   }
 
+  /// Gets unit by the captor name
   String _getUnit() {
     switch (widget.captor) {
       case "PM_1":

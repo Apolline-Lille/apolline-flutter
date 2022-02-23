@@ -191,7 +191,7 @@ class _SensorViewState extends State<SensorView> {
       List<int> userThresholds = widget.ucS.userConf.getThresholds(value);
       int warningThreshold = userThresholds[0];
       int dangerThreshold = userThresholds[1];
-      if(widget.ucS.userConf.showWarningNotifications && SensorSendNegativeValue().isSatisfiedBy(collectedValue)) {
+      if(widget.ucS.userConf.showWarningNotifications && SensorSendNegativeValue().isSatisfiedBy(collectedValue)) { // send notification if negative value is detected
         //print("[ERROR] $value concentration is negative ($collectedValue)"); // error
         _checkNotification(
             "notifications.error.title".tr(args: [value.getLabelKey().tr()]),
@@ -200,7 +200,7 @@ class _SensorViewState extends State<SensorView> {
         );
       }
 
-      else if(SensorSendInconsistentValue(dangerThreshold * 2).isSatisfiedBy(collectedValue)) { // danger x 2 ?
+      else if(SensorSendInconsistentValue(dangerThreshold * 2).isSatisfiedBy(collectedValue)) { // Send notification if inconsistent value is detected (inconsistent value = danger x 2 ?)
         //print("[INCONSISTENT] $value concentration is inconsistent ($collectedValue)"); // information
         _checkNotification(
             "notifications.information.title".tr(args: [value.getLabelKey().tr()]),
@@ -301,6 +301,7 @@ class _SensorViewState extends State<SensorView> {
       case NotificationType.Information:
         androidNotificationDetails = widget.androidPlatformInformationChannelSpecifics;
         notificationId = -3;
+        // payload allows to transmit information when the user click in the notification.
         payload = "{"
                       "\"name\": \"inconsistentNotification\","
                       "\"captor\": \"$captorName\","

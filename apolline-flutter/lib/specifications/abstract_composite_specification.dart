@@ -3,6 +3,7 @@ import 'package:apollineflutter/specifications/operations/and_specification.dart
 import 'package:apollineflutter/specifications/operations/not_specification.dart';
 import 'package:apollineflutter/specifications/operations/or_specification.dart';
 
+///
 abstract class AbstractCompositeSpecification implements Specification {
   Specification and(Specification specification) {
     return AndSpecification(this, specification);
