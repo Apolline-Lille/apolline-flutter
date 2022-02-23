@@ -7,6 +7,7 @@ import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
+import 'package:apollineflutter/utils/SensorCommands.dart';
 import 'package:apollineflutter/utils/position.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,7 +50,6 @@ class SensorTwin {
   Position _currentPosition;
   bool _isUsingSatellitePositioning;
 
-
   SensorTwin({@required BluetoothDevice device, @required Duration syncTiming}) {
     this._device = device;
     this._isSendingData = false;
@@ -87,7 +87,7 @@ class SensorTwin {
     if(!_isSendingData) return null;
     _isSendingData = false;
 
-    return _characteristic.write([0x64, 0]).then((s) {
+    return _characteristic.write(List.from(SensorCommands.disableLiveData)..add(0)).then((s) {
       print("Live data transmission stopped");
     }).catchError((e) {
       print(e);
@@ -97,25 +97,101 @@ class SensorTwin {
 
   /// Starts sending data stored on the SD card.
   /// Does nothing if history transmission is already in progress.
-  /// TODO implement
   Future<void> launchHistoryTransmission () {
     if(_isSendingHistory) return null;
     _isSendingHistory = true;
-    //_setPeriodicData();
-    List<int> readCommand = "b".codeUnits;
-    List<int> deleteCommand = "e".codeUnits;
-    print("b $readCommand\ne $deleteCommand");
-    return  _characteristic.write(new List.from(readCommand)..add(0))
-        .then(
-            (value) => _characteristic.write(new List.from(deleteCommand)..add(0))
-            .then(
-                (value) => print("deleted"))
-            .catchError(
-                (onError) => print("ERROR delete : $onError")))
-        .catchError(
-            (onError) => print('ERROR : $onError'));
+    _readSensorSD();
+    _setPeriodicData();
   }
 
+  /// Calls when the reading is over.
+  ///
+  /// Deletes file in the sensor (to avoid reading too much data and data already treated).
+  /// Computes the mean values during the period and call the callback method for the history transmission mode.
+  void _historyTreatment() {
+    _characteristic.write(SensorCommands.deleteSDData)
+        .then(
+            (value) => print("Deleting old sensor data..."))
+        .catchError(
+            (error) => print("Error when deleting old sensor data : $error"));
+
+    DataPointModel meanValues = _computeMeanValues();
+    _models = [];
+    _callbacks[SensorTwinEvent.history_data](meanValues);
+  }
+
+  DataPointModel _computeMeanValues() {
+    double meanPM1 = 0,
+        meanPM2_5 = 0,
+        meanPM10 = 0,
+        meanPMAbove0_3 = 0,
+        meanPMAbove0_5 = 0,
+        meanPMAbove1 = 0,
+        meanPMAbove2_5 = 0,
+        meanPMAbove5 = 0,
+        meanPMAbove10 = 0,
+        meanTemp = 0,
+        meanHumidity = 0;
+
+    int length = _models.length;
+    DataPointModel last = _models.last;
+    List<String> values = last.values;
+
+    // computes total of sensor values
+    _models.forEach((DataPointModel dpm) {
+      meanPM1 += dpm.pm1value;
+      meanPM2_5 += dpm.pm25value;
+      meanPM10 += dpm.pm10value;
+      meanPMAbove0_3 += dpm.pmAbove03value;
+      meanPMAbove0_5 += dpm.pmAbove05value;
+      meanPMAbove1 += dpm.pmAbove1value;
+      meanPMAbove2_5 += dpm.pmAbove25value;
+      meanPMAbove5 += dpm.pmAbove5value;
+      meanPMAbove10 += dpm.pmAbove10value;
+      meanTemp += dpm.temperature;
+      meanHumidity += dpm.humidity;
+    });
+
+    // computes mean of all of these values.
+    meanPM1 /= length;
+    meanPM2_5 /= length;
+    meanPM10 /= length;
+    meanPMAbove0_3 /= length;
+    meanPMAbove0_5 /= length;
+    meanPMAbove1 /= length;
+    meanPMAbove2_5 /= length;
+    meanPMAbove5 /= length;
+    meanPMAbove10 /= length;
+    meanTemp /= length;
+    meanHumidity /= length;
+
+    values.replaceRange(
+        DataPointModel.SENSOR_PM_1,
+        DataPointModel.SENSOR_PM_ABOVE_10 + 1,
+        [
+          meanPM1.toString(),
+          meanPM2_5.toString(),
+          meanPM10.toString(),
+          meanPMAbove0_3.toString(),
+          meanPMAbove0_5.toString(),
+          meanPMAbove1.toString(),
+          meanPMAbove2_5.toString(),
+          meanPMAbove5.toString(),
+          meanPMAbove10.toString()
+        ]
+    );
+
+    values.replaceRange(
+        DataPointModel.SENSOR_TEMP,
+        DataPointModel.SENSOR_HUMI + 1,
+        [
+          meanTemp.toString(),
+          meanHumidity.toString()
+        ]);
+
+    // creates point with means at the last position and last date.
+    return _getPointWithPosition(values);
+  }
 
   /// Synchronises internal clock with phone's time.
   Future<void> synchronizeClock () {
@@ -159,37 +235,34 @@ class SensorTwin {
       }
     });
 
+    bool isEndOfFile = false; // for periodic live transmission mode.
+
     return _characteristic.setNotifyValue(true).then((s) {
       /* Catch updates on characteristic  */
     }).catchError((e) {
       print(e);
     }).whenComplete(() {
 
-      _characteristic.value.listen((value) {
+      _characteristic.value.listen((value) async {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
-          print("[DEBUG] : _setUpListeners => is live sending mode.");
           DataPointModel model = _handleSensorUpdate(message);
           _callbacks[SensorTwinEvent.live_data](model);
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
-          // print("[DEBUG] : _setUpListeners => is history sending mode.");
-          // print("[DEBUG] : full line : $message");
-          //DataPointModel model = _handleDelayedSensorUpdate(message);
           DataPointModel model = _handleSensorUpdate(message);
           if(model != null) _models.add(model);
-          if(value.length == 2 && value[0] == 13 && value[1] == 10) {
-            print("[DEBUG] : value = ${value} isNotifying ? ${_characteristic.isNotifying.toString()}");
-            //delete data from captor
+          if(value.length == 2 && value[0] == 13 && value[1] == 10) { // this line is the `Carriage Return` and `Line Feed` characters. In each file stored in the sensor, this line appear twice
+            if(isEndOfFile)
+              _historyTreatment();
+
+            isEndOfFile = !isEndOfFile;
           }
-        }
-      }).onDone(() {
-        if(_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
-          print("[DEBUG] : onDone ${_models.length}");
         }
       });
     });
   }
+
 
   /// Filters out a Bluetooth device's services and characteristics to find the
   /// one that will allow us to receive data from the sensor.
@@ -257,18 +330,18 @@ class SensorTwin {
     _sqfLiteService.removeOldModels();
   }
 
-  _setPeriodicData() {
-    print("[DEBUG] : setting up periodic timer");
-    _historyTimer = Timer.periodic(const Duration(seconds: 600), (timer) {
-      print("[DEBUG] : Sending");
-      List<int> readCommand = "b".codeUnits;
-      List<int> deleteCommand = "e".codeUnits;
-      _characteristic.write(new List.from(readCommand)..add(0))
-          .then((value) => _characteristic.write(new List.from(deleteCommand)..add(0)).catchError((onError) {print("ERROR delete : $onError");}))
-          .catchError((onError) { print('ERROR : $onError'); });
-
+  _setPeriodicData({Duration duration = const Duration(seconds: 10)}) {
+    _historyTimer = Timer.periodic(duration, (timer) {
+      _readSensorSD();
     });
+  }
 
+  _readSensorSD() {
+    _characteristic.write(new List.from(SensorCommands.readingSD)..add(0))
+        .then(
+            (value) => print("Reading SD content"))
+        .catchError(
+            (onError) => print('Error when reading sensor SD content : $onError'));
   }
 
   /// Called when data is received from the sensor
