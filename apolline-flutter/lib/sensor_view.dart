@@ -134,7 +134,7 @@ class _SensorViewState extends State<SensorView> {
       return;
     }
     //await this._sensor.launchDataLiveTransmission();
-    await this._sensor.launchHistoryTransmission();
+    this._sensor.launchHistoryTransmission();
     updateState("connectionMessages.waiting".tr());
     activateBackgroundExecution();
   }

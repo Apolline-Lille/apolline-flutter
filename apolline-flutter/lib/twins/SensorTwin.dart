@@ -97,7 +97,7 @@ class SensorTwin {
 
   /// Starts sending data stored on the SD card.
   /// Does nothing if history transmission is already in progress.
-  Future<void> launchHistoryTransmission () {
+  launchHistoryTransmission () {
     if(_isSendingHistory) return null;
     _isSendingHistory = true;
     _readSensorSD();
