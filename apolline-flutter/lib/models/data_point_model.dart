@@ -51,15 +51,75 @@ class DataPointModel {
   }
 
   ///
+  /// return the temperature
+  double get temperature {
+    return double.parse(this.values[SENSOR_TEMP]);
+  }
+
+  ///
   ///return the temperature in kelvin.
   double get temperatureK {
     return double.parse(this.values[SENSOR_TEMP]) + 273.15;
   }
 
   ///
+  ///return the pm 1 value
+  double get pm1value {
+    return double.parse(this.values[SENSOR_PM_1]);
+  }
+
+  ///
   ///return the pm 25 value
   double get pm25value {
     return double.parse(this.values[SENSOR_PM_2_5]);
+  }
+
+  ///
+  ///return the pm 10 value
+  double get pm10value {
+    return double.parse(this.values[SENSOR_PM_10]);
+  }
+
+  ///
+  ///return the pm above 0.3 value
+  double get pmAbove03value {
+    return double.parse(this.values[SENSOR_PM_ABOVE_0_3]);
+  }
+
+  ///
+  ///return the pm above 0.5 value
+  double get pmAbove05value {
+    return double.parse(this.values[SENSOR_PM_ABOVE_0_5]);
+  }
+
+  ///
+  ///return the pm above 1 value
+  double get pmAbove1value {
+    return double.parse(this.values[SENSOR_PM_ABOVE_1]);
+  }
+
+  ///
+  ///return the pm above 2.5 value
+  double get pmAbove25value {
+    return double.parse(this.values[SENSOR_PM_ABOVE_2_5]);
+  }
+
+  ///
+  ///return the pm above 5 value
+  double get pmAbove5value {
+    return double.parse(this.values[SENSOR_PM_ABOVE_5]);
+  }
+
+  ///
+  ///return the pm above 10 value
+  double get pmAbove10value {
+    return double.parse(this.values[SENSOR_PM_ABOVE_10]);
+  }
+
+  ///
+  /// return the humidity (not compensated)
+  double get humidity {
+    return double.parse(this.values[SENSOR_HUMI]);
   }
 
   ///
@@ -70,7 +130,7 @@ class DataPointModel {
   }
 
   ///
-  ///return the humidity compensated.
+  ///return the date
   int get date {
     return this._date;
   }
