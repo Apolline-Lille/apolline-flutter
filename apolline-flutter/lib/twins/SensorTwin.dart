@@ -107,7 +107,7 @@ class SensorTwin {
   /// Calls when the reading is over.
   ///
   /// Deletes file in the sensor (to avoid reading too much data and data already treated).
-  /// Computes the mean values during the period and call the callback method for the history transmission mode.
+  /// Computes the averages values during the period and call the callback method for the history transmission mode.
   void _historyTreatment() {
     _characteristic.write(SensorCommands.deleteSDData)
         .then(
@@ -115,23 +115,23 @@ class SensorTwin {
         .catchError(
             (error) => print("Error when deleting old sensor data : $error"));
 
-    DataPointModel meanValues = _computeMeanValues();
+    DataPointModel averagesValues = _computeAveragesValues();
     _models = [];
-    _callbacks[SensorTwinEvent.history_data](meanValues);
+    _callbacks[SensorTwinEvent.history_data](averagesValues);
   }
 
-  DataPointModel _computeMeanValues() {
-    double meanPM1 = 0,
-        meanPM2_5 = 0,
-        meanPM10 = 0,
-        meanPMAbove0_3 = 0,
-        meanPMAbove0_5 = 0,
-        meanPMAbove1 = 0,
-        meanPMAbove2_5 = 0,
-        meanPMAbove5 = 0,
-        meanPMAbove10 = 0,
-        meanTemp = 0,
-        meanHumidity = 0;
+  DataPointModel _computeAveragesValues() {
+    double averagePM1 = 0,
+        averagePM2_5 = 0,
+        averagePM10 = 0,
+        averagePMAbove0_3 = 0,
+        averagePMAbove0_5 = 0,
+        averagePMAbove1 = 0,
+        averagePMAbove2_5 = 0,
+        averagePMAbove5 = 0,
+        averagePMAbove10 = 0,
+        averageTemp = 0,
+        averageHumidity = 0;
 
     int length = _models.length;
     DataPointModel last = _models.last;
@@ -139,45 +139,45 @@ class SensorTwin {
 
     // computes total of sensor values
     _models.forEach((DataPointModel dpm) {
-      meanPM1 += dpm.pm1value;
-      meanPM2_5 += dpm.pm25value;
-      meanPM10 += dpm.pm10value;
-      meanPMAbove0_3 += dpm.pmAbove03value;
-      meanPMAbove0_5 += dpm.pmAbove05value;
-      meanPMAbove1 += dpm.pmAbove1value;
-      meanPMAbove2_5 += dpm.pmAbove25value;
-      meanPMAbove5 += dpm.pmAbove5value;
-      meanPMAbove10 += dpm.pmAbove10value;
-      meanTemp += dpm.temperature;
-      meanHumidity += dpm.humidity;
+      averagePM1 += dpm.pm1value;
+      averagePM2_5 += dpm.pm25value;
+      averagePM10 += dpm.pm10value;
+      averagePMAbove0_3 += dpm.pmAbove03value;
+      averagePMAbove0_5 += dpm.pmAbove05value;
+      averagePMAbove1 += dpm.pmAbove1value;
+      averagePMAbove2_5 += dpm.pmAbove25value;
+      averagePMAbove5 += dpm.pmAbove5value;
+      averagePMAbove10 += dpm.pmAbove10value;
+      averageTemp += dpm.temperature;
+      averageHumidity += dpm.humidity;
     });
 
-    // computes mean of all of these values.
-    meanPM1 /= length;
-    meanPM2_5 /= length;
-    meanPM10 /= length;
-    meanPMAbove0_3 /= length;
-    meanPMAbove0_5 /= length;
-    meanPMAbove1 /= length;
-    meanPMAbove2_5 /= length;
-    meanPMAbove5 /= length;
-    meanPMAbove10 /= length;
-    meanTemp /= length;
-    meanHumidity /= length;
+    // computes average of all of these values.
+    averagePM1 /= length;
+    averagePM2_5 /= length;
+    averagePM10 /= length;
+    averagePMAbove0_3 /= length;
+    averagePMAbove0_5 /= length;
+    averagePMAbove1 /= length;
+    averagePMAbove2_5 /= length;
+    averagePMAbove5 /= length;
+    averagePMAbove10 /= length;
+    averageTemp /= length;
+    averageHumidity /= length;
 
     values.replaceRange(
         DataPointModel.SENSOR_PM_1,
         DataPointModel.SENSOR_PM_ABOVE_10 + 1,
         [
-          meanPM1.toString(),
-          meanPM2_5.toString(),
-          meanPM10.toString(),
-          meanPMAbove0_3.toString(),
-          meanPMAbove0_5.toString(),
-          meanPMAbove1.toString(),
-          meanPMAbove2_5.toString(),
-          meanPMAbove5.toString(),
-          meanPMAbove10.toString()
+          averagePM1.toString(),
+          averagePM2_5.toString(),
+          averagePM10.toString(),
+          averagePMAbove0_3.toString(),
+          averagePMAbove0_5.toString(),
+          averagePMAbove1.toString(),
+          averagePMAbove2_5.toString(),
+          averagePMAbove5.toString(),
+          averagePMAbove10.toString()
         ]
     );
 
@@ -185,11 +185,11 @@ class SensorTwin {
         DataPointModel.SENSOR_TEMP,
         DataPointModel.SENSOR_HUMI + 1,
         [
-          meanTemp.toString(),
-          meanHumidity.toString()
+          averageTemp.toString(),
+          averageHumidity.toString()
         ]);
 
-    // creates point with means at the last position and last date.
+    // creates point with averages at the last position and last date.
     return _getPointWithPosition(values);
   }
 
