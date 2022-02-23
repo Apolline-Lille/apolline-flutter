@@ -123,7 +123,8 @@ class _SensorViewState extends State<SensorView> {
 
     updateState("connectionMessages.configuring".tr());
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
-    this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
+    //this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
+    this._sensor.on(SensorTwinEvent.history_data, (d) => _onLiveDataReceived(d as DataPointModel));
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
     bool initResult = await this._sensor.init();
@@ -132,7 +133,8 @@ class _SensorViewState extends State<SensorView> {
       this._onWillPop(DeviceConnectionStatus.INCOMPATIBLE);
       return;
     }
-    await this._sensor.launchDataLiveTransmission();
+    //await this._sensor.launchDataLiveTransmission();
+    await this._sensor.launchHistoryTransmission();
     updateState("connectionMessages.waiting".tr());
     activateBackgroundExecution();
   }

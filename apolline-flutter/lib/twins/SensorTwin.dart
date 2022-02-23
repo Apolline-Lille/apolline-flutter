@@ -33,6 +33,8 @@ class SensorTwin {
   BluetoothDevice _device;
   bool _isSendingData;
   bool _isSendingHistory;
+  Timer _historyTimer;
+  List<DataPointModel> _models = [];
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
   // use for influxDB to send data to the back
@@ -81,17 +83,37 @@ class SensorTwin {
 
   /// Stops sending data.
   /// Does nothing if data transmission is not in progress.
-  /// TODO implement
   Future<void> stopDataLiveTransmission () {
-    return null;
+    if(!_isSendingData) return null;
+    _isSendingData = false;
+
+    return _characteristic.write([0x64, 0]).then((s) {
+      print("Live data transmission stopped");
+    }).catchError((e) {
+      print(e);
+    });
   }
 
 
   /// Starts sending data stored on the SD card.
-  /// Does nothing is history transmission is already in progress.
+  /// Does nothing if history transmission is already in progress.
   /// TODO implement
   Future<void> launchHistoryTransmission () {
-    return null;
+    if(_isSendingHistory) return null;
+    _isSendingHistory = true;
+    //_setPeriodicData();
+    List<int> readCommand = "b".codeUnits;
+    List<int> deleteCommand = "e".codeUnits;
+    print("b $readCommand\ne $deleteCommand");
+    return  _characteristic.write(new List.from(readCommand)..add(0))
+        .then(
+            (value) => _characteristic.write(new List.from(deleteCommand)..add(0))
+            .then(
+                (value) => print("deleted"))
+            .catchError(
+                (onError) => print("ERROR delete : $onError")))
+        .catchError(
+            (onError) => print('ERROR : $onError'));
   }
 
 
@@ -147,10 +169,23 @@ class SensorTwin {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
+          print("[DEBUG] : _setUpListeners => is live sending mode.");
           DataPointModel model = _handleSensorUpdate(message);
           _callbacks[SensorTwinEvent.live_data](model);
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
-          _callbacks[SensorTwinEvent.history_data](message);
+          // print("[DEBUG] : _setUpListeners => is history sending mode.");
+          // print("[DEBUG] : full line : $message");
+          //DataPointModel model = _handleDelayedSensorUpdate(message);
+          DataPointModel model = _handleSensorUpdate(message);
+          if(model != null) _models.add(model);
+          if(value.length == 2 && value[0] == 13 && value[1] == 10) {
+            print("[DEBUG] : value = ${value} isNotifying ? ${_characteristic.isNotifying.toString()}");
+            //delete data from captor
+          }
+        }
+      }).onDone(() {
+        if(_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
+          print("[DEBUG] : onDone ${_models.length}");
         }
       });
     });
@@ -222,9 +257,23 @@ class SensorTwin {
     _sqfLiteService.removeOldModels();
   }
 
+  _setPeriodicData() {
+    print("[DEBUG] : setting up periodic timer");
+    _historyTimer = Timer.periodic(const Duration(seconds: 600), (timer) {
+      print("[DEBUG] : Sending");
+      List<int> readCommand = "b".codeUnits;
+      List<int> deleteCommand = "e".codeUnits;
+      _characteristic.write(new List.from(readCommand)..add(0))
+          .then((value) => _characteristic.write(new List.from(deleteCommand)..add(0)).catchError((onError) {print("ERROR delete : $onError");}))
+          .catchError((onError) { print('ERROR : $onError'); });
+
+    });
+
+  }
+
   /// Called when data is received from the sensor
   DataPointModel _handleSensorUpdate (String message) {
-    if (!message.contains('\n')) return null;
+    if (!message.contains('\n') || ";".allMatches(message).length != 21) return null;
     print("Got full line: " + message);
     DataPointModel model = this._getPointWithPosition(message.split(';'));
     _dataService.update(model);
@@ -295,6 +344,7 @@ class SensorTwin {
   void shutdown () {
     this._callbacks = Map();
     this._syncTimer?.cancel();
+    this._historyTimer?.cancel();
     this._service.client?.close();
     this._dataService?.stop();
     _stopLocationService();
