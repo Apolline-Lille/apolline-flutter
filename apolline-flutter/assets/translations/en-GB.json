@@ -70,11 +70,11 @@
     },
     "informationChannel": {
       "name": "Exposure notifications (inconsistent)",
-      "description": "Gets alerts when current PM values seems inconsistent in order to contextualize your situation."
+      "description": "Get alerts when current PM values seem inconsistent in order to contextualize your situation."
     },
     "errorChannel": {
       "name": "Error notifications",
-      "description": "Gets alerts when we detect an error in your sensor values."
+      "description": "Get alerts when we detect errors in your sensor values."
     },
     "warning": {
       "title": "Warning for {}",
@@ -90,7 +90,7 @@
     },
     "error": {
       "title": "Error for {}",
-      "body": "Sensor send an error value. If this happens again, have your sensor checked."
+      "body": "Sensor sent an error value. If this happens again, please have your sensor checked."
     },
     "background": {
       "title": "Sensor connected",

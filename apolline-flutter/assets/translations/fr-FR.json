@@ -70,11 +70,11 @@
     },
     "informationChannel": {
       "name": "Notifications d'exposition (incohérente)",
-      "description": "Recevez des notifications lorsque le taux de particule fines semblent incohérent afin de contextualiser votre situation."
+      "description": "Recevez des notifications lorsque le taux de particules fines semble incohérent afin de contextualiser votre situation."
     },
     "errorChannel": {
       "name": "Notifications d'erreur",
-      "description": "Recevez des notifications lorsque nous détéctons une erreur dans les valeurs renvoyées par votre capteur."
+      "description": "Recevez des notifications lorsque nous détectons une erreur dans les valeurs renvoyées par votre capteur."
     },
     "warning": {
       "title": "Taux de {} préoccupant",
@@ -92,7 +92,7 @@
     },
     "error": {
       "title": "Erreur : {}",
-      "body": "Votre capteur à envoyer une valeur négative. Si cela se reproduit, faites verifier votre capteur."
+      "body": "Votre capteur a envoyé une valeur négative. Si cela se reproduit, veuillez faire vérifier votre capteur."
     },
     "background": {
       "title": "Capteur connecté",
