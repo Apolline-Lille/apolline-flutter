@@ -68,6 +68,14 @@
       "name": "Notifications d'exposition (danger)",
       "description": "Recevez des notifications lorsque les taux de particules fines dépassent les seuils de danger définis dans l'application."
     },
+    "informationChannel": {
+      "name": "Notifications d'exposition (incohérente)",
+      "description": "Recevez des notifications lorsque le taux de particules fines semble incohérent afin de contextualiser votre situation."
+    },
+    "errorChannel": {
+      "name": "Notifications d'erreur",
+      "description": "Recevez des notifications lorsque nous détectons une erreur dans les valeurs renvoyées par votre capteur."
+    },
     "warning": {
       "title": "Taux de {} préoccupant",
       "body": "La mesure de {} µm/m³ dépasse le seuil d'alerte."
@@ -75,6 +83,16 @@
     "danger": {
       "title": "Alerte : {}",
       "body": "La mesure de {} µm/m³ dépasse le seuil de danger."
+    },
+    "information": {
+      "title": "Information : {}",
+      "body": "La mesure de {} µm/m³ semble incohérente. Cliquez pour faire un rapport sur votre situation."
+
+
+    },
+    "error": {
+      "title": "Erreur : {}",
+      "body": "Votre capteur a envoyé une valeur négative. Si cela se reproduit, veuillez faire vérifier votre capteur."
     },
     "background": {
       "title": "Capteur connecté",
@@ -124,28 +142,50 @@
       "liveData": "Données de qualité de l'air reçues (live)"
     }
   },
-  "endpointDialog": {
-    "title": "Enregistrez un nouveau serveur",
-    "form" : {
-      "emptyField": "Ce champ ne doit pas être vide",
-      "apiUrl": "URL de votre serveur :",
-      "pingUrl": "URL de ping :",
-      "username": "Nom d'utilisateur :",
-      "password": "Mot de passe :",
-      "dbname": "Nom de la base de données :",
-      "confirm": "Enregistrer"
+  "inconsistentReport": {
+    "title": "Donnez nous le contexte de la valeur absurde",
+    "message": "Une valeur absurde a été détectée ({} µm/m³) par votre capteur {}, pouvez-vous nous donner plus d'information sur votre situation au moment de cette captation ?",
+    "form": {
+      "outdoor": "Extérieur",
+      "indoor": "Intérieur",
+      "inOutdoorLabel": "Dans quel environnement vous situiez vous ?",
+      "contextLabel": "Définissez l'action qui définit le mieux votre situation",
+      "valid": "Merci beaucoup pour votre rapport !",
+      "button": "Envoyer"
     }
   },
-  "endpointQRScanner": {
-    "title": "Scannez un code QR",
-    "permissionRequired": "Permission d'accès à la caméra nécessaire.",
-    "codeTypeError": "Vous devez scanner code QR.",
-    "codeDataError": "Les données du code QR ne sont pas au bon format."
-  },
-  "endpoint": {
-    "configAddConfirm": "{} a bien été enregistré.",
-    "remove": "{} a bien été retiré.",
-    "removeError": "Impossible de supprimer une configuration par défaut",
-    "dataLoadError": "Impossible de récupérer les configurations."
+  "userActions": {
+    "indoor": {
+      "kitchen": "Cuisine",
+      "aspirator": "Aspirateur"
+    },
+    "outdoor": {
+      "subway": "Métro",
+      "trafficJam": "Embouteillage"
+    },
+    "endpointDialog": {
+      "title": "Enregistrez un nouveau serveur",
+      "form" : {
+        "emptyField": "Ce champ ne doit pas être vide",
+        "apiUrl": "URL de votre serveur :",
+        "pingUrl": "URL de ping :",
+        "username": "Nom d'utilisateur :",
+        "password": "Mot de passe :",
+        "dbname": "Nom de la base de données :",
+        "confirm": "Enregistrer"
+      }
+    },
+    "endpointQRScanner": {
+      "title": "Scannez un code QR",
+      "permissionRequired": "Permission d'accès à la caméra nécessaire.",
+      "codeTypeError": "Vous devez scanner code QR.",
+      "codeDataError": "Les données du code QR ne sont pas au bon format."
+    },
+    "endpoint": {
+      "configAddConfirm": "{} a bien été enregistré.",
+      "remove": "{} a bien été retiré.",
+      "removeError": "Impossible de supprimer une configuration par défaut",
+      "dataLoadError": "Impossible de récupérer les configurations."
+    }
   }
 }

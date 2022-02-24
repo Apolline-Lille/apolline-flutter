@@ -68,6 +68,14 @@
       "name": "Exposure notifications (danger)",
       "description": "Get alerts when current PM values are above danger thresholds."
     },
+    "informationChannel": {
+      "name": "Exposure notifications (inconsistent)",
+      "description": "Get alerts when current PM values seem inconsistent in order to contextualize your situation."
+    },
+    "errorChannel": {
+      "name": "Error notifications",
+      "description": "Get alerts when we detect errors in your sensor values."
+    },
     "warning": {
       "title": "Warning for {}",
       "body": "{} µm/m³ value exceeds warning threshold."
@@ -75,6 +83,14 @@
     "danger": {
       "title": "Danger for {}",
       "body": "{} µm/m³ value exceeds danger threshold."
+    },
+    "information": {
+      "title": "Information for {}",
+      "body": "{} µm/m³ value seems inconsistent. Click here to report your situation"
+    },
+    "error": {
+      "title": "Error for {}",
+      "body": "Sensor sent an error value. If this happens again, please have your sensor checked."
     },
     "background": {
       "title": "Sensor connected",
@@ -124,28 +140,50 @@
       "liveData": "Air quality data received (live)"
     }
   },
-  "endpointDialog": {
-    "title": "Register a new server endpoint",
+  "inconsistentReport": {
+    "title": "Give us the context of this value",
+    "message": "An inconsistent value ({} µm/m³) has been detected by the captor : {}, please give us more details about the situation you where when the captor send this value",
     "form": {
-      "emptyField": "Please enter some text",
-      "apiUrl": "Your server endpoint URL:",
-      "pingUrl": "Ping URL:",
-      "username": "Username:",
-      "password": "Password:",
-      "dbname": "Database name: ",
-      "confirm": "Save"
+      "outdoor": "Outdoor",
+      "indoor": "Indoor",
+      "inOutdoorLabel": "What environment were you in? ",
+      "contextLabel": "Define the action that best defines your situation ",
+      "valid": "Thanks for your report !",
+      "button": "Submit"
     }
   },
-  "endpointQRScanner": {
-    "title": "Scan QR code",
-    "permissionRequired": "Access to the camera permission is required.",
-    "codeTypeError": "You must to scan a QR code.",
-    "codeDataError": "Wrong format for the QR code data."
-  },
-  "endpoint": {
-    "configAddConfirm": "{} has been added.",
-    "remove": "{} has been removed.",
-    "removeError": "Unable to remove default config",
-    "dataLoadError": "Unable to load configs"
+  "userActions": {
+    "indoor": {
+      "kitchen": "Kitchen",
+      "aspirator": "Aspirator"
+    },
+    "outdoor": {
+      "subway": "Subway",
+      "trafficJam": "Traffic jam"
+    },
+    "endpointDialog": {
+      "title": "Register a new server endpoint",
+      "form": {
+        "emptyField": "Please enter some text",
+        "apiUrl": "Your server endpoint URL:",
+        "pingUrl": "Ping URL:",
+        "username": "Username:",
+        "password": "Password:",
+        "dbname": "Database name: ",
+        "confirm": "Save"
+      }
+    },
+    "endpointQRScanner": {
+      "title": "Scan QR code",
+      "permissionRequired": "Access to the camera permission is required.",
+      "codeTypeError": "You must to scan a QR code.",
+      "codeDataError": "Wrong format for the QR code data."
+    },
+    "endpoint": {
+      "configAddConfirm": "{} has been added.",
+      "remove": "{} has been removed.",
+      "removeError": "Unable to remove default config",
+      "dataLoadError": "Unable to load configs"
+    }
   }
 }

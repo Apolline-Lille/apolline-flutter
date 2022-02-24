@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:apollineflutter/inconsistent_value_report_view.dart';
+import 'package:apollineflutter/services/navigator_service.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -39,19 +43,20 @@ class ApollineApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      navigatorKey: NavigatorService.navigatorKey,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: 'Apolline',
       theme: ThemeData(
-        primaryColor: mainColor,
-        backgroundColor: mainColor,
-        appBarTheme: AppBarTheme(backgroundColor: mainColor),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: secondaryColor),
-        tabBarTheme: TabBarTheme(
-          unselectedLabelColor: tertiaryColor
-        ),
-        toggleableActiveColor: tertiaryColor
+          primaryColor: mainColor,
+          backgroundColor: mainColor,
+          appBarTheme: AppBarTheme(backgroundColor: mainColor),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: secondaryColor),
+          tabBarTheme: TabBarTheme(
+              unselectedLabelColor: tertiaryColor
+          ),
+          toggleableActiveColor: tertiaryColor
       ),
       home: BluetoothDevicesPage(),
     );
@@ -63,7 +68,7 @@ Future<void> setupNotificationService () async {
 
   const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_apolline_notification');
   final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+    onDidReceiveLocalNotification: onDidReceiveLocalNotification,
   );
   final MacOSInitializationSettings initializationSettingsMacOS = MacOSInitializationSettings();
   final InitializationSettings initializationSettings = InitializationSettings(
@@ -78,11 +83,24 @@ Future<void> setupNotificationService () async {
 
 Future selectNotification(String payload) async {
   if (payload != null) {
+    Map<String, dynamic> jsonPayload = jsonDecode(payload);
+    if(jsonPayload["name"] == "inconsistentNotification") {
+      _openInconsistentReportView(jsonPayload);
+    }
     debugPrint('notification payload: $payload');
   }
 }
 Future onDidReceiveLocalNotification (
     int id, String title, String body, String payload
-) async {
+    ) async {
   debugPrint('notification payload: $payload');
+}
+
+///
+/// Open Inconsistent page when user click on the inconsistent notification.
+_openInconsistentReportView(Map<String, dynamic> payload) {
+  String captor = payload["captor"];
+  double value = payload["value"];
+  int time = payload["time"];
+  Navigator.of(NavigatorService.navigatorKey.currentContext).push(MaterialPageRoute(builder: (context) => InconsistentValueReportView(captor: captor, value: value, time: time)));
 }
