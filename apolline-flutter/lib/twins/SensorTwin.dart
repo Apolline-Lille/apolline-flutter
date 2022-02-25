@@ -84,7 +84,6 @@ class SensorTwin {
   /// Stops sending data.
   /// Does nothing if data transmission is not in progress.
   Future<void> stopDataLiveTransmission () {
-    if(!_isSendingData) return null;
     _isSendingData = false;
 
     return _characteristic.write(List.from(SensorCommands.disableLiveData)..add(0)).then((s) {

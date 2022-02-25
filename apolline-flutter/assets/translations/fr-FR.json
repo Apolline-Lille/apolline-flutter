@@ -20,7 +20,10 @@
     "connected": "Connexion avec le capteur établie.",
     "disconnected": "Connexion avec le capteur perdue.",
     "failed": "Impossible de se connecter à ce périphérique.",
-    "incompatible": "Ce périphérique n'est pas compatible avec l'application."
+    "incompatible": "Ce périphérique n'est pas compatible avec l'application.",
+    "periodicDataTransmission" : {
+      "waiting": "Récupération des données.\nCela peut prendre plusieurs minutes..."
+    }
   },
   "temperature": "TEMPÉRATURE",
   "statsView": {
@@ -81,6 +84,9 @@
       "body": "Apolline est actuellement en train de récupérer des données."
     }
   },
+  "periodicView": {
+    "description": "Les données sont automatiquement synchronisées toutes les {} minutes.\nVoici les valeurs moyennes relevées par le capteur durant cette période."
+  },
   "settings": {
     "description": "Vous pouvez spécifier ici des seuils d'alerte et de danger.\nLes valeurs reçues inférieures au seuil d'alerte seront considérées comme normales, celles supérieures au seuil de danger comme dangereuses.",
     "receiveWarning": "Recevoir des notifications d'alerte",
@@ -89,6 +95,7 @@
     "sameType": "du même type",
     "setTimeInterval": "Définir l'intervalle de temps",
     "setTimeIntervalBody": "Choisissez combien de temps doit s'écouler entre l'envoi de deux notifications.",
+    "transmissionModeSwitch": "Transmission continue",
     "warning": {
       "title": "Seuil d'alerte",
       "incorrect": "Doit être inférieur au seuil de danger.",
@@ -108,7 +115,8 @@
     "sectionDivider": {
       "notification": "Notification",
       "threshold": "Seuils de particule",
-      "configuration": "Configuration"
+      "configuration": "Configuration",
+      "dataTransmissionMode": "Mode de transmission"
     }
   },
   "navigation": {
