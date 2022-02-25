@@ -22,6 +22,8 @@ class UserConfiguration {
   Duration exposureNotificationsTimeInterval;
   ///sensor events
   Map<String, List<SensorEvent>> _sensorEvents;
+  /// sensor data transmission mode
+  bool isLiveDataTransmission = true;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
