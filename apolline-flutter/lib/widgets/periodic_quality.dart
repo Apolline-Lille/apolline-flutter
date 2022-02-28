@@ -1,6 +1,6 @@
 import 'package:apollineflutter/models/data_point_model.dart';
 import 'package:apollineflutter/models/user_configuration.dart';
-import 'package:apollineflutter/widgets/charts/BatteryLevelIndicator.dart';
+import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -63,53 +63,18 @@ class PeriodicQualityState extends State<PeriodicQuality> {
     return "${_lastSyncDate.hour}:${_lastSyncDate.minute}";
   }
 
-  Widget _getTemperatureInfo () {
-    return Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(widget.data.temperature.toStringAsFixed(2) + '°C',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 30)),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
-              child: Text(
-                "temperature".tr(),
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 14),
-              ),
-            )
-          ],
-        )
-    );
-  }
-
-  Widget _getBatteryInfo() {
-    return Container(
-      child: BatteryLevelIndicator(
-        currentBatteryLevel: double.parse(widget.data.values[DataPointModel.SENSOR_VOLT]),
-      ),
-    );
-  }
-
-  Widget _getTempAndBatteryInfo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _getTemperatureInfo(),
-        _getBatteryInfo()
-      ],
-    );
-  }
-
   Widget _getPMValues() {
+    Color pm1TextColor = widget.data.pm10value > widget.userConfiguration.getThresholds(PMFilter.PM_1)[0] ? Colors.orange : Colors.black;
+    pm1TextColor =  widget.data.pm10value > widget.userConfiguration.getThresholds(PMFilter.PM_1)[1] ? Colors.red : pm1TextColor;
+
+    Color pm25TextColor = widget.data.pm10value > widget.userConfiguration.getThresholds(PMFilter.PM_2_5)[0] ? Colors.orange : Colors.black;
+    pm25TextColor =  widget.data.pm10value > widget.userConfiguration.getThresholds(PMFilter.PM_2_5)[1] ? Colors.red : pm25TextColor;
+
+    Color pm10TextColor = widget.data.pm10value > widget.userConfiguration.getThresholds(PMFilter.PM_10)[0] ? Colors.orange : Colors.black;
+    pm10TextColor =  widget.data.pm10value > widget.userConfiguration.getThresholds(PMFilter.PM_10)[1] ? Colors.red : pm10TextColor;
+
     return Padding(
-        padding: EdgeInsets.only(top: 75, bottom: 75),
+        padding: EdgeInsets.only(top: 100, bottom: 100),
         child: Column(
             children: [
               Text("periodicView.tableAverageTitle".tr(),
@@ -136,11 +101,17 @@ class PeriodicQualityState extends State<PeriodicQuality> {
                     TableRow(
                         children: [
                           Text("${widget.data.pm1value.toStringAsFixed(2)} ${Units.CONCENTRATION_UG_M3}",
-                              textAlign: TextAlign.center),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: pm1TextColor)
+                          ),
                           Text("${widget.data.pm25value.toStringAsFixed(2)} ${Units.CONCENTRATION_UG_M3}",
-                              textAlign: TextAlign.center),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: pm25TextColor),
+                          ),
                           Text("${widget.data.pm10value.toStringAsFixed(2)} ${Units.CONCENTRATION_UG_M3}",
-                              textAlign: TextAlign.center)
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: pm10TextColor)
+                          )
                         ]
                     ),
                   ]
@@ -155,16 +126,8 @@ class PeriodicQualityState extends State<PeriodicQuality> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Padding(
-        //     padding: EdgeInsets.only(top: 20),
-        //     child: Text("periodicView.description".tr(args: ["5"]),
-        //         textAlign: TextAlign.center,
-        //         style: TextStyle(fontWeight: FontWeight.bold)
-        //     )
-        // ),
         _getTimer(),
         _getPMValues(),
-        _getTempAndBatteryInfo()
       ],
     );
   }
