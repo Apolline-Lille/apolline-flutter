@@ -35,7 +35,6 @@ class SensorTwin {
   bool _isSendingData;
   bool _isSendingHistory;
   Timer _historyTimer;
-  Stopwatch _historyTimeCounter;
   List<DataPointModel> _models = [];
   Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
@@ -417,7 +416,6 @@ class SensorTwin {
     this._callbacks = Map();
     this._syncTimer?.cancel();
     this._historyTimer?.cancel();
-    this._historyTimeCounter?.stop();
     this._service.client?.close();
     this._dataService?.stop();
     _stopLocationService();
