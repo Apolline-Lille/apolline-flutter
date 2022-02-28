@@ -85,7 +85,9 @@
     }
   },
   "periodicView": {
-    "description": "Data are automatically synchronized every {} minutes.\nHere are the average values recorded by the sensor during this period."
+    "nextSync": "Next sync in: ",
+    "previousSync": "Last sync at: {}",
+    "tableAverageTitle": "Average of the last 5 minutes."
   },
   "settings": {
     "description": "Here, you can specify warning and danger thresholds.\nReceived values lower than warning limit will be considered as normal, values superior to danger limit will be considered as dangerous.",

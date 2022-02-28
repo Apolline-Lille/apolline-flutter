@@ -85,7 +85,9 @@
     }
   },
   "periodicView": {
-    "description": "Les données sont automatiquement synchronisées toutes les {} minutes.\nVoici les valeurs moyennes relevées par le capteur durant cette période."
+    "nextSync": "Prochaine synchronisation dans :",
+    "previousSync": "Dernière synchronisation à {}",
+    "tableAverageTitle": "Moyenne des 5 dernières minutes."
   },
   "settings": {
     "description": "Vous pouvez spécifier ici des seuils d'alerte et de danger.\nLes valeurs reçues inférieures au seuil d'alerte seront considérées comme normales, celles supérieures au seuil de danger comme dangereuses.",
