@@ -26,6 +26,7 @@ class SettingsPanel extends StatefulWidget {
 class _SettingsPanelState extends State<SettingsPanel> {
   bool _showWarningNotifications = true;
   bool _showDangerNotifications = true;
+  bool _liveDataTransmissionMode;
   Duration _notificationIntervalDuration = Duration(minutes: 5);
   List<List<String>> pickerData = [
     new List<String>.generate(24, (i) => (i).toString() + 'h'),
@@ -39,6 +40,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
     this._showWarningNotifications = widget.ucS.userConf.showWarningNotifications;
     this._showDangerNotifications = widget.ucS.userConf.showDangerNotifications;
     this._notificationIntervalDuration = widget.ucS.userConf.exposureNotificationsTimeInterval;
+    _liveDataTransmissionMode = widget.ucS.userConf.isLiveDataTransmission;
     _serverEndpoints = SqfLiteService().getAllServerEndpoints();
     super.initState();
   }
@@ -51,6 +53,23 @@ class _SettingsPanelState extends State<SettingsPanel> {
     return Container (
       child: Text("settings.description").tr(),
     );
+  }
+
+  Widget _buildTransmissionModeSelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text("settings.transmissionModeSwitch".tr()),
+        Switch(
+        value: _liveDataTransmissionMode,
+        onChanged: (value) {
+          widget.ucS.userConf.isLiveDataTransmission = value;
+          widget.ucS.update();
+          setState(() {
+            _liveDataTransmissionMode = value;
+          });
+        })
+    ]);
   }
 
   // https://stackoverflow.com/a/54775297/11243782
@@ -307,6 +326,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
       _divider("settings.sectionDivider.notification".tr()),
       _buildInformationWidget(),
       _buildNotificationConfigurationWidget(),
+      _divider("settings.sectionDivider.dataTransmissionMode".tr()),
+      _buildTransmissionModeSelector(),
       _divider("settings.sectionDivider.threshold".tr()),
     ];
 

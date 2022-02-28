@@ -8,6 +8,7 @@ import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/utils/pm_filter.dart';
 import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:apollineflutter/utils/sensor_events/events_dialog.dart';
+import 'package:apollineflutter/widgets/periodic_quality.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -29,23 +30,23 @@ class SensorView extends StatefulWidget {
   final BluetoothDevice device;
   final UserConfigurationService ucS = locator<UserConfigurationService>();
   final AndroidNotificationDetails androidPlatformWarningChannelSpecifics =
-    AndroidNotificationDetails(
-        'apolline_exposure_warning_notifications',
-        'notifications.warningChannel.name'.tr(),
-        'notifications.warningChannel.description'.tr(),
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: true
-    );
+  AndroidNotificationDetails(
+      'apolline_exposure_warning_notifications',
+      'notifications.warningChannel.name'.tr(),
+      'notifications.warningChannel.description'.tr(),
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: true
+  );
   final AndroidNotificationDetails androidPlatformDangerChannelSpecifics =
-    AndroidNotificationDetails(
-        'apolline_exposure_danger_notifications',
-        'notifications.dangerChannel.name'.tr(),
-        'notifications.dangerChannel.description'.tr(),
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: true
-    );
+  AndroidNotificationDetails(
+      'apolline_exposure_danger_notifications',
+      'notifications.dangerChannel.name'.tr(),
+      'notifications.dangerChannel.description'.tr(),
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: true
+  );
 
 
   @override
@@ -123,7 +124,12 @@ class _SensorViewState extends State<SensorView> {
 
     updateState("connectionMessages.configuring".tr());
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
-    this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
+    if(widget.ucS.userConf.isLiveDataTransmission) {
+      this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
+    } else {
+      this._sensor.on(SensorTwinEvent.history_data, (d) => _onLiveDataReceived(d as DataPointModel));
+    }
+
     this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
     this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
     bool initResult = await this._sensor.init();
@@ -132,8 +138,16 @@ class _SensorViewState extends State<SensorView> {
       this._onWillPop(DeviceConnectionStatus.INCOMPATIBLE);
       return;
     }
-    await this._sensor.launchDataLiveTransmission();
-    updateState("connectionMessages.waiting".tr());
+
+    if(widget.ucS.userConf.isLiveDataTransmission) {
+      await this._sensor.launchDataLiveTransmission();
+      updateState("connectionMessages.waiting".tr());
+    } else {
+      await _sensor.stopDataLiveTransmission();
+      this._sensor.launchHistoryTransmission();
+      updateState("connectionMessages.periodicDataTransmission.waiting".tr());
+    }
+
     activateBackgroundExecution();
   }
 
@@ -172,16 +186,16 @@ class _SensorViewState extends State<SensorView> {
       if (widget.ucS.userConf.showWarningNotifications && collectedValue < dangerThreshold && collectedValue >= warningThreshold) {
         // print("[WARNING] $value concentration is $collectedValue (>= $warningThreshold).");
         _checkNotification(
-          "notifications.warning.title".tr(args: [value.getLabelKey().tr()]),
-          'notifications.warning.body'.tr(args: [collectedValue.toString()]),
-          false
+            "notifications.warning.title".tr(args: [value.getLabelKey().tr()]),
+            'notifications.warning.body'.tr(args: [collectedValue.toString()]),
+            false
         );
       } else if (widget.ucS.userConf.showDangerNotifications && collectedValue >= dangerThreshold) {
         // print("[DANGER] $value concentration is $collectedValue (>= $dangerThreshold).");
         _checkNotification(
-          "notifications.danger.title".tr(args: [value.getLabelKey().tr()]),
-          'notifications.danger.body'.tr(args: [collectedValue.toString()]),
-          true
+            "notifications.danger.title".tr(args: [value.getLabelKey().tr()]),
+            'notifications.danger.body'.tr(args: [collectedValue.toString()]),
+            true
         );
       }
     });
@@ -242,9 +256,9 @@ class _SensorViewState extends State<SensorView> {
 
   Future<void> _showNotification (String title, String message, {bool isDanger = false}) async {
     NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: isDanger
-          ? widget.androidPlatformDangerChannelSpecifics
-          : widget.androidPlatformWarningChannelSpecifics
+        android: isDanger
+            ? widget.androidPlatformDangerChannelSpecifics
+            : widget.androidPlatformWarningChannelSpecifics
     );
     await FlutterLocalNotificationsPlugin().show(
         isDanger ? -1 : -2,
@@ -279,19 +293,31 @@ class _SensorViewState extends State<SensorView> {
   Widget _getActionIndicator() {
     return _sensor != null
         ? Container(
-          margin: EdgeInsets.only(right: 15),
-          child: IconButton(
-              onPressed: () => showSensorEventsDialog(context, widget.device.name),
-              icon: Icon(
-                Icons.circle_sharp,
-                color: !this.isConnected
-                    ? Colors.red
-                    : this._receivedData
-                    ? Colors.green.shade800
-                    : Colors.green.shade900,
-              ))
-        )
+        margin: EdgeInsets.only(right: 15),
+        child: IconButton(
+            onPressed: () => showSensorEventsDialog(context, widget.device.name),
+            icon: Icon(
+              Icons.circle_sharp,
+              color: !this.isConnected
+                  ? Colors.red
+                  : this._receivedData
+                  ? Colors.green.shade800
+                  : Colors.green.shade900,
+            ))
+    )
         : Container();
+  }
+
+  Widget _dataRepresentation() {
+    if(widget.ucS.userConf.isLiveDataTransmission) {
+      return Quality(lastReceivedData: lastReceivedData);
+    } else {
+      if(lastReceivedData == null) {
+        return Column();
+      } else {
+        return PeriodicQuality(data: lastReceivedData, userConfiguration: widget.ucS.userConf);
+      }
+    }
   }
 
   /* UI update only */
@@ -304,66 +330,66 @@ class _SensorViewState extends State<SensorView> {
     return WillPopScope(
         onWillPop: () => _onWillPop(DeviceConnectionStatusHelper.fromConnectionStatus(isConnected)),
         child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          key: _scaffoldMessengerKey,
-          bottomNavigationBar: IgnorePointer(
-            ignoring: !hasData,
-            child: ColorFiltered(
-              colorFilter: hasData ? ColorFilter.mode(Colors.transparent, BlendMode.exclusion) : ColorFilter.mode(Colors.grey.shade500, BlendMode.modulate),
-              child: Container(
-                color: theme.primaryColor,
-                child: TabBar(
-                  automaticIndicatorColorAdjustment: true,
-                  tabs: [
-                    Tab(icon: Icon(Icons.home), text: "navigation.home".tr()),
-                    Tab(icon: Icon(Icons.insert_chart), text: "navigation.chart".tr()),
-                    Tab(icon: Icon(Icons.map), text: "navigation.map".tr())
-                  ],
-                ),
-              ),
-            ),
-          ),
-          appBar: AppBar(
-            title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
-            actions: [
-              this._getActionIndicator()
-            ],
-          ),
-          body: Stack(
-            children: [
-              AnimatedOpacity(
-                opacity: hasData ? 0.0 : 1.0,
-                duration: animationDuration,
-                child: Center(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container (
-                            child: CupertinoActivityIndicator(),
-                            margin: EdgeInsets.only(bottom: 10)
-                        ),
-                        Text(state),
-                      ]
+            length: 3,
+            child: Scaffold(
+              key: _scaffoldMessengerKey,
+              bottomNavigationBar: IgnorePointer(
+                ignoring: !hasData,
+                child: ColorFiltered(
+                  colorFilter: hasData ? ColorFilter.mode(Colors.transparent, BlendMode.exclusion) : ColorFilter.mode(Colors.grey.shade500, BlendMode.modulate),
+                  child: Container(
+                    color: theme.primaryColor,
+                    child: TabBar(
+                      automaticIndicatorColorAdjustment: true,
+                      tabs: [
+                        Tab(icon: Icon(Icons.home), text: "navigation.home".tr()),
+                        Tab(icon: Icon(Icons.insert_chart), text: "navigation.chart".tr()),
+                        Tab(icon: Icon(Icons.map), text: "navigation.map".tr())
+                      ],
+                    ),
                   ),
                 ),
               ),
-
-              AnimatedOpacity(
-                opacity: hasData ? 1.0 : 0.0,
-                duration: animationDuration,
-                child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
+              appBar: AppBar(
+                title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
+                actions: [
+                  this._getActionIndicator()
+                ],
+              ),
+              body: Stack(
                   children: [
-                    Quality(lastReceivedData: lastReceivedData),
-                    Stats(),
-                    PMMapView()
-                  ]
-                ),
-              )
-            ]),
-          )
+                    AnimatedOpacity(
+                      opacity: hasData ? 0.0 : 1.0,
+                      duration: animationDuration,
+                      child: Center(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                  child: CupertinoActivityIndicator(),
+                                  margin: EdgeInsets.only(bottom: 10)
+                              ),
+                              Text(state),
+                            ]
+                        ),
+                      ),
+                    ),
+
+                    AnimatedOpacity(
+                      opacity: hasData ? 1.0 : 0.0,
+                      duration: animationDuration,
+                      child: TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            _dataRepresentation(),
+                            Stats(),
+                            PMMapView()
+                          ]
+                      ),
+                    )
+                  ]),
+            )
         )
     );
   }

@@ -50,6 +50,7 @@ dependencies:
   syncfusion_flutter_charts: ^19.2.62
   flutter_picker: ^2.0.2
   qr_code_scanner: ^0.6.1
+  circular_countdown_timer: ^0.2.0
 
 
 
