@@ -1,6 +1,6 @@
 import 'package:apollineflutter/utils/sensor_events/events_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class DeviceCard extends StatefulWidget {
   DeviceCard({this.device, this.connectionCallback, this.enabled = true});
