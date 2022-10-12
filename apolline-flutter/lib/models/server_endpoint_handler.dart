@@ -7,7 +7,7 @@ import '../configuration_key_name.dart';
 
 class ServerEndpointHandler {
   static final _instance = ServerEndpointHandler._internal();
-  ServerModel currentServerEndpoint;
+  late ServerModel currentServerEndpoint;
 
   ServerEndpointHandler._internal();
 
@@ -24,7 +24,7 @@ class ServerEndpointHandler {
         GlobalConfiguration().get(ApollineConf.DBNAME)
     ); // Retrieving config of config_dev.json file
 
-    ServerModel defaultConfig = await SqfLiteService().getDefaultEndpoint(); // If any default config has been saved, she become current config. Else, setting current config as mainConfig
+    ServerModel? defaultConfig = await SqfLiteService().getDefaultEndpoint(); // If any default config has been saved, she become current config. Else, setting current config as mainConfig
     if(defaultConfig == null) {
       mainConfig.isDefault = 1;
       currentServerEndpoint = mainConfig;

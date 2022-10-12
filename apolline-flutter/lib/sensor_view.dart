@@ -25,7 +25,7 @@ enum ConnexionType { Normal, Disconnect }
 
 
 class SensorView extends StatefulWidget {
-  SensorView({Key key, this.device}) : super(key: key);
+  SensorView({required Key key, required this.device}) : super(key: key);
   final BluetoothDevice device;
   final UserConfigurationService ucS = locator<UserConfigurationService>();
   final AndroidNotificationDetails androidPlatformWarningChannelSpecifics =
@@ -55,14 +55,14 @@ class SensorView extends StatefulWidget {
 
 class _SensorViewState extends State<SensorView> {
   String state = "connectionMessages.connecting".tr();
-  DataPointModel lastReceivedData;
+  DataPointModel? lastReceivedData;
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
-  SensorTwin _sensor;
+  late SensorTwin _sensor;
   Map<bool, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   bool _receivedData = false;
-  Timer timer;
+  late Timer timer;
 
 
   @override
@@ -91,7 +91,7 @@ class _SensorViewState extends State<SensorView> {
         }
       });
     } catch (e) {
-      if (e.code != "already_connected") {
+      if (e != "already_connected") {
         throw e;
       }
     } finally {
@@ -225,8 +225,8 @@ class _SensorViewState extends State<SensorView> {
   ///Display a snackBar
   void showSnackBar(String msg, {Duration duration = const Duration(seconds: 4)}) {
     var snackBar = SnackBar(content: Text(msg), duration: duration,);
-    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
-    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).showSnackBar(snackBar);
+    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext!)?.hideCurrentSnackBar();
+    ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext!)?.showSnackBar(snackBar);
   }
 
   Future<void> _checkNotification (String title, String message, bool isDanger) async {
@@ -234,7 +234,7 @@ class _SensorViewState extends State<SensorView> {
       _showNotification( title, message, isDanger: isDanger );
       _notificationTimestamps[isDanger] = DateTime.now().millisecondsSinceEpoch;
     }
-    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[isDanger] > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
+    if (DateTime.now().millisecondsSinceEpoch - _notificationTimestamps[isDanger]! > widget.ucS.userConf.exposureNotificationsTimeInterval.inMilliseconds) {
       _showNotification( title, message, isDanger: isDanger );
       _notificationTimestamps[isDanger] = DateTime.now().millisecondsSinceEpoch;
     }
@@ -257,7 +257,7 @@ class _SensorViewState extends State<SensorView> {
   void dispose() {
     FlutterLocalNotificationsPlugin().cancelAll();
     widget.device.disconnect();
-    this._sensor?.shutdown();
+    this._sensor.shutdown();
     disableBackgroundExecution();
     this.timer.cancel();
     super.dispose();
@@ -268,7 +268,7 @@ class _SensorViewState extends State<SensorView> {
   ///Called when press back button
   Future<bool> _onWillPop(DeviceConnectionStatus status) async {
     if (_scaffoldMessengerKey.currentContext != null) {
-      ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext).hideCurrentSnackBar();
+      ScaffoldMessenger.maybeOf(_scaffoldMessengerKey.currentContext!)?.hideCurrentSnackBar();
       Navigator.pop(context, status);
     }
 
@@ -356,8 +356,8 @@ class _SensorViewState extends State<SensorView> {
                 child: TabBarView(
                   physics: NeverScrollableScrollPhysics(),
                   children: [
-                    Quality(lastReceivedData: lastReceivedData),
-                    Stats(),
+                    Quality(key: super.widget.key!, lastReceivedData: lastReceivedData),
+                    Stats(key: super.widget.key!),
                     PMMapView()
                   ]
                 ),

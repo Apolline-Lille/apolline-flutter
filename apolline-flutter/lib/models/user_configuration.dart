@@ -11,17 +11,17 @@ import 'package:apollineflutter/utils/time_filter.dart';
 class UserConfiguration {
   
   ///variable to retrieve data up to x minute
-  TimeFilter _timeFilter;
+  late TimeFilter _timeFilter;
   ///which PM data to display
-  PMFilter _pmFilter;
+  late PMFilter _pmFilter;
   ///pm size concentration limits
-  Map<PMFilter, List<int>> _thresholdsValues;
+  late Map<PMFilter, List<int>> _thresholdsValues;
   ///pm concentration alerts
-  List<bool> _shouldSendThresholdNotifications;
+  late List<bool> _shouldSendThresholdNotifications;
   ///exposure notifications time interval
-  Duration exposureNotificationsTimeInterval;
+  late Duration exposureNotificationsTimeInterval;
   ///sensor events
-  Map<String, List<SensorEvent>> _sensorEvents;
+  late Map<String, List<SensorEvent>> _sensorEvents;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
@@ -33,12 +33,13 @@ class UserConfiguration {
 
   ///
   ///Constructor
-  UserConfiguration({timeFilter: TimeFilter.LAST_MIN,
+  UserConfiguration({
+    timeFilter: TimeFilter.LAST_MIN,
     pmFilter: PMFilter.PM_2_5,
-    Map<PMFilter, int> thresholds,
-    List<bool> alerts,
+    Map<PMFilter, int>? thresholds = null,
+    List<bool>? alerts = null,
     Duration notificationsInterval: const Duration(minutes: 5),
-    List<SensorEvent> sensorEvents
+    List<SensorEvent>? sensorEvents = null
   }) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;
@@ -46,12 +47,16 @@ class UserConfiguration {
     this._shouldSendThresholdNotifications = alerts == null || alerts.length == 0
         ? [true, true]
         : alerts;
+
+    /*
+    TODO fix those
+
     this._thresholdsValues = thresholds == null || thresholds.keys.length == 0
         ? PMFilterUtils.getThresholds()
         : thresholds;
     this._sensorEvents = sensorEvents == null || _sensorEvents.keys.length == 0
         ? {}
-        : sensorEvents;
+        : sensorEvents;*/
   }
 
   ///
@@ -126,15 +131,15 @@ class UserConfiguration {
   }
 
   List<int> getThresholds (PMFilter filter) {
-    return this._thresholdsValues[filter];
+    return this._thresholdsValues[filter]!;
   }
 
   void updatePMThreshold (PMFilter filter, int thresholdIndex, int newValue) {
-    this._thresholdsValues[filter][thresholdIndex] = newValue;
+    this._thresholdsValues[filter]![thresholdIndex] = newValue;
   }
 
   List<int> getCurrentThresholds () {
-    return this._thresholdsValues[this.pmFilter];
+    return this._thresholdsValues[this.pmFilter]!;
   }
 
   bool get showWarningNotifications {
@@ -152,17 +157,17 @@ class UserConfiguration {
   }
 
   List<SensorEvent> getSensorEvents(String deviceName) {
-    return this._sensorEvents[deviceName];
+    return this._sensorEvents[deviceName]!;
   }
   void addSensorEvent (String deviceName, SensorEventType event) {
     if (this._sensorEvents[deviceName] == null) this._sensorEvents[deviceName] = [];
-    this._sensorEvents[deviceName].add( SensorEvent(event) );
+    this._sensorEvents[deviceName]!.add( SensorEvent(event) );
   }
   void clearSensorEvents (String deviceName) {
     DateTime now = DateTime.now();
     print("Removing sensor events older than one week.");
     this._sensorEvents[deviceName] =
-        this._sensorEvents[deviceName]
+        this._sensorEvents[deviceName]!
             .where((element) => now.difference(element.time) < Duration(days: 7)).toList();
   }
 }

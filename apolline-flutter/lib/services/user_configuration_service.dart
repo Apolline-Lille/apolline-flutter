@@ -8,7 +8,7 @@ import 'package:apollineflutter/services/service_locator.dart';
 class UserConfigurationService extends ChangeNotifier{
   static const USER_CONF_KEY = "userconf";
   //user configuration
-  UserConfiguration userConf;
+  late UserConfiguration userConf;
   //help to know if data is load from local storage
   bool isReady = false;
 

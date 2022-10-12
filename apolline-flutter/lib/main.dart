@@ -53,7 +53,7 @@ class ApollineApp extends StatelessWidget {
         ),
         toggleableActiveColor: tertiaryColor
       ),
-      home: BluetoothDevicesPage(),
+      home: BluetoothDevicesPage(key: key!,),
     );
   }
 }
@@ -76,13 +76,13 @@ Future<void> setupNotificationService () async {
   );
 }
 
-Future selectNotification(String payload) async {
+Future selectNotification(String? payload) async {
   if (payload != null) {
     debugPrint('notification payload: $payload');
   }
 }
 Future onDidReceiveLocalNotification (
-    int id, String title, String body, String payload
+    int id, String? title, String? body, String? payload
 ) async {
   debugPrint('notification payload: $payload');
 }

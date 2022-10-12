@@ -31,10 +31,10 @@ class _PMFilterValues {
   final int warningThreshold;
   final int dangerThreshold;
   _PMFilterValues({
-    @required this.labelKey,
-    @required this.dataRowIndex,
-    @required this.warningThreshold,
-    @required this.dangerThreshold
+    required this.labelKey,
+    required this.dataRowIndex,
+    required this.warningThreshold,
+    required this.dangerThreshold
   });
 }
 
@@ -55,17 +55,17 @@ extension PMFilterUtils on PMFilter {
   int getRowIndex () {
     if (PMFilterUtils._values[this] == null)
       throw RangeError("This PMFilter has no associated row index.");
-    return PMFilterUtils._values[this].dataRowIndex;
+    return PMFilterUtils._values[this]!.dataRowIndex;
   }
 
   String getLabelKey () {
     if (PMFilterUtils._values[this] == null)
       throw RangeError("This PMFilter has no associated row index.");
-    return PMFilterUtils._values[this].labelKey;
+    return PMFilterUtils._values[this]!.labelKey;
   }
 
   static List<String> getLabels () {
-    return PMFilter.values.map((filter) => PMFilterUtils._values[filter].labelKey.tr()).toList();
+    return PMFilter.values.map((filter) => PMFilterUtils._values[filter]!.labelKey.tr()).toList();
   }
 
   static Map<PMFilter, List<int>> getThresholds () {

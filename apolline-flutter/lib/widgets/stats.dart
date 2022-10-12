@@ -16,26 +16,26 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 
 class Stats extends StatefulWidget {
-  Stats({Key key}) : super(key: key);
+  Stats({required Key key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    return StatsState();
+    return StatsState(key: key!);
   }
 }
 
 class StatsState extends State<Stats> {
-  StatsState({Key key});
+  StatsState({required Key key});
   RealtimeDataService _dataService = locator<RealtimeDataService>();
   Stream<DataPointModel> _dataStream = locator<RealtimeDataService>().dataStream;
-  StreamSubscription<DataPointModel> _streamSubscription;
-  List<DataPointModel> _data;
-  TimeFilter _dataDurationFilter;
-  SqfLiteService _sqfLiteService;
-  ValueNotifier<bool> _isDialOpen;
+  StreamSubscription<DataPointModel>? _streamSubscription;
+  late List<DataPointModel> _data;
+  late TimeFilter _dataDurationFilter;
+  late SqfLiteService _sqfLiteService;
+  late ValueNotifier<bool> _isDialOpen;
 
   @override
   void dispose() {
-    _streamSubscription.cancel();
+    _streamSubscription?.cancel();
     super.dispose();
   }
 

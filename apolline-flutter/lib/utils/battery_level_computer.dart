@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class BatteryLevelStep {
   final int percentage;
   final double voltageValue;
-  BatteryLevelStep({@required this.percentage, @required this.voltageValue});
+  BatteryLevelStep({required this.percentage, required this.voltageValue});
 }
 
 final List<BatteryLevelStep> _steps = [

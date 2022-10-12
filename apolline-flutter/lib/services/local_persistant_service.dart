@@ -22,7 +22,7 @@ class LocalKeyValuePersistance {
 
   ///
   ///get some data to localStoraage.
-  static Future<Map<String, dynamic>> getObject(String key) async{
+  static Future<Map<String, dynamic>?> getObject(String key) async{
     var prefs = await SharedPreferences.getInstance();
     var stringObject = prefs.getString(generateKey(key));
     if(stringObject != null)  {

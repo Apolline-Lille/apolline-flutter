@@ -35,20 +35,29 @@ class DataPointModel {
 
 
   String sensorName;
-  int _date;
+  late int date;
   int id;
-  Position position;
+  Position? position;
 
   /* Values received, parsed through a comma-separated string */
   List<String> values = [];
 
-  DataPointModel({this.values, this.sensorName, this.position}) {
-    this._date = DateTime.now().millisecondsSinceEpoch;
+  DataPointModel({
+    required this.id,
+    required this.values,
+    required this.sensorName,
+    required this.position
+  }) {
+    this.date = DateTime.now().millisecondsSinceEpoch;
   }
 
-  DataPointModel.bdd({this.id, this.values, this.sensorName, this.position, date}) {
-    this._date = date;
-  }
+  DataPointModel.bdd({
+    required this.id,
+    required this.values,
+    required this.sensorName,
+    required this.position,
+    required this.date
+  });
 
   ///
   ///return the temperature in kelvin.
@@ -70,12 +79,6 @@ class DataPointModel {
   }
 
   ///
-  ///return the humidity compensated.
-  int get date {
-    return this._date;
-  }
-
-  ///
   ///add one row for one properties.
   String addNestedData(String propertie, String value, String unit) {
     var provider = this.position?.provider ?? "no";
@@ -83,7 +86,7 @@ class DataPointModel {
     var transport = this.position?.transport ?? "no";
     return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
         "device=$sensorName,provider=$provider,geohash=$geohash,transport=$transport," +
-        "unit=$unit value=$value ${_date * 1000000}";
+        "unit=$unit value=$value ${date * 1000000}";
   }
 
   ///
@@ -122,7 +125,7 @@ class DataPointModel {
     json["provider"] = this.position?.provider ?? "no";
     json["geohash"] = this.position?.geohash ?? "no";
     json["transport"] = this.position?.transport ?? "no";
-    json["date"] = this._date;
+    json["date"] = this.date;
     json["value"] = this.values.join('|');
     return json;
   }

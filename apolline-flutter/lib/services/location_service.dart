@@ -9,10 +9,10 @@ import 'package:geolocator/geolocator.dart' as geo;
 class SimpleLocationService {
 
   ///current position.
-  Position _currentPosition;
+  late Position _currentPosition;
   ///stream.
   StreamController<Position> _locationStream = StreamController<Position>();
-  StreamSubscription<geo.Position> _locationSubscription;
+  late StreamSubscription<geo.Position> _locationSubscription;
 
   ///
   ///constructor.
@@ -43,15 +43,13 @@ class SimpleLocationService {
   void start () async {
     this._locationStream = StreamController<Position>();
     this._locationSubscription = geo.Geolocator.getPositionStream().listen((p) {
-      if(p != null) {
-        this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude)));
-      }
+      this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude)));
     });
   }
 
   /// Removes all stream listeners and close it.
   void close () async {
-    this._locationSubscription?.cancel();
+    this._locationSubscription.cancel();
     this._locationStream.close();
   }
 }
