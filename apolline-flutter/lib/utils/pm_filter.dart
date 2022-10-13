@@ -1,5 +1,4 @@
 import 'package:apollineflutter/models/data_point_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 

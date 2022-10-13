@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 class BatteryLevelStep {
   final int percentage;
   final double voltageValue;

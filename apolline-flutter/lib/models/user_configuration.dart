@@ -36,10 +36,10 @@ class UserConfiguration {
   UserConfiguration({
     timeFilter: TimeFilter.LAST_MIN,
     pmFilter: PMFilter.PM_2_5,
-    Map<PMFilter, int>? thresholds = null,
-    List<bool>? alerts = null,
+    Map<PMFilter, int>? thresholds,
+    List<bool>? alerts,
     Duration notificationsInterval: const Duration(minutes: 5),
-    List<SensorEvent>? sensorEvents = null
+    List<SensorEvent>? sensorEvents
   }) {
     this._timeFilter = timeFilter;
     this._pmFilter = pmFilter;

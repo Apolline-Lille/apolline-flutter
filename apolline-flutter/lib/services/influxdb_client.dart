@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:apollineflutter/exception/bad_request_exception.dart';
 import 'package:apollineflutter/exception/lost_connection_exception.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+
 
 ///Author (Issagha Barry)
 ///Influx db api.
@@ -47,11 +47,11 @@ class InfluxDBAPI {
   }
 
   bool changeEndpointConfiguration() {
-    _connectionString = ServerEndpointHandler().currentServerEndpoint!.apiURL;
-    _db = ServerEndpointHandler().currentServerEndpoint!.dbName;
-    _username = ServerEndpointHandler().currentServerEndpoint!.username;
-    _password = ServerEndpointHandler().currentServerEndpoint!.password;
-    _pingUrl = ServerEndpointHandler().currentServerEndpoint!.pingURL;
+    _connectionString = ServerEndpointHandler().currentServerEndpoint.apiURL;
+    _db = ServerEndpointHandler().currentServerEndpoint.dbName;
+    _username = ServerEndpointHandler().currentServerEndpoint.username;
+    _password = ServerEndpointHandler().currentServerEndpoint.password;
+    _pingUrl = ServerEndpointHandler().currentServerEndpoint.pingURL;
     try {
       this.ping();
     } on LostConnectionException catch (_) {

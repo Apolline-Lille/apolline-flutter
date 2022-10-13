@@ -9,7 +9,6 @@ import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/position.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 import '../gattsample.dart';
@@ -294,9 +293,9 @@ class SensorTwin {
   /// Releases resources associated with the sensor.
   void shutdown () {
     this._callbacks = Map();
-    this._syncTimer?.cancel();
-    this._service.client?.close();
-    this._dataService?.stop();
+    this._syncTimer.cancel();
+    this._service.client.close();
+    this._dataService.stop();
     _stopLocationService();
     try {
       this._device.disconnect();

@@ -31,7 +31,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
     new List<String>.generate(24, (i) => (i).toString() + 'h'),
     new List<String>.generate(60, (i) => (i).toString() + 'min')
   ];
-  ServerModel _dropdownValue = ServerEndpointHandler().currentServerEndpoint!;
+  ServerModel _dropdownValue = ServerEndpointHandler().currentServerEndpoint;
   late Future<List<ServerModel>> _serverEndpoints;
 
   @override
