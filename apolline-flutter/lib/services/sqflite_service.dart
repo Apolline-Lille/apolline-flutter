@@ -45,7 +45,7 @@ class SqfLiteService {
   }
 
   // Only allow a single open connection to the database.
-  static late Database? _database;
+  static Database? _database;
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();

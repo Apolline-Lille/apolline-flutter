@@ -187,7 +187,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     /* We selected a device - go to the device screen passing information about the selected device */
     DeviceConnectionStatus status = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SensorView(device: device, key: this.widget.key!,)),
+      MaterialPageRoute(builder: (context) => SensorView(device: device, key: Key("Sensor_view"),)),
     );
 
     switch (status) {

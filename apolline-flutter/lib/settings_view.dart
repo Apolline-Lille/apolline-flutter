@@ -31,7 +31,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
     new List<String>.generate(24, (i) => (i).toString() + 'h'),
     new List<String>.generate(60, (i) => (i).toString() + 'min')
   ];
-  ServerModel _dropdownValue = ServerEndpointHandler().currentServerEndpoint;
+  ServerModel _dropdownValue = ServerEndpointHandler().currentServerEndpoint!;
   late Future<List<ServerModel>> _serverEndpoints;
 
   @override
@@ -228,7 +228,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => ServerEndpointSelectorQr(key: super.widget.key!,),
+                        builder: (_) => ServerEndpointSelectorQr(key: Key("ServerEndpointSelector"),),
                         fullscreenDialog: false))
                     .then((value) {
                   if (value != null) {
@@ -251,7 +251,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               onPressed: () => {
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(key: super.widget.key!,), fullscreenDialog: true))
+                    MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(key: Key("ServerEndpointSelectorDialog"),), fullscreenDialog: true))
                     .then((value) {
                   if(value != null) {
                     Fluttertoast.showToast(msg: value.toString());

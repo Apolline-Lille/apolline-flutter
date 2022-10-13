@@ -5,7 +5,7 @@ import 'package:apollineflutter/models/data_point_model.dart';
 
 /// RealtimeDataServiceImpl to implement method for the service
 class RealtimeDataServiceImpl extends RealtimeDataService {
-  late StreamController<DataPointModel>? _streamController;
+  StreamController<DataPointModel>? _streamController;
   List<String> values = [];
   // ignore: non_constant_identifier_names
   bool is_running = true;

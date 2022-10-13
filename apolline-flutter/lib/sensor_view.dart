@@ -58,7 +58,7 @@ class _SensorViewState extends State<SensorView> {
   DataPointModel? lastReceivedData;
   bool isConnected = false;
   ConnexionType connectType = ConnexionType.Normal;
-  late SensorTwin _sensor;
+  SensorTwin? _sensor;
   Map<bool, int> _notificationTimestamps = Map();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   bool _receivedData = false;
@@ -116,23 +116,24 @@ class _SensorViewState extends State<SensorView> {
   void handleDeviceConnect(BluetoothDevice device) async {
     if (isConnected) return;
     isConnected = true;
+
     if (this._sensor != null) {
-      this._sensor.shutdown();
+      this._sensor!.shutdown();
       await widget.device.connect();
     }
 
     updateState("connectionMessages.configuring".tr());
     this._sensor = SensorTwin(device: device, syncTiming: Duration(minutes: 2));
-    this._sensor.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
-    this._sensor.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
-    this._sensor.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
-    bool initResult = await this._sensor.init();
+    this._sensor!.on(SensorTwinEvent.live_data, (d) => _onLiveDataReceived(d as DataPointModel));
+    this._sensor!.on(SensorTwinEvent.sensor_connected, (_) => _onSensorConnected());
+    this._sensor!.on(SensorTwinEvent.sensor_disconnected, (_) => _onSensorDisconnected());
+    bool initResult = await this._sensor!.init();
     if (!initResult) {
       Fluttertoast.showToast(msg: "connectionMessages.incompatible".tr());
       this._onWillPop(DeviceConnectionStatus.INCOMPATIBLE);
       return;
     }
-    await this._sensor.launchDataLiveTransmission();
+    await this._sensor!.launchDataLiveTransmission();
     updateState("connectionMessages.waiting".tr());
     activateBackgroundExecution();
   }
@@ -257,7 +258,7 @@ class _SensorViewState extends State<SensorView> {
   void dispose() {
     FlutterLocalNotificationsPlugin().cancelAll();
     widget.device.disconnect();
-    this._sensor.shutdown();
+    this._sensor?.shutdown();
     disableBackgroundExecution();
     this.timer.cancel();
     super.dispose();
@@ -325,7 +326,7 @@ class _SensorViewState extends State<SensorView> {
             ),
           ),
           appBar: AppBar(
-            title: Text(_sensor != null ? _sensor.name : "connectionMessages.connecting".tr()),
+            title: Text(_sensor != null ? _sensor!.name : "connectionMessages.connecting".tr()),
             actions: [
               this._getActionIndicator()
             ],
@@ -356,8 +357,8 @@ class _SensorViewState extends State<SensorView> {
                 child: TabBarView(
                   physics: NeverScrollableScrollPhysics(),
                   children: [
-                    Quality(key: super.widget.key!, lastReceivedData: lastReceivedData),
-                    Stats(key: super.widget.key!),
+                    Quality(key: Key("LiveAirQuality_view"), lastReceivedData: lastReceivedData),
+                    Stats(key: Key('LiveStats_view')),
                     PMMapView()
                   ]
                 ),

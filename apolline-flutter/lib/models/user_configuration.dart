@@ -21,7 +21,7 @@ class UserConfiguration {
   ///exposure notifications time interval
   late Duration exposureNotificationsTimeInterval;
   ///sensor events
-  late Map<String, List<SensorEvent>> _sensorEvents;
+  Map<String, List<SensorEvent>>? _sensorEvents;
 
   ///Json keys
   static const String TIME_FILTER_KEY = "timeFilterValue";
@@ -57,6 +57,9 @@ class UserConfiguration {
     this._sensorEvents = sensorEvents == null || _sensorEvents.keys.length == 0
         ? {}
         : sensorEvents;*/
+
+    this._sensorEvents = {};
+    this._thresholdsValues = PMFilterUtils.getThresholds();
   }
 
   ///
@@ -157,17 +160,17 @@ class UserConfiguration {
   }
 
   List<SensorEvent> getSensorEvents(String deviceName) {
-    return this._sensorEvents[deviceName]!;
+    return this._sensorEvents![deviceName]!;
   }
   void addSensorEvent (String deviceName, SensorEventType event) {
-    if (this._sensorEvents[deviceName] == null) this._sensorEvents[deviceName] = [];
-    this._sensorEvents[deviceName]!.add( SensorEvent(event) );
+    if (this._sensorEvents![deviceName] == null) this._sensorEvents![deviceName] = [];
+    this._sensorEvents![deviceName]!.add( SensorEvent(event) );
   }
   void clearSensorEvents (String deviceName) {
     DateTime now = DateTime.now();
     print("Removing sensor events older than one week.");
-    this._sensorEvents[deviceName] =
-        this._sensorEvents[deviceName]!
+    this._sensorEvents![deviceName] =
+        this._sensorEvents![deviceName]!
             .where((element) => now.difference(element.time) < Duration(days: 7)).toList();
   }
 }
