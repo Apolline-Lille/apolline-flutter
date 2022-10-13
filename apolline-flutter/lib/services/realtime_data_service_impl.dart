@@ -46,7 +46,7 @@ class RealtimeDataServiceImpl extends RealtimeDataService {
 
   @override
   void closeDataStream() {
-    _streamController!.close();
+    _streamController?.close();
   }
 
   @override
