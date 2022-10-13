@@ -53,7 +53,7 @@ class ApollineApp extends StatelessWidget {
         ),
         toggleableActiveColor: tertiaryColor
       ),
-      home: BluetoothDevicesPage(key: key!,),
+      home: BluetoothDevicesPage(key: Key("Bluetooth_devices_page"),),
     );
   }
 }
