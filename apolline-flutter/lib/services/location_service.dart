@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/position/position.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 

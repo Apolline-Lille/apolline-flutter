@@ -7,7 +7,7 @@ import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
-import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/position/position.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 

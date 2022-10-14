@@ -1,5 +1,5 @@
 import 'package:apollineflutter/gattsample.dart';
-import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/position/position.dart';
 
 // Authors BARRY Issagha, GDISSA Ramy
 //Unité
