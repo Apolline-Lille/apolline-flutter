@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 ///
 /// This enumeration represents all position sources.
 ///
@@ -7,15 +9,26 @@ enum PositionProvider {
   UNKNOWN
 }
 
-extension PositionProviderExtension on PositionProvider {
+extension PositionProviderUtils on PositionProvider {
+  static final Map<PositionProvider, String> _values = {
+    PositionProvider.PHONE: 'phone',
+    PositionProvider.SENSOR: 'sensor',
+    PositionProvider.UNKNOWN: 'unknown'
+  };
+
   String get value {
-    switch (this) {
-      case PositionProvider.PHONE:
-        return 'phone';
-      case PositionProvider.SENSOR:
-        return 'sensor';
-      case PositionProvider.UNKNOWN:
-        return 'unknown';
-    }
+    if (PositionProviderUtils._values[this] == null)
+      throw RangeError("This PositionProvider has no associated value.");
+    return PositionProviderUtils._values[this]!;
+  }
+
+  static PositionProvider fromString(String value) {
+    // Return UNKNOWN for legacy positions.
+    if (value == "no")
+      return PositionProvider.UNKNOWN;
+
+    if (!PositionProviderUtils._values.values.contains(value))
+      throw RangeError("This value does not match any PositionProvider.");
+    return PositionProviderUtils._values.keys.firstWhere((element) => PositionProviderUtils._values[element] == value);
   }
 }
