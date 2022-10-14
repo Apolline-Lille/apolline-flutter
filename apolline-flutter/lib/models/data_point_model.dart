@@ -82,7 +82,7 @@ class DataPointModel {
   ///
   ///add one row for one properties.
   String addNestedData(String propertie, String value, String unit) {
-    var provider = this.position?.provider ?? "no";
+    var provider = this.position?.provider.value;
     var geohash = this.position?.geohash ?? "no";
     var transport = this.position?.transport ?? "no";
     return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
