@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 ///
 /// This enumeration represents all position sources.
 ///
