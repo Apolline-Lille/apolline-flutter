@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2.1.0
+        uses: actions/checkout@v3.1.0
       - name: Install Java
         uses: actions/setup-java@v1
         with:
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2.1.0
+        uses: actions/checkout@v3.1.0
       - name: Install Java
         uses: actions/setup-java@v1
         with:
@@ -116,7 +116,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2.1.0
+        uses: actions/checkout@v3.1.0
       - name: Install Java
         uses: actions/setup-java@v1
         with:
