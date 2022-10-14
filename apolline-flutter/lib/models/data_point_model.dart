@@ -138,6 +138,6 @@ class DataPointModel {
             id: json['id'],
             values: json['value'].split('|'),
             sensorName: json['deviceName'],
-            position: Position(geohash: json['geohash'], provider: json['provider'], transport: json['transport']),
+            position: Position(geohash: json['geohash'], provider: PositionProviderUtils.fromString(json['provider']), transport: json['transport']),
             date: json['date']);
 }
