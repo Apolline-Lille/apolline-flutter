@@ -1,5 +1,6 @@
 import 'package:apollineflutter/gattsample.dart';
 import 'package:apollineflutter/utils/position/position.dart';
+import 'package:apollineflutter/utils/position/position_provider.dart';
 
 // Authors BARRY Issagha, GDISSA Ramy
 //Unité
@@ -122,7 +123,7 @@ class DataPointModel {
     var json = Map<String, dynamic>();
     json["deviceName"] = sensorName;
     json["uuid"] = BlueSensorAttributes.dustSensorServiceUUID;
-    json["provider"] = this.position?.provider ?? "no";
+    json["provider"] = this.position?.provider.value;
     json["geohash"] = this.position?.geohash ?? "no";
     json["transport"] = this.position?.transport ?? "no";
     json["date"] = this.date;
