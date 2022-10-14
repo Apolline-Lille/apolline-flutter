@@ -19,6 +19,7 @@ class UserConfigurationService extends ChangeNotifier{
     //load data from localStorage.
     LocalKeyValuePersistance.getObject(UserConfigurationService.USER_CONF_KEY).then((json) {
       this.isReady = true;
+      // If user didn't register custom settings, use default settings.
       this.userConf = json == null ? UserConfiguration() : UserConfiguration.fromJson(json);
       locator.signalReady(this);
     });

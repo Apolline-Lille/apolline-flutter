@@ -31,33 +31,18 @@ class UserConfiguration {
   static const String NOTIFICATIONS_KEY = "notificationsValue";
   static const String SENSOR_EVENTS_KEY = "sensorEventsKey";
 
+
   ///
-  ///Constructor
-  UserConfiguration({
-    timeFilter: TimeFilter.LAST_MIN,
-    pmFilter: PMFilter.PM_2_5,
-    Map<PMFilter, int>? thresholds,
-    List<bool>? alerts,
-    Duration notificationsInterval: const Duration(minutes: 5),
-    List<SensorEvent>? sensorEvents
-  }) {
-    this._timeFilter = timeFilter;
-    this._pmFilter = pmFilter;
-    this.exposureNotificationsTimeInterval = notificationsInterval;
-    this._shouldSendThresholdNotifications = alerts == null || alerts.length == 0
-        ? [true, true]
-        : alerts;
-
-    /*
-    TODO fix those
-
-    this._thresholdsValues = thresholds == null || thresholds.keys.length == 0
-        ? PMFilterUtils.getThresholds()
-        : thresholds;
-    this._sensorEvents = sensorEvents == null || _sensorEvents.keys.length == 0
-        ? {}
-        : sensorEvents;*/
-
+  /// Constructor with default parameters.
+  /// This constructor is used when user hasn't registered any custom setting
+  /// (e.g. alert notification frequency); when user registered settings, you'd
+  /// better user UserConfiguration.fromJson constructor.
+  ///
+  UserConfiguration() {
+    this._timeFilter = TimeFilter.LAST_MIN;
+    this._pmFilter = PMFilter.PM_2_5;
+    this.exposureNotificationsTimeInterval = const Duration(minutes: 5);
+    this._shouldSendThresholdNotifications = [true, true];
     this._sensorEvents = {};
     this._thresholdsValues = PMFilterUtils.getThresholds();
   }
