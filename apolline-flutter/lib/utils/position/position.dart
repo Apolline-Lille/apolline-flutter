@@ -1,15 +1,17 @@
-
-
 import 'package:apollineflutter/utils/position/position_provider.dart';
 
 ///
 ///Position.
 class Position {
-  ///[geohash] the hash of latitude and longitude
-  ///[transport] the transport
-  String geohash, transport;
+  /// Latitude and longitude linked by a ";" character.
+  /// Those are stored as a string not to break compatibility with previous
+  /// database versions.
+  String geohash;
 
-  // Source of the current position.
+  /// The transport.
+  String transport;
+
+  /// Source of the current position.
   PositionProvider provider;
 
   ///
@@ -19,4 +21,11 @@ class Position {
     this.transport="no",
     this.provider = PositionProvider.UNKNOWN
   });
+
+  String toInfluxDbFormat() {
+    List<String> words = geohash.split(";");
+    return geohash == "no"
+        ? "geohash=no"
+        : "latitude=${words.first},longitude=${words.last}";
+  }
 }
