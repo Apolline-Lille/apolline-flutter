@@ -17,7 +17,7 @@ import 'package:grant_and_activate/utils/classes.dart';
 
 
 class BluetoothDevicesPage extends StatefulWidget {
-  BluetoothDevicesPage({Key key}) : super(key: key);
+  BluetoothDevicesPage({required Key key}) : super(key: key);
   final FlutterBlue flutterBlue = FlutterBlue.instance;
 
   @override
@@ -187,7 +187,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
     /* We selected a device - go to the device screen passing information about the selected device */
     DeviceConnectionStatus status = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SensorView(device: device)),
+      MaterialPageRoute(builder: (context) => SensorView(device: device, key: Key("Sensor_view"),)),
     );
 
     switch (status) {
@@ -227,8 +227,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
     if (timeout) {
       return <Widget>[
-        // ignore: missing_required_param
-        TextButton(child: Text("devicesView.analysisButton.analyse", style: btnStyle,).tr()),
+        TextButton(onPressed: () {  },
+        child: Text("devicesView.analysisButton.analyse", style: btnStyle,).tr()),
       ];
     } else {
       return <Widget>[
@@ -237,8 +237,8 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           width: 20,
           height: 20,
         ),
-        // ignore: missing_required_param
-        TextButton(child: Text("devicesView.analysisButton.cancel", style: btnStyle).tr()),
+        TextButton(onPressed: () {  },
+        child: Text("devicesView.analysisButton.cancel", style: btnStyle).tr()),
       ];
     }
   }

@@ -3,7 +3,7 @@ import 'package:apollineflutter/models/data_point_model.dart';
 /// abstract class
 /// realtimedataService a service to stream data points
 abstract class RealtimeDataService {
-  Stream<DataPointModel> dataStream;
+  late Stream<DataPointModel> dataStream;
 
   /// close Stream
   void closeDataStream();
@@ -13,6 +13,6 @@ abstract class RealtimeDataService {
   void start();
   /// stop recieve model
   void stop();
-  bool isRunning;
-  List<String> currentValues;
+  late bool isRunning;
+  late List<String> currentValues;
 }

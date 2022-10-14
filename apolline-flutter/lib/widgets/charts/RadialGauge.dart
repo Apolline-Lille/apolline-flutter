@@ -8,11 +8,12 @@ class RadialGauge extends StatefulWidget {
   final double maximumValue;
   final double currentValue;
 
-  const RadialGauge({Key key,
-    @required this.indicatorTitle,
-    @required this.minimumValue,
-    @required this.maximumValue,
-    @required this.currentValue
+  const RadialGauge({
+    required Key key,
+    required this.indicatorTitle,
+    required this.minimumValue,
+    required this.maximumValue,
+    required this.currentValue
   }) : super(key: key);
 
   @override

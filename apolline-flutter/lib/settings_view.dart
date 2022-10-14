@@ -17,7 +17,7 @@ class SettingsPanel extends StatefulWidget {
   final EdgeInsets padding = EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10);
   final UserConfigurationService ucS;
 
-  SettingsPanel({@required this.ucS});
+  SettingsPanel({required this.ucS});
 
   @override
   State<StatefulWidget> createState() => _SettingsPanelState();
@@ -32,7 +32,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
     new List<String>.generate(60, (i) => (i).toString() + 'min')
   ];
   ServerModel _dropdownValue = ServerEndpointHandler().currentServerEndpoint;
-  Future<List<ServerModel>> _serverEndpoints;
+  late Future<List<ServerModel>> _serverEndpoints;
 
   @override
   initState () {
@@ -61,16 +61,16 @@ class _SettingsPanelState extends State<SettingsPanel> {
   }
 
   Widget _buildNotificationConfigurationWidget () {
-    Function updateWarningState = (bool value) {
-      widget.ucS.userConf.showWarningNotifications = value;
+    Function updateWarningState = (bool? value) {
+      widget.ucS.userConf.showWarningNotifications = value!;
       widget.ucS.update();
       setState(() {
         _showWarningNotifications = value;
       });
     };
 
-    Function updateDangerState = (bool value) {
-      widget.ucS.userConf.showDangerNotifications = value;
+    Function updateDangerState = (bool? value) {
+      widget.ucS.userConf.showDangerNotifications = value!;
       widget.ucS.update();
       setState(() {
         _showDangerNotifications = value;
@@ -86,7 +86,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               onTap: () => updateWarningState(!_showWarningNotifications),
               trailing: Checkbox(
                 value: _showWarningNotifications,
-                onChanged: updateWarningState,
+                onChanged: (v) => updateWarningState(v),
               ),
             ),
             ListTile(
@@ -94,7 +94,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               onTap: () => updateDangerState(!_showDangerNotifications),
               trailing: Checkbox(
                 value: _showDangerNotifications,
-                onChanged: updateDangerState,
+                onChanged: (v) => updateDangerState(v),
               ),
             ),
             ListTile(
@@ -150,14 +150,14 @@ class _SettingsPanelState extends State<SettingsPanel> {
               return DropdownButton(
                   value: _dropdownValue,
                   onChanged: (value) {
-                    if(ServerEndpointHandler().changeCurrentServerEndpoint(value)){
+                    if(ServerEndpointHandler().changeCurrentServerEndpoint(value!)){
                       _updateDropdown();
                       Fluttertoast.showToast(msg: "settings.endpointSelector.confirmationSnackbar".tr());
                     } else {
                       Fluttertoast.showToast(msg: "settings.endpointSelector.errorSnackbar".tr());
                     }
                   },
-                  items: snapshot.data
+                  items: snapshot.data!
                       .map<DropdownMenuItem<ServerModel>>((ServerModel endpoint) {
                     return DropdownMenuItem<ServerModel>(
                         value: endpoint,
@@ -228,7 +228,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => ServerEndpointSelectorQr(),
+                        builder: (_) => ServerEndpointSelectorQr(key: Key("ServerEndpointSelector"),),
                         fullscreenDialog: false))
                     .then((value) {
                   if (value != null) {
@@ -251,7 +251,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               onPressed: () => {
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(), fullscreenDialog: true))
+                    MaterialPageRoute(builder: (_) => ServerEndpointSelectorDialog(key: Key("ServerEndpointSelectorDialog"),), fullscreenDialog: true))
                     .then((value) {
                   if(value != null) {
                     Fluttertoast.showToast(msg: value.toString());
@@ -279,7 +279,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
   void _updateDropdown() {
     setState(() {
       SqfLiteService().getDefaultEndpoint().then((value) {
-        _dropdownValue = value;
+        _dropdownValue = value!;
       });
       _serverEndpoints = SqfLiteService().getAllServerEndpoints();
     });
