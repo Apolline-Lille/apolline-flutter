@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:apollineflutter/utils/position/position.dart';
+import 'package:apollineflutter/utils/position/position_provider.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 
@@ -31,7 +32,7 @@ class SimpleLocationService {
   Future<Position> getLocation() async {
     try {
       var p = await geo.Geolocator.getCurrentPosition();
-      this._currentPosition = Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude));
+      this._currentPosition = Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude), provider: PositionProvider.PHONE);
     } catch(e) {
       print('pas pu recupérer la localisation');
       this._currentPosition = Position();
@@ -43,7 +44,7 @@ class SimpleLocationService {
   void start () async {
     this._locationStream = StreamController<Position>();
     this._locationSubscription = geo.Geolocator.getPositionStream().listen((p) {
-      this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude)));
+      this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude), provider: PositionProvider.PHONE));
     });
   }
 

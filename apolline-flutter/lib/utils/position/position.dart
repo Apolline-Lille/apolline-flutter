@@ -1,15 +1,22 @@
 
 
+import 'package:apollineflutter/utils/position/position_provider.dart';
+
 ///
 ///Position.
 class Position {
-  ///[provider] the provider
   ///[geohash] the hash of latitude and longitude
   ///[transport] the transport
-  String provider, geohash, transport;
+  String geohash, transport;
+
+  // Source of the current position.
+  PositionProvider provider;
 
   ///
   ///Constructor.
-  Position({this.provider="no", this.geohash="no", this.transport="no"});
-
+  Position({
+    this.geohash="no",
+    this.transport="no",
+    this.provider = PositionProvider.UNKNOWN
+  });
 }
