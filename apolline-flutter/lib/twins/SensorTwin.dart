@@ -44,7 +44,8 @@ class SensorTwin {
 
   late SimpleLocationService _locationService;
   StreamSubscription? _locationSubscription;
-  Position? _currentPosition;
+  // init current position as unknown
+  Position _currentPosition = Position();
   late bool _isUsingSatellitePositioning;
 
 
@@ -260,7 +261,7 @@ class SensorTwin {
         _stopLocationService();
       }
     } else {
-      currentPosition = _currentPosition!;
+      currentPosition = _currentPosition;
       if (this._isUsingSatellitePositioning) {
         this._isUsingSatellitePositioning = false;
         this._locationService.start();
