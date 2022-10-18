@@ -1,5 +1,6 @@
 import 'package:apollineflutter/gattsample.dart';
-import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/position/position.dart';
+import 'package:apollineflutter/utils/position/position_provider.dart';
 
 // Authors BARRY Issagha, GDISSA Ramy
 //Unité
@@ -81,11 +82,10 @@ class DataPointModel {
   ///
   ///add one row for one properties.
   String addNestedData(String propertie, String value, String unit) {
-    var provider = this.position?.provider ?? "no";
-    var geohash = this.position?.geohash ?? "no";
+    var provider = this.position?.provider.value;
     var transport = this.position?.transport ?? "no";
     return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
-        "device=$sensorName,provider=$provider,geohash=$geohash,transport=$transport," +
+        "device=$sensorName,provider=$provider,${this.position?.toInfluxDbFormat()},transport=$transport," +
         "unit=$unit value=$value ${date * 1000000}";
   }
 
@@ -122,7 +122,7 @@ class DataPointModel {
     var json = Map<String, dynamic>();
     json["deviceName"] = sensorName;
     json["uuid"] = BlueSensorAttributes.dustSensorServiceUUID;
-    json["provider"] = this.position?.provider ?? "no";
+    json["provider"] = this.position?.provider.value;
     json["geohash"] = this.position?.geohash ?? "no";
     json["transport"] = this.position?.transport ?? "no";
     json["date"] = this.date;
@@ -137,6 +137,6 @@ class DataPointModel {
             id: json['id'],
             values: json['value'].split('|'),
             sensorName: json['deviceName'],
-            position: Position(geohash: json['geohash'], provider: json['provider'], transport: json['transport']),
+            position: Position(geohash: json['geohash'], provider: PositionProviderUtils.fromString(json['provider']), transport: json['transport']),
             date: json['date']);
 }

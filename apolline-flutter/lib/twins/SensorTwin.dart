@@ -7,7 +7,8 @@ import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
-import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/position/position.dart';
+import 'package:apollineflutter/utils/position/position_provider.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -43,7 +44,8 @@ class SensorTwin {
 
   late SimpleLocationService _locationService;
   StreamSubscription? _locationSubscription;
-  Position? _currentPosition;
+  // init current position as unknown
+  Position _currentPosition = Position();
   late bool _isUsingSatellitePositioning;
 
 
@@ -252,14 +254,14 @@ class SensorTwin {
 
     if (shouldUseSatellitePositioning) {
       currentPosition = Position(
-          provider: "sensor",
+          provider: PositionProvider.SENSOR,
           geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
       if (!this._isUsingSatellitePositioning) {
         this._isUsingSatellitePositioning = true;
         _stopLocationService();
       }
     } else {
-      currentPosition = _currentPosition!;
+      currentPosition = _currentPosition;
       if (this._isUsingSatellitePositioning) {
         this._isUsingSatellitePositioning = false;
         this._locationService.start();
