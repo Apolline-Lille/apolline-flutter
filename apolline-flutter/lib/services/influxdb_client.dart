@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:apollineflutter/exception/bad_request_exception.dart';
 import 'package:apollineflutter/exception/lost_connection_exception.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -37,7 +38,12 @@ class InfluxDBAPI {
   ///
   ///write data to influx database
   Future<void> write(String data) async {
-    return await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);
+    String token = GlobalConfiguration().appConfig["token"]; // TODO get token from sensor
+    bool useTokenAuth = token.isNotEmpty;
+
+    return useTokenAuth
+        ? await client.postSilent("$_connectionString/write?db=$_db", body: data, headers: {'Authorization': 'Token $token'}, encoding: Encoding.getByName("utf-8")!)
+        : await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);
   }
 
   ///
