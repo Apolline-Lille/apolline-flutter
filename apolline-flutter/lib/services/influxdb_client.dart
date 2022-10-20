@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:apollineflutter/exception/bad_request_exception.dart';
 import 'package:apollineflutter/exception/lost_connection_exception.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 
 
