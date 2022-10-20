@@ -36,6 +36,7 @@ class SensorTwin {
   late Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
   // use for influxDB to send data to the back
+  late String _databaseToken;
   late InfluxDBAPI _service;
   late SqfLiteService _sqfLiteService;
   late Duration _synchronizationTiming;
@@ -58,6 +59,7 @@ class SensorTwin {
     this._sqfLiteService = SqfLiteService();
     this._synchronizationTiming = syncTiming;
     this._isUsingSatellitePositioning = false;
+    this._databaseToken = "";
   }
 
 
@@ -212,7 +214,7 @@ class SensorTwin {
       // Send data to influxDB
       List<DataPointModel> models = dataPoints.sublist(lowerBound, upperBound);
       print('Sending ${models.length} data points to InfluxDB');
-      await _service.write(DataPointModel.sensorsFmtToInfluxData(models));
+      await _service.write(DataPointModel.sensorsFmtToInfluxData(models), token: this._databaseToken);
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();

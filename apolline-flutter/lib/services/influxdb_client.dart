@@ -37,8 +37,7 @@ class InfluxDBAPI {
 
   ///
   ///write data to influx database
-  Future<void> write(String data) async {
-    String token = GlobalConfiguration().appConfig["token"]; // TODO get token from sensor
+  Future<void> write(String data, {String token = ""}) async {
     bool useTokenAuth = token.isNotEmpty;
 
     return useTokenAuth
