@@ -117,6 +117,17 @@ class SensorTwin {
   }
 
 
+  /// Tells the sensor to send token which is stored in its internal memory.
+  /// This token will be used to upload data to backend.
+  Future<void> _loadUpDatabaseToken () {
+    print("Retrieving database token from sensor...");
+    String command = "Fl";
+    List<int> finalCommand = new List.from(command.codeUnits)..addAll([0]);
+    return _characteristic.write(finalCommand)
+        .catchError((e) { print("Error while loading token from sensor: $e"); });
+  }
+
+
   /// Registers a function to be called when new data is produced.
   void on (SensorTwinEvent event, SensorTwinEventCallback callback) {
     _callbacks[event] = callback;
@@ -285,6 +296,7 @@ class SensorTwin {
 
     await _setUpListeners();
     await synchronizeClock();
+    await _loadUpDatabaseToken();
 
     this._locationService = SimpleLocationService();
     this._locationService.start();
