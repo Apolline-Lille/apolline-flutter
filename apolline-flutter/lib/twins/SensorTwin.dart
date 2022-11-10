@@ -37,6 +37,7 @@ class SensorTwin {
 
   // use for influxDB to send data to the back
   late String _databaseToken;
+  late bool _isReceivingToken;
   late InfluxDBAPI _service;
   late SqfLiteService _sqfLiteService;
   late Duration _synchronizationTiming;
@@ -60,6 +61,7 @@ class SensorTwin {
     this._synchronizationTiming = syncTiming;
     this._isUsingSatellitePositioning = false;
     this._databaseToken = "";
+    this._isReceivingToken = false;
   }
 
 
@@ -123,6 +125,7 @@ class SensorTwin {
     print("Retrieving database token from sensor...");
     String command = "Fl";
     List<int> finalCommand = new List.from(command.codeUnits)..addAll([0]);
+    this._isReceivingToken = true;
     return _characteristic.write(finalCommand)
         .catchError((e) { print("Error while loading token from sensor: $e"); });
   }
@@ -162,7 +165,9 @@ class SensorTwin {
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
           DataPointModel? model = _handleSensorUpdate(message);
-          _callbacks[SensorTwinEvent.live_data]!(model);
+          if (model != null) {
+            _callbacks[SensorTwinEvent.live_data]!(model);
+          }
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
           _callbacks[SensorTwinEvent.history_data]!(message);
         }
@@ -238,6 +243,26 @@ class SensorTwin {
 
   /// Called when data is received from the sensor
   DataPointModel? _handleSensorUpdate (String message) {
+
+    // Database token will arrive in several parts
+    if (this._isReceivingToken) {
+      if (message.contains('Fl;')) {
+        String firstTokenPart = message.split('\n').last;
+        this._databaseToken = firstTokenPart.substring(3, firstTokenPart.length);
+      }
+
+      else if (!message.contains(';')) {
+        // Remove newline characters from token
+        message = message.replaceAll('\n', '');
+        message = message.replaceAll('\r', '');
+
+        this._databaseToken += message;
+        this._isReceivingToken = false;
+
+        return null;
+      }
+    }
+
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
     DataPointModel model = this._getPointWithPosition(message.split(';'));
