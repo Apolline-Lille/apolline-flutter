@@ -10,7 +10,6 @@ import 'package:apollineflutter/twins/SensorTwinEvent.dart';
 import 'package:apollineflutter/utils/position/position.dart';
 import 'package:apollineflutter/utils/position/position_provider.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 
