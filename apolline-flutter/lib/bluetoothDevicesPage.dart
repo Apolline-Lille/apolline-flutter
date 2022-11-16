@@ -227,8 +227,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
     if (timeout) {
       return <Widget>[
-        TextButton(onPressed: () {  },
-        child: Text("devicesView.analysisButton.analyse", style: btnStyle,).tr()),
+        Text("devicesView.analysisButton.analyse", style: btnStyle,).tr(),
       ];
     } else {
       return <Widget>[
@@ -237,22 +236,19 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           width: 20,
           height: 20,
         ),
-        TextButton(onPressed: () {  },
-        child: Text("devicesView.analysisButton.cancel", style: btnStyle).tr()),
+        Text("devicesView.analysisButton.cancel", style: btnStyle).tr(),
       ];
     }
   }
 
-  List<Widget> _buildAppBarAction() {
-    List<Widget> wList = <Widget>[
-      TextButton(
+  Widget _buildAppBarAction() {
+    return TextButton(
         onPressed: () {
+          print("pressed!");
           _onPressLookforButton();
         },
         child: Row(children: _buildChildrenButton()),
-      ),
-    ];
-    return wList;
+      );
   }
 
   /* UI update only */
@@ -272,7 +268,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text("devicesView.title").tr(),
-        actions: _buildAppBarAction(),
+        actions: [ _buildAppBarAction() ],
       ),
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
