@@ -36,6 +36,8 @@ class SensorTwin {
   late Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
   // use for influxDB to send data to the back
+  late String _databaseToken;
+  late bool _isReceivingToken;
   late InfluxDBAPI _service;
   late SqfLiteService _sqfLiteService;
   late Duration _synchronizationTiming;
@@ -58,6 +60,8 @@ class SensorTwin {
     this._sqfLiteService = SqfLiteService();
     this._synchronizationTiming = syncTiming;
     this._isUsingSatellitePositioning = false;
+    this._databaseToken = "";
+    this._isReceivingToken = false;
   }
 
 
@@ -115,6 +119,18 @@ class SensorTwin {
   }
 
 
+  /// Tells the sensor to send token which is stored in its internal memory.
+  /// This token will be used to upload data to backend.
+  Future<void> _loadUpDatabaseToken () {
+    print("Retrieving database token from sensor...");
+    String command = "Fl";
+    List<int> finalCommand = new List.from(command.codeUnits)..addAll([0]);
+    this._isReceivingToken = true;
+    return _characteristic.write(finalCommand)
+        .catchError((e) { print("Error while loading token from sensor: $e"); });
+  }
+
+
   /// Registers a function to be called when new data is produced.
   void on (SensorTwinEvent event, SensorTwinEventCallback callback) {
     _callbacks[event] = callback;
@@ -149,7 +165,9 @@ class SensorTwin {
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
           DataPointModel? model = _handleSensorUpdate(message);
-          _callbacks[SensorTwinEvent.live_data]!(model);
+          if (model != null) {
+            _callbacks[SensorTwinEvent.live_data]!(model);
+          }
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
           _callbacks[SensorTwinEvent.history_data]!(message);
         }
@@ -212,7 +230,7 @@ class SensorTwin {
       // Send data to influxDB
       List<DataPointModel> models = dataPoints.sublist(lowerBound, upperBound);
       print('Sending ${models.length} data points to InfluxDB');
-      await _service.write(DataPointModel.sensorsFmtToInfluxData(models));
+      await _service.write(DataPointModel.sensorsFmtToInfluxData(models), token: this._databaseToken);
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();
@@ -225,6 +243,37 @@ class SensorTwin {
 
   /// Called when data is received from the sensor
   DataPointModel? _handleSensorUpdate (String message) {
+
+    // Database token will arrive in several parts
+    if (this._isReceivingToken) {
+      if (message.contains('Fl;')) {
+        String firstTokenPart = message.split('\n').firstWhere((element) => element.contains('Fl;'));
+        this._databaseToken = firstTokenPart.substring(3, firstTokenPart.length);
+        // Remove newline characters from token
+        this._databaseToken = this._databaseToken.replaceAll('\n', '');
+        this._databaseToken = this._databaseToken.replaceAll('\r', '');
+
+        // Sensor might send token in one message only (on boot for instance)
+        if (this._databaseToken.length == 88) {
+          this._isReceivingToken = false;
+          print("Received whole token at once!");
+          return null;
+        }
+      }
+
+      else if (!message.contains(';')) {
+        // Remove newline characters from token
+        message = message.replaceAll('\n', '');
+        message = message.replaceAll('\r', '');
+
+        this._databaseToken += message;
+        this._isReceivingToken = false;
+        print("Database token is now complete!");
+
+        return null;
+      }
+    }
+
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
     DataPointModel model = this._getPointWithPosition(message.split(';'));
@@ -283,6 +332,7 @@ class SensorTwin {
 
     await _setUpListeners();
     await synchronizeClock();
+    await _loadUpDatabaseToken();
 
     this._locationService = SimpleLocationService();
     this._locationService.start();

@@ -36,8 +36,12 @@ class InfluxDBAPI {
 
   ///
   ///write data to influx database
-  Future<void> write(String data) async {
-    return await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);
+  Future<void> write(String data, {String token = ""}) async {
+    bool useTokenAuth = token.isNotEmpty;
+
+    return useTokenAuth
+        ? await client.postSilent("$_connectionString/write?db=$_db", body: data, headers: {'Authorization': 'Token $token'}, encoding: Encoding.getByName("utf-8")!)
+        : await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);
   }
 
   ///
