@@ -213,7 +213,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   }
 
   ///
-  ///Exécuter lorsqu'on clique sur le button Annalyser ou Arreter
+  ///Exécuter lorsqu'on clique sur le button Analyser ou Arreter
   void _onPressLookforButton() {
     if (timeout == true) {
       initializeDevice();
@@ -227,32 +227,29 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
     if (timeout) {
       return <Widget>[
-        TextButton(onPressed: () {  },
-        child: Text("devicesView.analysisButton.analyse", style: btnStyle,).tr()),
+        Text("devicesView.analysisButton.analyse", style: btnStyle,).tr(),
       ];
     } else {
       return <Widget>[
-        SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor, color: Colors.white,),
-          width: 20,
-          height: 20,
+        Container(
+          margin: EdgeInsets.only(right: 10),
+          child: SizedBox(
+            child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor, color: Colors.white,),
+            width: 20,
+            height: 20,
+          ),
         ),
-        TextButton(onPressed: () {  },
-        child: Text("devicesView.analysisButton.cancel", style: btnStyle).tr()),
+        Text("devicesView.analysisButton.cancel", style: btnStyle).tr(),
       ];
     }
   }
 
-  List<Widget> _buildAppBarAction() {
-    List<Widget> wList = <Widget>[
-      TextButton(
-        onPressed: () {
-          _onPressLookforButton();
-        },
+  Widget _buildAppBarAction() {
+    return TextButton(
+        onPressed: _onPressLookforButton,
+        style: TextButton.styleFrom(padding: EdgeInsets.symmetric(horizontal: 15)),
         child: Row(children: _buildChildrenButton()),
-      ),
-    ];
-    return wList;
+      );
   }
 
   /* UI update only */
@@ -272,7 +269,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text("devicesView.title").tr(),
-        actions: _buildAppBarAction(),
+        actions: [ _buildAppBarAction() ],
       ),
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
