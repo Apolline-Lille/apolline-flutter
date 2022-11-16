@@ -247,8 +247,18 @@ class SensorTwin {
     // Database token will arrive in several parts
     if (this._isReceivingToken) {
       if (message.contains('Fl;')) {
-        String firstTokenPart = message.split('\n').last;
+        String firstTokenPart = message.split('\n').firstWhere((element) => element.contains('Fl;'));
         this._databaseToken = firstTokenPart.substring(3, firstTokenPart.length);
+        // Remove newline characters from token
+        this._databaseToken = this._databaseToken.replaceAll('\n', '');
+        this._databaseToken = this._databaseToken.replaceAll('\r', '');
+
+        // Sensor might send token in one message only (on boot for instance)
+        if (this._databaseToken.length == 88) {
+          this._isReceivingToken = false;
+          print("Received whole token at once!");
+          return null;
+        }
       }
 
       else if (!message.contains(';')) {
@@ -258,6 +268,7 @@ class SensorTwin {
 
         this._databaseToken += message;
         this._isReceivingToken = false;
+        print("Database token is now complete!");
 
         return null;
       }
