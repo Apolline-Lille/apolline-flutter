@@ -247,6 +247,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
           print("pressed!");
           _onPressLookforButton();
         },
+        style: TextButton.styleFrom(padding: EdgeInsets.symmetric(horizontal: 15)),
         child: Row(children: _buildChildrenButton()),
       );
   }
