@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 
@@ -23,7 +22,7 @@ enum TimeFilter {
 class _TimeFilterValues {
   String label;
   int Function() toMinutes;
-  _TimeFilterValues({@required this.label, @required this.toMinutes});
+  _TimeFilterValues({required this.label, required this.toMinutes});
 }
 
 extension TimeFilterUtils on TimeFilter {
@@ -53,16 +52,16 @@ extension TimeFilterUtils on TimeFilter {
   int toMinutes () {
     if (TimeFilterUtils._values[this] == null)
       throw RangeError("This TimeFilter has no value.");
-    return TimeFilterUtils._values[this].toMinutes();
+    return TimeFilterUtils._values[this]!.toMinutes();
   }
 
   String get labelKey {
     if (TimeFilterUtils._values[this] == null)
       throw RangeError("This TimeFilter has no label.");
-    return TimeFilterUtils._values[this].label;
+    return TimeFilterUtils._values[this]!.label;
   }
 
   static List<String> getLabels () {
-    return TimeFilter.values.map((filter) => TimeFilterUtils._values[filter].label.tr()).toList();
+    return TimeFilter.values.map((filter) => TimeFilterUtils._values[filter]!.label.tr()).toList();
   }
 }

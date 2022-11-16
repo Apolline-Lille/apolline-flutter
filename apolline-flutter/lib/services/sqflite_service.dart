@@ -45,11 +45,11 @@ class SqfLiteService {
   }
 
   // Only allow a single open connection to the database.
-  static Database _database;
+  static Database? _database;
   Future<Database> get database async {
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
 // open the database
@@ -121,7 +121,7 @@ class SqfLiteService {
     List<DataPointModel> models = [];
     List<Map> maps = await db.query(dataPointTableName);
     if (maps.length > 0) {
-      maps.forEach((map) => models.add(DataPointModel.fromJson(map)));
+      maps.forEach((map) => models.add(DataPointModel.fromJson(map as Map<String, dynamic>)));
       return models;
     }
     return models;
@@ -149,7 +149,7 @@ class SqfLiteService {
     List<Map> maps = await db.query(dataPointTableName,
         columns: [columnId, columnDeviceName, columnUuid, columnProvider, columnGeohash, columnTransport, columnDate, columnValues],
         where: '$columnSynchro == ?', whereArgs: [0]);
-    return maps.map((map) => DataPointModel.fromJson(map)).toList();
+    return maps.map((map) => DataPointModel.fromJson(map as Map<String, dynamic>)).toList();
   }
 
   /// Declares a list of models as sent to the backend
@@ -192,7 +192,7 @@ class SqfLiteService {
     }).toList();
   }
 
-  Future<ServerModel> getDefaultEndpoint() async {
+  Future<ServerModel?> getDefaultEndpoint() async {
     Database db = await database;
     var res = await db.query(serverEndpointTableName, columns: null, where: "$columnIsDefault = 1", limit: 1);
     if(res.isNotEmpty)

@@ -13,13 +13,14 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2.1.0
+        uses: actions/checkout@v3.1.0
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3.5.0
         with:
-          java-version: '12.x'
+          distribution: 'temurin'
+          java-version: '11.0.16+101'
       - name: Install Flutter
-        uses: subosito/flutter-action@v1
+        uses: subosito/flutter-action@v2.8.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
@@ -47,13 +48,14 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2.1.0
+        uses: actions/checkout@v3.1.0
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3.5.0
         with:
-          java-version: '12.x'
+          distribution: 'temurin'
+          java-version: '11.0.16+101'
       - name: Install Flutter
-        uses: subosito/flutter-action@v1
+        uses: subosito/flutter-action@v2.8.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
@@ -90,7 +92,7 @@ jobs:
         
       - name: Get compilation time
         id: date
-        run: echo "::set-output name=date::$(date +'%d-%m-%Y %H:%M:%S')"
+        run: echo date=\"$(date +'%d-%m-%Y %H:%M:%S')\" >> $GITHUB_ENV
 
       - name: Save build artefact
         uses: actions/upload-artifact@v1
@@ -105,7 +107,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: android-dev-release
           allowUpdates: true
-          body: This is the latest Android development version of the Apolline application (created on ${{ steps.date.outputs.date }}).
+          body: This is the latest Android development version of the Apolline application (created on ${{ env.date }}).
 
 
   build-iOS:
@@ -116,13 +118,14 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2.1.0
+        uses: actions/checkout@v3.1.0
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3.5.0
         with:
-          java-version: '12.x'
+          distribution: 'temurin'
+          java-version: '11.0.16+101'
       - name: Install Flutter
-        uses: subosito/flutter-action@v1
+        uses: subosito/flutter-action@v2.8.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - name: Generate configuration file
@@ -139,7 +142,7 @@ jobs:
         
       - name: Get compilation time
         id: date
-        run: echo "::set-output name=date::$(date +'%d-%m-%Y %H:%M:%S')"
+        run: echo date=\"$(date +'%d-%m-%Y %H:%M:%S')\" >> $GITHUB_ENV
 
       - name: Save build artefact
         uses: actions/upload-artifact@v1
@@ -160,4 +163,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ios-dev-release
           allowUpdates: true
-          body: This is the latest iOS development version of the Apolline application (created on ${{ steps.date.outputs.date }}).
+          body: This is the latest iOS development version of the Apolline application (created on ${{ env.date }}).

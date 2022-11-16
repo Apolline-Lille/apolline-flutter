@@ -7,10 +7,12 @@ import 'package:apollineflutter/services/realtime_data_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/sqflite_service.dart';
 import 'package:apollineflutter/twins/SensorTwinEvent.dart';
-import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/position/position.dart';
+import 'package:apollineflutter/utils/position/position_provider.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+
 
 import '../gattsample.dart';
 
@@ -29,26 +31,29 @@ import '../gattsample.dart';
 /// To access these data, one can subscribe to data events using the "on" method.
 ///
 class SensorTwin {
-  BluetoothCharacteristic _characteristic;
-  BluetoothDevice _device;
-  bool _isSendingData;
-  bool _isSendingHistory;
-  Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
+  late BluetoothCharacteristic _characteristic;
+  late BluetoothDevice _device;
+  late bool _isSendingData;
+  late bool _isSendingHistory;
+  late Map<SensorTwinEvent, SensorTwinEventCallback> _callbacks;
 
   // use for influxDB to send data to the back
-  InfluxDBAPI _service;
-  SqfLiteService _sqfLiteService;
-  Duration _synchronizationTiming;
-  RealtimeDataService _dataService = locator<RealtimeDataService>();
-  Timer _syncTimer;
+  late String _databaseToken;
+  late bool _isReceivingToken;
+  late InfluxDBAPI _service;
+  late SqfLiteService _sqfLiteService;
+  late Duration _synchronizationTiming;
+  late RealtimeDataService _dataService = locator<RealtimeDataService>();
+  late Timer _syncTimer;
 
-  SimpleLocationService _locationService;
-  StreamSubscription _locationSubscription;
-  Position _currentPosition;
-  bool _isUsingSatellitePositioning;
+  late SimpleLocationService _locationService;
+  StreamSubscription? _locationSubscription;
+  // init current position as unknown
+  Position _currentPosition = Position();
+  late bool _isUsingSatellitePositioning;
 
 
-  SensorTwin({@required BluetoothDevice device, @required Duration syncTiming}) {
+  SensorTwin({required BluetoothDevice device, required Duration syncTiming}) {
     this._device = device;
     this._isSendingData = false;
     this._isSendingHistory = false;
@@ -57,6 +62,8 @@ class SensorTwin {
     this._sqfLiteService = SqfLiteService();
     this._synchronizationTiming = syncTiming;
     this._isUsingSatellitePositioning = false;
+    this._databaseToken = "";
+    this._isReceivingToken = false;
   }
 
 
@@ -68,7 +75,7 @@ class SensorTwin {
   /// Starts sending data live (one point every second) through Bluetooth
   /// connection.
   /// Does nothing if data transmission is already in progress.
-  Future<void> launchDataLiveTransmission () {
+  Future<void>? launchDataLiveTransmission () {
     if (_isSendingData) return null;
     _isSendingData = true;
 
@@ -82,7 +89,7 @@ class SensorTwin {
   /// Stops sending data.
   /// Does nothing if data transmission is not in progress.
   /// TODO implement
-  Future<void> stopDataLiveTransmission () {
+  Future<void>? stopDataLiveTransmission () {
     return null;
   }
 
@@ -90,7 +97,7 @@ class SensorTwin {
   /// Starts sending data stored on the SD card.
   /// Does nothing is history transmission is already in progress.
   /// TODO implement
-  Future<void> launchHistoryTransmission () {
+  Future<void>? launchHistoryTransmission () {
     return null;
   }
 
@@ -114,6 +121,18 @@ class SensorTwin {
   }
 
 
+  /// Tells the sensor to send token which is stored in its internal memory.
+  /// This token will be used to upload data to backend.
+  Future<void> _loadUpDatabaseToken () {
+    print("Retrieving database token from sensor...");
+    String command = "Fl";
+    List<int> finalCommand = new List.from(command.codeUnits)..addAll([0]);
+    this._isReceivingToken = true;
+    return _characteristic.write(finalCommand)
+        .catchError((e) { print("Error while loading token from sensor: $e"); });
+  }
+
+
   /// Registers a function to be called when new data is produced.
   void on (SensorTwinEvent event, SensorTwinEventCallback callback) {
     _callbacks[event] = callback;
@@ -126,11 +145,11 @@ class SensorTwin {
       switch(state) {
         case BluetoothDeviceState.connected:
           if (_callbacks.containsKey(SensorTwinEvent.sensor_connected))
-            _callbacks[SensorTwinEvent.sensor_connected]("connected");
+            _callbacks[SensorTwinEvent.sensor_connected]!("connected");
           break;
         case BluetoothDeviceState.disconnected:
           if (_callbacks.containsKey(SensorTwinEvent.sensor_disconnected))
-            _callbacks[SensorTwinEvent.sensor_disconnected]("disconnected");
+            _callbacks[SensorTwinEvent.sensor_disconnected]!("disconnected");
           break;
         default:
           break;
@@ -147,10 +166,12 @@ class SensorTwin {
         String message = String.fromCharCodes(value);
 
         if (_isSendingData && _callbacks.containsKey(SensorTwinEvent.live_data)) {
-          DataPointModel model = _handleSensorUpdate(message);
-          _callbacks[SensorTwinEvent.live_data](model);
+          DataPointModel? model = _handleSensorUpdate(message);
+          if (model != null) {
+            _callbacks[SensorTwinEvent.live_data]!(model);
+          }
         } else if (_isSendingHistory && _callbacks.containsKey(SensorTwinEvent.history_data)) {
-          _callbacks[SensorTwinEvent.history_data](message);
+          _callbacks[SensorTwinEvent.history_data]!(message);
         }
       });
     });
@@ -211,7 +232,7 @@ class SensorTwin {
       // Send data to influxDB
       List<DataPointModel> models = dataPoints.sublist(lowerBound, upperBound);
       print('Sending ${models.length} data points to InfluxDB');
-      await _service.write(DataPointModel.sensorsFmtToInfluxData(models));
+      await _service.write(DataPointModel.sensorsFmtToInfluxData(models), token: this._databaseToken);
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();
@@ -223,7 +244,38 @@ class SensorTwin {
   }
 
   /// Called when data is received from the sensor
-  DataPointModel _handleSensorUpdate (String message) {
+  DataPointModel? _handleSensorUpdate (String message) {
+
+    // Database token will arrive in several parts
+    if (this._isReceivingToken) {
+      if (message.contains('Fl;')) {
+        String firstTokenPart = message.split('\n').firstWhere((element) => element.contains('Fl;'));
+        this._databaseToken = firstTokenPart.substring(3, firstTokenPart.length);
+        // Remove newline characters from token
+        this._databaseToken = this._databaseToken.replaceAll('\n', '');
+        this._databaseToken = this._databaseToken.replaceAll('\r', '');
+
+        // Sensor might send token in one message only (on boot for instance)
+        if (this._databaseToken.length == 88) {
+          this._isReceivingToken = false;
+          print("Received whole token at once!");
+          return null;
+        }
+      }
+
+      else if (!message.contains(';')) {
+        // Remove newline characters from token
+        message = message.replaceAll('\n', '');
+        message = message.replaceAll('\r', '');
+
+        this._databaseToken += message;
+        this._isReceivingToken = false;
+        print("Database token is now complete!");
+
+        return null;
+      }
+    }
+
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
     DataPointModel model = this._getPointWithPosition(message.split(';'));
@@ -253,7 +305,7 @@ class SensorTwin {
 
     if (shouldUseSatellitePositioning) {
       currentPosition = Position(
-          provider: "sensor",
+          provider: PositionProvider.SENSOR,
           geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
       if (!this._isUsingSatellitePositioning) {
         this._isUsingSatellitePositioning = true;
@@ -270,7 +322,7 @@ class SensorTwin {
 
     print('Using position from ${shouldUseSatellitePositioning ? 'satellites' : 'phone'}.');
 
-    return DataPointModel(values: values, sensorName: this.name, position: currentPosition);
+    return DataPointModel(values: values, sensorName: this.name, position: currentPosition, id: -1);
   }
 
   /// Sets up listeners and synchronises sensor clock.
@@ -282,6 +334,7 @@ class SensorTwin {
 
     await _setUpListeners();
     await synchronizeClock();
+    await _loadUpDatabaseToken();
 
     this._locationService = SimpleLocationService();
     this._locationService.start();
@@ -294,9 +347,9 @@ class SensorTwin {
   /// Releases resources associated with the sensor.
   void shutdown () {
     this._callbacks = Map();
-    this._syncTimer?.cancel();
-    this._service.client?.close();
-    this._dataService?.stop();
+    this._syncTimer.cancel();
+    this._service.client.close();
+    this._dataService.stop();
     _stopLocationService();
     try {
       this._device.disconnect();

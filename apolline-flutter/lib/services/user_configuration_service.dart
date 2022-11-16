@@ -8,7 +8,7 @@ import 'package:apollineflutter/services/service_locator.dart';
 class UserConfigurationService extends ChangeNotifier{
   static const USER_CONF_KEY = "userconf";
   //user configuration
-  UserConfiguration userConf;
+  late UserConfiguration userConf;
   //help to know if data is load from local storage
   bool isReady = false;
 
@@ -19,6 +19,7 @@ class UserConfigurationService extends ChangeNotifier{
     //load data from localStorage.
     LocalKeyValuePersistance.getObject(UserConfigurationService.USER_CONF_KEY).then((json) {
       this.isReady = true;
+      // If user didn't register custom settings, use default settings.
       this.userConf = json == null ? UserConfiguration() : UserConfiguration.fromJson(json);
       locator.signalReady(this);
     });

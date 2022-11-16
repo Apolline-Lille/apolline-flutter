@@ -7,23 +7,24 @@ import 'package:easy_localization/easy_localization.dart';
 
 
 class Quality extends StatelessWidget {
-  final DataPointModel lastReceivedData;
+  final DataPointModel? lastReceivedData;
 
-  Quality({Key key, this.lastReceivedData}) : super(key: key);
+  Quality({required Key key, required this.lastReceivedData}) : super(key: key);
 
   Widget _buildNewGauge(String title, double data, double minimumValue, double maximumValue) {
     return RadialGauge(
         indicatorTitle: title,
         minimumValue: minimumValue,
         maximumValue: maximumValue,
-        currentValue: data
+        currentValue: data,
+      key: this.key!,
     );
   }
 
   Widget _getPM1Gauge () {
     return Container(
         child: _buildNewGauge("PM1 (µg/m3)",
-            double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_1]),
+            double.parse(lastReceivedData!.values[DataPointModel.SENSOR_PM_1]),
             0,
             20) //box
     );
@@ -32,7 +33,7 @@ class Quality extends StatelessWidget {
   Widget _getPM25Gauge () {
     return Container(
       child: _buildNewGauge("PM2.5 (µg/m3)",
-          double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_2_5]),
+          double.parse(lastReceivedData!.values[DataPointModel.SENSOR_PM_2_5]),
           0,
           20),
     );
@@ -41,7 +42,7 @@ class Quality extends StatelessWidget {
   Widget _getPM10Gauge () {
     return Container(
       child: _buildNewGauge("PM10 (µg/m3)",
-          double.parse(lastReceivedData.values[DataPointModel.SENSOR_PM_10]),
+          double.parse(lastReceivedData!.values[DataPointModel.SENSOR_PM_10]),
           0,
           20),
     );
@@ -53,7 +54,7 @@ class Quality extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(double.parse(lastReceivedData.values[DataPointModel.SENSOR_TEMP]).toStringAsFixed(2) + '°C',
+            Text(double.parse(lastReceivedData!.values[DataPointModel.SENSOR_TEMP]).toStringAsFixed(2) + '°C',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
@@ -76,7 +77,8 @@ class Quality extends StatelessWidget {
   Widget _getBatteryInfo () {
     return Container(
         child: BatteryLevelIndicator(
-            currentBatteryLevel: double.parse(lastReceivedData.values[DataPointModel.SENSOR_VOLT])
+            currentBatteryLevel: double.parse(lastReceivedData!.values[DataPointModel.SENSOR_VOLT]),
+            key: this.key!,
         )
     );
   }

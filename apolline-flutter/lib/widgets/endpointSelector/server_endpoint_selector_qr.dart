@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ServerEndpointSelectorQr extends StatefulWidget {
-  const ServerEndpointSelectorQr({Key key}) : super(key: key);
+  const ServerEndpointSelectorQr({required Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -19,8 +19,8 @@ class ServerEndpointSelectorQr extends StatefulWidget {
 }
 
 class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
-  Barcode result;
-  QRViewController qrController;
+  Barcode? result;
+  QRViewController? qrController;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   @override
@@ -59,7 +59,7 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
                               future: qrController?.getFlashStatus(),
                               builder: (context, snapshot) {
                                 if(snapshot.hasData) {
-                                  if (snapshot.data) {
+                                  if (snapshot.data!) {
                                     return Icon(Icons.flash_on_outlined);
                                   } else {
                                     return Icon(Icons.flash_off_outlined);
@@ -138,9 +138,9 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        qrController.pauseCamera();
+        qrController!.pauseCamera();
         _addEndpoint();
-        qrController.resumeCamera();
+        qrController!.resumeCamera();
       });
     });
   }
@@ -155,7 +155,7 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
   }
 
   Widget _onQRCodeScanned() {
-    if(result.format == BarcodeFormat.qrcode) {
+    if(result!.format == BarcodeFormat.qrcode) {
       return CircularProgressIndicator(
           semanticsLabel: "Connection to new endpoint");
     } else {
@@ -166,7 +166,7 @@ class ServerEndpointSelectorQrView extends State<ServerEndpointSelectorQr> {
   _addEndpoint() {
     dynamic qrCodeContent;
     try {
-      qrCodeContent = json.decode(result.code);
+      qrCodeContent = json.decode(result!.code!);
 
       if(qrCodeContent is Map<String, dynamic>) {
         ServerModel server = ServerModel.fromJson(qrCodeContent);

@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:apollineflutter/utils/position.dart';
+import 'package:apollineflutter/utils/position/position.dart';
+import 'package:apollineflutter/utils/position/position_provider.dart';
 import 'package:apollineflutter/utils/simple_geohash.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 
@@ -9,10 +10,10 @@ import 'package:geolocator/geolocator.dart' as geo;
 class SimpleLocationService {
 
   ///current position.
-  Position _currentPosition;
+  late Position _currentPosition;
   ///stream.
   StreamController<Position> _locationStream = StreamController<Position>();
-  StreamSubscription<geo.Position> _locationSubscription;
+  late StreamSubscription<geo.Position> _locationSubscription;
 
   ///
   ///constructor.
@@ -31,7 +32,7 @@ class SimpleLocationService {
   Future<Position> getLocation() async {
     try {
       var p = await geo.Geolocator.getCurrentPosition();
-      this._currentPosition = Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude));
+      this._currentPosition = Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude), provider: PositionProvider.PHONE);
     } catch(e) {
       print('pas pu recupérer la localisation');
       this._currentPosition = Position();
@@ -43,15 +44,13 @@ class SimpleLocationService {
   void start () async {
     this._locationStream = StreamController<Position>();
     this._locationSubscription = geo.Geolocator.getPositionStream().listen((p) {
-      if(p != null) {
-        this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude)));
-      }
+      this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude), provider: PositionProvider.PHONE));
     });
   }
 
   /// Removes all stream listeners and close it.
   void close () async {
-    this._locationSubscription?.cancel();
+    this._locationSubscription.cancel();
     this._locationStream.close();
   }
 }
