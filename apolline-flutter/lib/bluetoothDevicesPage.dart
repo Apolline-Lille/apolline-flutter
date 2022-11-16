@@ -231,10 +231,13 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
       ];
     } else {
       return <Widget>[
-        SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor, color: Colors.white,),
-          width: 20,
-          height: 20,
+        Container(
+          margin: EdgeInsets.only(right: 10),
+          child: SizedBox(
+            child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor, color: Colors.white,),
+            width: 20,
+            height: 20,
+          ),
         ),
         Text("devicesView.analysisButton.cancel", style: btnStyle).tr(),
       ];
