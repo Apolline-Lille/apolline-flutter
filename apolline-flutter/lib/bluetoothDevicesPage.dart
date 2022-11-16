@@ -213,7 +213,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   }
 
   ///
-  ///Exécuter lorsqu'on clique sur le button Annalyser ou Arreter
+  ///Exécuter lorsqu'on clique sur le button Analyser ou Arreter
   void _onPressLookforButton() {
     if (timeout == true) {
       initializeDevice();
@@ -246,10 +246,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
   Widget _buildAppBarAction() {
     return TextButton(
-        onPressed: () {
-          print("pressed!");
-          _onPressLookforButton();
-        },
+        onPressed: _onPressLookforButton,
         style: TextButton.styleFrom(padding: EdgeInsets.symmetric(horizontal: 15)),
         child: Row(children: _buildChildrenButton()),
       );
