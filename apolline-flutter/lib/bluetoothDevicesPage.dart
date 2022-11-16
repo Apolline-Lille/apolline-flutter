@@ -6,7 +6,7 @@ import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/widgets/device_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
@@ -18,7 +18,7 @@ import 'package:grant_and_activate/utils/classes.dart';
 
 class BluetoothDevicesPage extends StatefulWidget {
   BluetoothDevicesPage({required Key key}) : super(key: key);
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
+  final FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
 
   @override
   _BluetoothDevicesPageState createState() => _BluetoothDevicesPageState();
@@ -56,7 +56,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///
   ///Permet de tester si le bluetooth est activé ou pas
   Future<void> initializeDevice() async {
-    Result result = await checkPermissionsAndActivateServices([Feature.Bluetooth, Feature.Location]);
+    Result result = await checkPermissionsAndActivateServices([Feature.BluetoothConnect, Feature.Location]);
     print(result);
     if (result.allOk) {
       _performDetection();
@@ -183,7 +183,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   /* Handles a click on a device entry */
   void connectToDevice(BluetoothDevice device) async {
     /* Stop scanning, if not already stopped */
-    FlutterBlue.instance.stopScan();
+    FlutterBluePlus.instance.stopScan();
     /* We selected a device - go to the device screen passing information about the selected device */
     DeviceConnectionStatus status = await Navigator.push(
       context,
