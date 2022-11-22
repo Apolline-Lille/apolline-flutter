@@ -56,7 +56,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///
   ///Permet de tester si le bluetooth est activé ou pas
   Future<void> initializeDevice() async {
-    Result result = await checkPermissionsAndActivateServices([Feature.BluetoothConnect, Feature.Location]);
+    Result result = await checkPermissionsAndActivateServices(
+        Platform.isAndroid
+          ? [Feature.BluetoothConnect, Feature.Location]
+          : [Feature.Bluetooth, Feature.Location]
+    );
     print(result);
     if (result.allOk) {
       _performDetection();
