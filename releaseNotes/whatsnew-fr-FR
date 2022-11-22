@@ -1,2 +1,5 @@
-Le service de fonctionnement en arrière-plan est correctement initialisé avant la configuration de la
-connexion au capteur.
+Apolline utilise désormais des jetons récupérés depuis les capteurs pour envoyer les données ;
+l'application envoie désormais les positions sous forme de longitude/latitude (au lieu d'utiliser des
+geohashes) ; le graphe affichant les données de qualité de l'air en direct ne clignote plus ; les
+dépendences de développement ainsi que la librairie Bluetooth ont été mises à jour ; appuyer sur le
+bouton "Scanner" lance effectivement un nouveau scan Bluetooth.
