@@ -62,27 +62,27 @@ Future<void> setupNotificationService () async {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_apolline_notification');
-  final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-  );
-  final MacOSInitializationSettings initializationSettingsMacOS = MacOSInitializationSettings();
+  final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
+      onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+  final LinuxInitializationSettings initializationSettingsLinux = LinuxInitializationSettings( defaultActionName: 'Open notification' );
   final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-      macOS: initializationSettingsMacOS
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin,
+      linux: initializationSettingsLinux
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: selectNotification
-  );
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 }
 
-Future selectNotification(String? payload) async {
-  if (payload != null) {
-    debugPrint('notification payload: $payload');
-  }
-}
 Future onDidReceiveLocalNotification (
     int id, String? title, String? body, String? payload
 ) async {
   debugPrint('notification payload: $payload');
+}
+void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
+  final String? payload = notificationResponse.payload;
+  if (notificationResponse.payload != null) {
+    debugPrint('notification payload: $payload');
+  }
 }
