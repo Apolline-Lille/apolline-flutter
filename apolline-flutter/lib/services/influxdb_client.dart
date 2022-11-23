@@ -6,6 +6,7 @@ import 'package:apollineflutter/exception/lost_connection_exception.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
 import 'package:http/http.dart' as http;
 
+
 ///Author (Issagha Barry)
 ///Influx db api.
 class InfluxDBAPI {
@@ -35,8 +36,12 @@ class InfluxDBAPI {
 
   ///
   ///write data to influx database
-  Future<void> write(String data) async {
-    return await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data);
+  Future<void> write(String data, {String token = ""}) async {
+    bool useTokenAuth = token.isNotEmpty;
+
+    return useTokenAuth
+        ? await client.postSilent("$_connectionString/write?db=$_db", body: data, headers: {'Authorization': 'Token $token'}, encoding: Encoding.getByName("utf-8")!)
+        : await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);
   }
 
   ///
@@ -95,7 +100,7 @@ class _InfluxDBClient extends http.BaseClient {
 
   ///
   ///post.
-  Future<void> postSilent(url, {Map headers, body, Encoding encoding}) async {
+  Future<void> postSilent(url, {required Map<String, String> headers, body, required Encoding encoding}) async {
     http.Response resp;
     try{
       resp = await this.post(Uri.parse(url), headers: headers, body: body, encoding: encoding);

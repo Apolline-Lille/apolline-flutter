@@ -1,1 +1,4 @@
-Background service initialisation is now completed before initializing sensor connection.
+Apolline now uses tokens from sensors to upload data; application now sends raw latitude/longitude
+coordinates instead of geohashes; live data graph does not blink anymore; development dependencies
+and Bluetooth library have been updated; "Scan" button now effectively triggers a new Bluetooth
+scan.

@@ -5,7 +5,7 @@ import 'package:apollineflutter/models/data_point_model.dart';
 
 /// RealtimeDataServiceImpl to implement method for the service
 class RealtimeDataServiceImpl extends RealtimeDataService {
-  StreamController<DataPointModel> _streamController;
+  StreamController<DataPointModel>? _streamController;
   List<String> values = [];
   // ignore: non_constant_identifier_names
   bool is_running = true;
@@ -41,12 +41,12 @@ class RealtimeDataServiceImpl extends RealtimeDataService {
         onCancel: stop,
       );
     }
-    return _streamController.stream;
+    return _streamController!.stream;
   }
 
   @override
   void closeDataStream() {
-    _streamController.close();
+    _streamController?.close();
   }
 
   @override
@@ -54,7 +54,7 @@ class RealtimeDataServiceImpl extends RealtimeDataService {
     // values = newValues;
     if (_streamController != null && is_running == true) {
       values = newValues.values;
-      _streamController.add(newValues);
+      _streamController!.add(newValues);
     }
   }
 }

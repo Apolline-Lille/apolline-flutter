@@ -6,10 +6,9 @@ class ServerModel {
   String username;
   String password;
   String dbName;
-  int isDefault;
+  late int isDefault;
 
-  ServerModel(this.apiURL, this.pingURL, this.username, String password, this.dbName, {int isDefault = 0}) {
-    this.password = password;
+  ServerModel(this.apiURL, this.pingURL, this.username, this.password, this.dbName, {int isDefault = 0}) {
     this.isDefault = isDefault;
   }
 

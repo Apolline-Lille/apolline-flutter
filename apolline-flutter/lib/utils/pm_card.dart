@@ -11,7 +11,7 @@ class PMCard extends StatefulWidget {
   final PMFilter indicator;
   final List<TextInputFormatter> formatters =
     [TextInputFormatter.withFunction((oldValue, newValue) => newValue.text.length > 3 ? oldValue : newValue)];
-  PMCard({@required this.ucS, @required this.indicator});
+  PMCard({required this.ucS, required this.indicator});
 
   @override
   State<StatefulWidget> createState() => _PMCardState();

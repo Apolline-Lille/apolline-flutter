@@ -2,7 +2,7 @@ import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 
 class SensorEvent {
   SensorEventType type;
-  DateTime time;
+  late DateTime time;
 
   SensorEvent(this.type, {String time = ""}) {
     this.type = type;

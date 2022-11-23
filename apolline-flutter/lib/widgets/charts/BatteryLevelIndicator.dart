@@ -7,7 +7,7 @@ class BatteryLevelIndicator extends StatefulWidget {
   final double minimumLevel = 0;
   final double maximumLevel = 100;
 
-  const BatteryLevelIndicator({Key key, @required this.currentBatteryLevel}) : super(key: key);
+  const BatteryLevelIndicator({required Key key, required this.currentBatteryLevel}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _BatteryLevelIndicatorState();
@@ -30,11 +30,11 @@ class _BatteryLevelIndicatorState extends State<BatteryLevelIndicator> {
         ? batteryLevelPercentage
         : 5;
 
-    final Color _fillColor = levelPercentage <= 25
+    final Color _fillColor = (levelPercentage <= 25
         ? const Color(0xffF45656)
         : levelPercentage <= 50
-        ? const Color(0xffFFC93E)
-        : Colors.green[400];
+          ? const Color(0xffFFC93E)
+          : Colors.green[400]) as Color;
     return Container(
         width: 145,
         child: SfLinearGauge(

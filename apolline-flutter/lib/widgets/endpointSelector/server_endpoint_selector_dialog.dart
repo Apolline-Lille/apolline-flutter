@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class ServerEndpointSelectorDialog extends StatefulWidget {
 
-  ServerEndpointSelectorDialog({Key key}) : super(key: key);
+  ServerEndpointSelectorDialog({required Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -112,7 +112,7 @@ class ServerEndpointSelectorDialogViewState extends State<ServerEndpointSelector
                           SizedBox(height: 10),
                           ElevatedButton(
                               onPressed: () {
-                                if(_formKey.currentState.validate()) {
+                                if(_formKey.currentState!.validate()) {
                                   ServerModel serverEndpoint = ServerModel(apiURLController.text, pingURLController.text, usernameController.text, passwordController.text, dbController.text);
                                   SqfLiteService().addServerEndpoint(serverEndpoint);
                                   ServerEndpointHandler().changeCurrentServerEndpoint(serverEndpoint);

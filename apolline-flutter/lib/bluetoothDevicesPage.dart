@@ -6,7 +6,7 @@ import 'package:apollineflutter/utils/device_connection_status.dart';
 import 'package:apollineflutter/widgets/device_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:apollineflutter/services/local_persistant_service.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/services/service_locator.dart';
@@ -17,8 +17,8 @@ import 'package:grant_and_activate/utils/classes.dart';
 
 
 class BluetoothDevicesPage extends StatefulWidget {
-  BluetoothDevicesPage({Key key}) : super(key: key);
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
+  BluetoothDevicesPage({required Key key}) : super(key: key);
+  final FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
 
   @override
   _BluetoothDevicesPageState createState() => _BluetoothDevicesPageState();
@@ -56,7 +56,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   ///
   ///Permet de tester si le bluetooth est activé ou pas
   Future<void> initializeDevice() async {
-    Result result = await checkPermissionsAndActivateServices([Feature.Bluetooth, Feature.Location]);
+    Result result = await checkPermissionsAndActivateServices(
+        Platform.isAndroid
+          ? [Feature.BluetoothConnect, Feature.Location]
+          : [Feature.Bluetooth, Feature.Location]
+    );
     print(result);
     if (result.allOk) {
       _performDetection();
@@ -183,11 +187,11 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   /* Handles a click on a device entry */
   void connectToDevice(BluetoothDevice device) async {
     /* Stop scanning, if not already stopped */
-    FlutterBlue.instance.stopScan();
+    FlutterBluePlus.instance.stopScan();
     /* We selected a device - go to the device screen passing information about the selected device */
     DeviceConnectionStatus status = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SensorView(device: device)),
+      MaterialPageRoute(builder: (context) => SensorView(device: device, key: Key("Sensor_view"),)),
     );
 
     switch (status) {
@@ -213,7 +217,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
   }
 
   ///
-  ///Exécuter lorsqu'on clique sur le button Annalyser ou Arreter
+  ///Exécuter lorsqu'on clique sur le button Analyser ou Arreter
   void _onPressLookforButton() {
     if (timeout == true) {
       initializeDevice();
@@ -227,32 +231,29 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
 
     if (timeout) {
       return <Widget>[
-        // ignore: missing_required_param
-        TextButton(child: Text("devicesView.analysisButton.analyse", style: btnStyle,).tr()),
+        Text("devicesView.analysisButton.analyse", style: btnStyle,).tr(),
       ];
     } else {
       return <Widget>[
-        SizedBox(
-          child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor, color: Colors.white,),
-          width: 20,
-          height: 20,
+        Container(
+          margin: EdgeInsets.only(right: 10),
+          child: SizedBox(
+            child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor, color: Colors.white,),
+            width: 20,
+            height: 20,
+          ),
         ),
-        // ignore: missing_required_param
-        TextButton(child: Text("devicesView.analysisButton.cancel", style: btnStyle).tr()),
+        Text("devicesView.analysisButton.cancel", style: btnStyle).tr(),
       ];
     }
   }
 
-  List<Widget> _buildAppBarAction() {
-    List<Widget> wList = <Widget>[
-      TextButton(
-        onPressed: () {
-          _onPressLookforButton();
-        },
+  Widget _buildAppBarAction() {
+    return TextButton(
+        onPressed: _onPressLookforButton,
+        style: TextButton.styleFrom(padding: EdgeInsets.symmetric(horizontal: 15)),
         child: Row(children: _buildChildrenButton()),
-      ),
-    ];
-    return wList;
+      );
   }
 
   /* UI update only */
@@ -272,7 +273,7 @@ class _BluetoothDevicesPageState extends State<BluetoothDevicesPage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text("devicesView.title").tr(),
-        actions: _buildAppBarAction(),
+        actions: [ _buildAppBarAction() ],
       ),
       body: Center(
           // Center is a layout widget. It takes a single child and positions it

@@ -37,10 +37,10 @@ class PMMapView extends StatefulWidget {
 
 class _PMMapViewState extends State<PMMapView> {
   ///circle to put in map
-  Set<Circle> _circles;
+  late Set<Circle> _circles;
   ///help for close subscription
-  StreamSubscription _sub;
-  ValueNotifier<bool> _isDialOpen;
+  late StreamSubscription _sub;
+  late ValueNotifier<bool> _isDialOpen;
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _PMMapViewState extends State<PMMapView> {
     this.updateCirclesFromData();
 
     this._sub = widget.sensorDataStream.listen((pModel) {
-      if(pModel.position != null && pModel.position.geohash != "no") {
+      if(pModel.position != null && pModel.position!.geohash != "no") {
         this.addCircle(pModel);
         //manage the rendering frequency.
         if(this._circles.length % 10 == 0) {
@@ -62,7 +62,7 @@ class _PMMapViewState extends State<PMMapView> {
 
   @override
   void dispose() {
-    this._sub?.cancel();
+    this._sub.cancel();
     super.dispose();
   }
 
@@ -211,11 +211,11 @@ class _PMMapViewState extends State<PMMapView> {
   ///add circle to model.
   ///[pModel] model
   void addCircle(DataPointModel pModel) {
-    var json = SimpleGeoHash.decode(pModel.position.geohash);
+    var json = SimpleGeoHash.decode(pModel.position!.geohash);
     this._circles.add(
       Circle(
         circleId: CircleId(UniqueKey().toString()),
-        center: LatLng(json["latitude"], json["longitude"]),
+        center: LatLng(json["latitude"]!, json["longitude"]!),
         radius: 10,
         strokeWidth: 0,
         fillColor: this.getPMCircleColor(double.parse(pModel.values[widget.ucS.userConf.pmFilter.getRowIndex()]))
@@ -228,7 +228,7 @@ class _PMMapViewState extends State<PMMapView> {
   void updateCirclesFromData() async {
     List<DataPointModel> models = await widget.sqliteService.getAllDataPointsAfterDate(widget.ucS.userConf.timeFilter);
     print("Got ${models.length} results for ${widget.ucS.userConf.timeFilter} with filter=${widget.ucS.userConf.pmFilter}.");
-    List<DataPointModel> circleModels = models.where((model) => model.position.geohash != 'no').toList();
+    List<DataPointModel> circleModels = models.where((model) => model.position!.geohash != 'no').toList();
 
     setState(() {
       this._circles.clear(); //clean last content.
@@ -245,15 +245,16 @@ class _PMMapViewState extends State<PMMapView> {
   /// [controller] GoogleMapController help to do something.
   void onMapCreated(GoogleMapController controller) async {
     List<DataPointModel> points = await widget.sqliteService.getAllDataPoints();
-    DataPointModel lastPointWithPosition = points.length == 0
-        ? null
-        : points.lastWhere((point) => point.position.geohash != "no", orElse: () => null);
+    DataPointModel? lastPointWithPosition;
+    if (points.where((element) => element.position!.geohash != "no").isNotEmpty) {
+      lastPointWithPosition = points.lastWhere((point) => point.position!.geohash != "no");
+    }
     CameraPosition pos = lastPointWithPosition == null
         ? CameraPosition(target: LatLng(0, 0), zoom: 18.0)
         : CameraPosition(
           target: LatLng(
-              SimpleGeoHash.decode(lastPointWithPosition.position.geohash)['latitude'],
-              SimpleGeoHash.decode(lastPointWithPosition.position.geohash)['longitude']
+              SimpleGeoHash.decode(lastPointWithPosition.position!.geohash)['latitude']!,
+              SimpleGeoHash.decode(lastPointWithPosition.position!.geohash)['longitude']!
           ),
           zoom: 18.0
         );

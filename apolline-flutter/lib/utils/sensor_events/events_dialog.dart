@@ -29,7 +29,7 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
 }
 
 bool _hasEventsForSensor(String deviceName) {
-  return ucS.userConf.getSensorEvents(deviceName) != null;
+  return ucS.userConf.getSensorEvents(deviceName).isNotEmpty;
 }
 
 List<Widget> _getEventCards (String deviceName) {
