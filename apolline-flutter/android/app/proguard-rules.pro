@@ -1,5 +1,5 @@
 # The protos need to have all their names and fields preserved.
--keep class com.pauldemarco.flutter_blue.Protos* { *; }
+-keep class com.boskokg.flutter_blue_plus.Protos* { *; }
 
 ## Gson rules
 # Gson uses generic type information stored in a class file when working with fields. Proguard
