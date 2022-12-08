@@ -111,12 +111,18 @@ class DataPointModel {
     var pm25ab = addNestedData("pm.2_5.above", this.values[SENSOR_PM_ABOVE_2_5], Units.CONCENTRATION_ABOVE);
     var pm5ab = addNestedData("pm.5.above", this.values[SENSOR_PM_ABOVE_5], Units.CONCENTRATION_ABOVE);
     var pm10ab = addNestedData("pm.10.above", this.values[SENSOR_PM_ABOVE_10], Units.CONCENTRATION_ABOVE);
+
+    // Temperatures
     var tmpC = addNestedData("temperature.c", this.values[SENSOR_TEMP], Units.TEMPERATURE_CELSIUS);
     var tmpK = addNestedData("temperature.k", this.temperatureK.toString(), Units.TEMPERATURE_KELVIN);
+    var tmpDps310 = addNestedData("temperature_dps310.c", this.values[SENSOR_TEMP_DPS310], Units.TEMPERATURE_CELSIUS);
+    var tmpAdj = addNestedData("temperature_adjusted.c", this.values[SENSOR_TEMP_ADJUSTED], Units.TEMPERATURE_CELSIUS);
+    // var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
+
     var humi = addNestedData("humidity", this.values[SENSOR_HUMI], Units.PERCENTAGE);
     var humiC = addNestedData("humidity.compensated", this.humidityC.toString(), Units.PERCENTAGE);
 
-    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$humi\n$humiC";
+    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC";
   }
 
   ///Format data to write many sensorData into influxdb.
