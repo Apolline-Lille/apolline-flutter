@@ -119,10 +119,14 @@ class DataPointModel {
     var tmpAdj = addNestedData("temperature_adjusted.c", this.values[SENSOR_TEMP_ADJUSTED], Units.TEMPERATURE_CELSIUS);
     // var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
 
+    // Humidity
     var humi = addNestedData("humidity", this.values[SENSOR_HUMI], Units.PERCENTAGE);
     var humiC = addNestedData("humidity.compensated", this.humidityC.toString(), Units.PERCENTAGE);
+    var humiDps310 = addNestedData("humidity_dps310", this.values[SENSOR_HUMI_DPS310], Units.PERCENTAGE);
+    var humAdj = addNestedData("humidity_adjusted", this.values[SENSOR_HUMI_ADJUSTED], Units.PERCENTAGE);
+    // var humAdj2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
 
-    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC";
+    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$humiDps310\n$humAdj";
   }
 
   ///Format data to write many sensorData into influxdb.
