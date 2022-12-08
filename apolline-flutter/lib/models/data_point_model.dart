@@ -17,6 +17,8 @@ class Units {
 /// This class represents data reported by a sensor.
 ///
 class DataPointModel {
+  // sensor data frame header
+  // AAAA_MM_JJ_hh_mm_ss;PM1.0;PM2.5;PM10(ug/m3);Above PM0.3;PM0.5;PM1;PM2.5;PM5;PM10(ug/m3);Latitude;Longitude;Altitude;speed(km/h);satellites count;TemperatureDPS310(°C);PressureDPS310(Pascal);TemperatureHDC1080(°C);HumidityHDC1080(%);battery level;Adjusted temperature(°C);Adjusted humidity(%);TemperatureAM2320(°C);HumidityAM2320(%)
   static const int SENSOR_DATE = 0;
   static const int SENSOR_PM_1 = 1;
   static const int SENSOR_PM_2_5 = 2;
@@ -29,10 +31,18 @@ class DataPointModel {
   static const int SENSOR_PM_ABOVE_10 = 9;
   static const int SENSOR_LATITUDE = 10;
   static const int SENSOR_LONGITUDE = 11;
+  static const int SENSOR_ALTITUDE = 12;
+  static const int SENSOR_SPEED = 13;
   static const int SENSOR_GPS_SATELLITES_COUNT = 14;
+  static const int SENSOR_TEMP_DPS310 = 15;
+  static const int SENSOR_HUMI_DPS310 = 16;
   static const int SENSOR_TEMP = 17;
   static const int SENSOR_HUMI = 18;
   static const int SENSOR_VOLT = 19;
+  static const int SENSOR_TEMP_ADJUSTED = 20;
+  static const int SENSOR_HUMI_ADJUSTED = 21;
+  static const int SENSOR_TEMP_AM2320 = 22;
+  static const int SENSOR_HUMI_AM2320 = 23;
 
 
   String sensorName;
