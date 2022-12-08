@@ -94,9 +94,12 @@ class DataPointModel {
   String addNestedData(String propertie, String value, String unit) {
     var provider = this.position?.provider.value;
     var transport = this.position?.transport ?? "no";
+    var cleanedValue = value.replaceAll('\n', '');
+    cleanedValue = cleanedValue.replaceAll('\r', '');
+    cleanedValue = cleanedValue.replaceAll(' ', '');
     return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
         "device=$sensorName,provider=$provider,${this.position?.toInfluxDbFormat()},transport=$transport," +
-        "unit=$unit value=$value ${date * 1000000}";
+        "unit=$unit value=$cleanedValue ${date * 1000000}";
   }
 
   ///

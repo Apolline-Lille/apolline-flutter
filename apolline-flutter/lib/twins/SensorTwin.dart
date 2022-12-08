@@ -277,7 +277,7 @@ class SensorTwin {
 
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
-    DataPointModel model = this._getPointWithPosition(message.split(';'));
+    DataPointModel model = this._getPointWithPosition(message.split('\n')[0].split(';'));
     _dataService.update(model);
     /* insert to sqflite */
     _sqfLiteService.addDataPoint(model.toJSON());
