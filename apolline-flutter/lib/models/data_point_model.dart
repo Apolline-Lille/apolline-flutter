@@ -11,6 +11,7 @@ class Units {
   static const String TEMPERATURE_CELSIUS = "°C";
   static const String TEMPERATURE_KELVIN = "°K";
   static const String VOLTAGE = "V";
+  static const String PRESSURE = "Pa";
 }
 
 
@@ -36,7 +37,7 @@ class DataPointModel {
   static const int SENSOR_SPEED = 13;
   static const int SENSOR_GPS_SATELLITES_COUNT = 14;
   static const int SENSOR_TEMP_DPS310 = 15;
-  static const int SENSOR_HUMI_DPS310 = 16;
+  static const int SENSOR_PRESSURE = 16;
   static const int SENSOR_TEMP = 17;
   static const int SENSOR_HUMI = 18;
   static const int SENSOR_VOLT = 19;
@@ -126,13 +127,13 @@ class DataPointModel {
     // Humidity
     var humi = addNestedData("humidity", this.values[SENSOR_HUMI], Units.PERCENTAGE);
     var humiC = addNestedData("humidity.compensated", this.humidityC.toString(), Units.PERCENTAGE);
-    var humiDps310 = addNestedData("humidity_dps310", this.values[SENSOR_HUMI_DPS310], Units.PERCENTAGE);
     var humAdj = addNestedData("humidity_adjusted", this.values[SENSOR_HUMI_ADJUSTED], Units.PERCENTAGE);
     // var humAdj2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
 
     var batLevel = addNestedData("voltage", this.values[SENSOR_VOLT], Units.VOLTAGE);
+    var pressure = addNestedData("pressure", this.values[SENSOR_PRESSURE], Units.PRESSURE);
 
-    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$humiDps310\n$humAdj\n$batLevel";
+    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$pressure\n$humAdj\n$batLevel";
   }
 
   ///Format data to write many sensorData into influxdb.
