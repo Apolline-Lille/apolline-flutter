@@ -299,6 +299,7 @@ class SensorTwin {
     double sensorLatitude = double.parse(values[DataPointModel.SENSOR_LATITUDE]);
     double sensorAltitude = double.parse(values[DataPointModel.SENSOR_ALTITUDE]);
     double satellitesCount = double.parse(values[DataPointModel.SENSOR_GPS_SATELLITES_COUNT]);
+    double sensorSpeed = double.parse(values[DataPointModel.SENSOR_SPEED]);
 
     Position currentPosition;
     bool shouldUseSatellitePositioning = satellitesCount >= 3 && sensorLongitude != 0 && sensorLatitude != 0;
@@ -306,7 +307,7 @@ class SensorTwin {
     if (shouldUseSatellitePositioning) {
       currentPosition = Position(
           provider: PositionProvider.SENSOR,
-          geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude, sensorAltitude));
+          geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude, sensorAltitude, sensorSpeed));
       if (!this._isUsingSatellitePositioning) {
         this._isUsingSatellitePositioning = true;
         _stopLocationService();

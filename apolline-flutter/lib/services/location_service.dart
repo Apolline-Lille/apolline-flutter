@@ -32,7 +32,7 @@ class SimpleLocationService {
   Future<Position> getLocation() async {
     try {
       var p = await geo.Geolocator.getCurrentPosition();
-      this._currentPosition = Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude, p.altitude), provider: PositionProvider.PHONE);
+      this._currentPosition = Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude, p.altitude, p.speed), provider: PositionProvider.PHONE);
     } catch(e) {
       print('pas pu recupérer la localisation');
       this._currentPosition = Position();
@@ -44,7 +44,7 @@ class SimpleLocationService {
   void start () async {
     this._locationStream = StreamController<Position>();
     this._locationSubscription = geo.Geolocator.getPositionStream().listen((p) {
-      this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude, p.altitude), provider: PositionProvider.PHONE));
+      this._locationStream.add(Position(geohash: SimpleGeoHash.encode(p.latitude, p.longitude, p.altitude, p.speed), provider: PositionProvider.PHONE));
     });
   }
 

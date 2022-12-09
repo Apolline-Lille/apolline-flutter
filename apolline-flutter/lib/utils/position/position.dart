@@ -26,6 +26,6 @@ class Position {
     List<String> words = geohash.split(";");
     return geohash == "no"
         ? "geohash=no"
-        : "latitude=${words.first},longitude=${words[1]},altitude=${words.last}";
+        : "latitude=${words.first},longitude=${words[1]},altitude=${words[2]},speed=${words.last}";
   }
 }
