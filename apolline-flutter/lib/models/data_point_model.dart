@@ -10,6 +10,7 @@ class Units {
   static const String PERCENTAGE = "%";
   static const String TEMPERATURE_CELSIUS = "°C";
   static const String TEMPERATURE_KELVIN = "°K";
+  static const String VOLTAGE = "V";
 }
 
 
@@ -129,7 +130,9 @@ class DataPointModel {
     var humAdj = addNestedData("humidity_adjusted", this.values[SENSOR_HUMI_ADJUSTED], Units.PERCENTAGE);
     // var humAdj2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
 
-    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$humiDps310\n$humAdj";
+    var batLevel = addNestedData("voltage", this.values[SENSOR_VOLT], Units.VOLTAGE);
+
+    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$humiDps310\n$humAdj\n$batLevel";
   }
 
   ///Format data to write many sensorData into influxdb.
