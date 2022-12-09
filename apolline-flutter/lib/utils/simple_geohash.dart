@@ -6,8 +6,8 @@ class SimpleGeoHash {
 
   ///
   ///encode [lat] latitude and longitude [long]
-  static String encode(double lat, double long, {int codeLength: 10}) {
-    return "$lat;$long"; // Geohash.encode(lat, long, codeLength: codeLength);
+  static String encode(double lat, double long, double altitude, {int codeLength: 10}) {
+    return "$lat;$long;$altitude"; // Geohash.encode(lat, long, codeLength: codeLength);
   }
 
   ///
@@ -15,6 +15,6 @@ class SimpleGeoHash {
   static Map<String, double> decode(String geohash) {
     // Point<double> p = Geohash.decode(geohash);
     var words = geohash.split(";");
-    return {'latitude': double.parse(words[0]), 'longitude': double.parse(words[1])};
+    return {'latitude': double.parse(words[0]), 'longitude': double.parse(words[1]), 'altitude': double.parse(words[2])};
   }
 }
