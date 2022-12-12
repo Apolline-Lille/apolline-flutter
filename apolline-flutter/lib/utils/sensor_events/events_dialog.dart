@@ -4,6 +4,8 @@ import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import 'SensorEvent.dart';
+
 final UserConfigurationService ucS = locator<UserConfigurationService>();
 final DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm:ss');
 
@@ -11,7 +13,10 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
-        return EventsDialog(deviceName: deviceName);
+        return EventsDialog(
+          deviceName: deviceName,
+          events: ucS.userConf.getSensorEvents(deviceName)
+        );
       }
   );
 }
@@ -19,7 +24,8 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
 
 class EventsDialog extends StatefulWidget {
   final String deviceName;
-  EventsDialog({required this.deviceName});
+  final List<SensorEvent> events;
+  EventsDialog({required this.deviceName, required this.events});
 
   @override
   State<StatefulWidget> createState() => _EventsDialogState();
@@ -29,12 +35,12 @@ class _EventsDialogState extends State<EventsDialog> {
   bool _showLiveDataEvents = true;
 
   bool _hasEvents() {
-    return ucS.userConf.getSensorEvents(widget.deviceName).isNotEmpty;
+    return widget.events.isNotEmpty;
   }
 
   List<Widget> _getEventCards () {
     List<Widget> widgets = [];
-    ucS.userConf.getSensorEvents(widget.deviceName)
+    widget.events
         .where((element) => !_showLiveDataEvents || _showLiveDataEvents && element.type != SensorEventType.LiveData)
         .forEach((event) {
           widgets.add(
