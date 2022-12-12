@@ -38,6 +38,7 @@ List<Widget> _getEventCards (String deviceName) {
     widgets.add(
       ListTile(
         title: Text(event.type.label),
+        dense: event.type == SensorEventType.LiveData,
         subtitle: Text(formatter.format(event.time).toString()),
         tileColor: event.type == SensorEventType.Connection
             ? Colors.green.shade100
