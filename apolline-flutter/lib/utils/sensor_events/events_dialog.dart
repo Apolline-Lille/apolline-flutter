@@ -11,42 +11,58 @@ void showSensorEventsDialog(BuildContext context, String deviceName) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(deviceName),
-          contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
-          content: _hasEventsForSensor(deviceName) ? Container(
-              height: 300,
-              width: 300,
-              child: ListView(
-                children: _getEventCards(deviceName),
-              )
-          ) : ListTile(
-            title: Text("events.noEventsText").tr(),
-          ),
-        );
+        return EventsDialog(deviceName: deviceName);
       }
   );
 }
 
-bool _hasEventsForSensor(String deviceName) {
-  return ucS.userConf.getSensorEvents(deviceName).isNotEmpty;
+
+class EventsDialog extends StatefulWidget {
+  final String deviceName;
+  EventsDialog({required this.deviceName});
+
+  @override
+  State<StatefulWidget> createState() => _EventsDialogState();
 }
 
-List<Widget> _getEventCards (String deviceName) {
-  List<Widget> widgets = [];
-  ucS.userConf.getSensorEvents(deviceName).forEach((event) {
-    widgets.add(
-      ListTile(
-        title: Text(event.type.label),
-        dense: event.type == SensorEventType.LiveData,
-        subtitle: Text(formatter.format(event.time).toString()),
-        tileColor: event.type == SensorEventType.Connection
-            ? Colors.green.shade100
-            : event.type == SensorEventType.Disconnection
-              ? Colors.red.shade100
-              : Colors.white
-      )
+class _EventsDialogState extends State<EventsDialog> {
+  bool _hasEvents() {
+    return ucS.userConf.getSensorEvents(widget.deviceName).isNotEmpty;
+  }
+
+  List<Widget> _getEventCards () {
+    List<Widget> widgets = [];
+    ucS.userConf.getSensorEvents(widget.deviceName).forEach((event) {
+      widgets.add(
+          ListTile(
+              title: Text(event.type.label),
+              dense: event.type == SensorEventType.LiveData,
+              subtitle: Text(formatter.format(event.time).toString()),
+              tileColor: event.type == SensorEventType.Connection
+                  ? Colors.green.shade100
+                  : event.type == SensorEventType.Disconnection
+                  ? Colors.red.shade100
+                  : Colors.white
+          )
+      );
+    });
+    return widgets.reversed.toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.deviceName),
+      contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
+      content: _hasEvents() ? Container(
+          height: 300,
+          width: 300,
+          child: ListView(
+            children: _getEventCards(),
+          )
+      ) : ListTile(
+        title: Text("events.noEventsText").tr(),
+      ),
     );
-  });
-  return widgets.reversed.toList();
+  }
 }
