@@ -108,6 +108,8 @@ class _InfluxDBClient extends http.BaseClient {
       throw LostConnectionException("server is unavailable ${e.toString()}");
     }
 
+    print(resp.body);
+
     if(!OKSTATUS.contains(resp.statusCode) ) {
       throw BadRequestException("Server not access with status code ${resp.statusCode} and body ${resp.body}");
     }

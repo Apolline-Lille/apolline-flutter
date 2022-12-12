@@ -10,6 +10,8 @@ class Units {
   static const String PERCENTAGE = "%";
   static const String TEMPERATURE_CELSIUS = "°C";
   static const String TEMPERATURE_KELVIN = "°K";
+  static const String VOLTAGE = "V";
+  static const String PRESSURE = "Pa";
 }
 
 
@@ -17,13 +19,12 @@ class Units {
 /// This class represents data reported by a sensor.
 ///
 class DataPointModel {
+  // sensor data frame header
+  // AAAA_MM_JJ_hh_mm_ss;PM1.0;PM2.5;PM10(ug/m3);Above PM0.3;PM0.5;PM1;PM2.5;PM5;PM10(ug/m3);Latitude;Longitude;Altitude;speed(km/h);satellites count;TemperatureDPS310(°C);PressureDPS310(Pascal);TemperatureHDC1080(°C);HumidityHDC1080(%);battery level;Adjusted temperature(°C);Adjusted humidity(%);TemperatureAM2320(°C);HumidityAM2320(%)
   static const int SENSOR_DATE = 0;
   static const int SENSOR_PM_1 = 1;
   static const int SENSOR_PM_2_5 = 2;
   static const int SENSOR_PM_10 = 3;
-  static const int SENSOR_TEMP = 17;
-  static const int SENSOR_HUMI = 18;
-  static const int SENSOR_VOLT = 19;
   static const int SENSOR_PM_ABOVE_0_3 = 4;
   static const int SENSOR_PM_ABOVE_0_5 = 5;
   static const int SENSOR_PM_ABOVE_1 = 6;
@@ -32,7 +33,18 @@ class DataPointModel {
   static const int SENSOR_PM_ABOVE_10 = 9;
   static const int SENSOR_LATITUDE = 10;
   static const int SENSOR_LONGITUDE = 11;
+  static const int SENSOR_ALTITUDE = 12;
+  static const int SENSOR_SPEED = 13;
   static const int SENSOR_GPS_SATELLITES_COUNT = 14;
+  static const int SENSOR_TEMP_DPS310 = 15;
+  static const int SENSOR_PRESSURE = 16;
+  static const int SENSOR_TEMP = 17;
+  static const int SENSOR_HUMI = 18;
+  static const int SENSOR_VOLT = 19;
+  static const int SENSOR_TEMP_ADJUSTED = 20;
+  static const int SENSOR_HUMI_ADJUSTED = 21;
+  static const int SENSOR_TEMP_AM2320 = 22;
+  static const int SENSOR_HUMI_AM2320 = 23;
 
 
   String sensorName;
@@ -84,9 +96,12 @@ class DataPointModel {
   String addNestedData(String propertie, String value, String unit) {
     var provider = this.position?.provider.value;
     var transport = this.position?.transport ?? "no";
+    var cleanedValue = value.replaceAll('\n', '');
+    cleanedValue = cleanedValue.replaceAll('\r', '');
+    cleanedValue = cleanedValue.replaceAll(' ', '');
     return "$propertie,uuid=${BlueSensorAttributes.dustSensorServiceUUID}," +
         "device=$sensorName,provider=$provider,${this.position?.toInfluxDbFormat()},transport=$transport," +
-        "unit=$unit value=$value ${date * 1000000}";
+        "unit=$unit value=$cleanedValue ${date * 1000000}";
   }
 
   ///
@@ -101,12 +116,25 @@ class DataPointModel {
     var pm25ab = addNestedData("pm.2_5.above", this.values[SENSOR_PM_ABOVE_2_5], Units.CONCENTRATION_ABOVE);
     var pm5ab = addNestedData("pm.5.above", this.values[SENSOR_PM_ABOVE_5], Units.CONCENTRATION_ABOVE);
     var pm10ab = addNestedData("pm.10.above", this.values[SENSOR_PM_ABOVE_10], Units.CONCENTRATION_ABOVE);
+
+    // Temperatures
     var tmpC = addNestedData("temperature.c", this.values[SENSOR_TEMP], Units.TEMPERATURE_CELSIUS);
     var tmpK = addNestedData("temperature.k", this.temperatureK.toString(), Units.TEMPERATURE_KELVIN);
+    var tmpDps310 = addNestedData("temperature_dps310.c", this.values[SENSOR_TEMP_DPS310], Units.TEMPERATURE_CELSIUS);
+    var tmpAdj = addNestedData("temperature_adjusted.c", this.values[SENSOR_TEMP_ADJUSTED], Units.TEMPERATURE_CELSIUS);
+    // var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
+
+    // Humidity
     var humi = addNestedData("humidity", this.values[SENSOR_HUMI], Units.PERCENTAGE);
     var humiC = addNestedData("humidity.compensated", this.humidityC.toString(), Units.PERCENTAGE);
+    var humAdj = addNestedData("humidity_adjusted", this.values[SENSOR_HUMI_ADJUSTED], Units.PERCENTAGE);
+    // var humAm2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
 
-    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$humi\n$humiC";
+    var batLevel = addNestedData("voltage", this.values[SENSOR_VOLT], Units.VOLTAGE);
+    var pressure = addNestedData("pressure", this.values[SENSOR_PRESSURE], Units.PRESSURE);
+
+    // TODO add AM2320 metrics once sensor has actually been added
+    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$pressure\n$humAdj\n$batLevel";
   }
 
   ///Format data to write many sensorData into influxdb.
