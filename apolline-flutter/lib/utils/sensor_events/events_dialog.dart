@@ -26,26 +26,30 @@ class EventsDialog extends StatefulWidget {
 }
 
 class _EventsDialogState extends State<EventsDialog> {
+  bool _showLiveDataEvents = true;
+
   bool _hasEvents() {
     return ucS.userConf.getSensorEvents(widget.deviceName).isNotEmpty;
   }
 
   List<Widget> _getEventCards () {
     List<Widget> widgets = [];
-    ucS.userConf.getSensorEvents(widget.deviceName).forEach((event) {
-      widgets.add(
-          ListTile(
-              title: Text(event.type.label),
-              dense: event.type == SensorEventType.LiveData,
-              subtitle: Text(formatter.format(event.time).toString()),
-              tileColor: event.type == SensorEventType.Connection
-                  ? Colors.green.shade100
-                  : event.type == SensorEventType.Disconnection
-                  ? Colors.red.shade100
-                  : Colors.white
-          )
-      );
-    });
+    ucS.userConf.getSensorEvents(widget.deviceName)
+        .where((element) => !_showLiveDataEvents || _showLiveDataEvents && element.type != SensorEventType.LiveData)
+        .forEach((event) {
+          widgets.add(
+              ListTile(
+                  title: Text(event.type.label),
+                  dense: event.type == SensorEventType.LiveData,
+                  subtitle: Text(formatter.format(event.time).toString()),
+                  tileColor: event.type == SensorEventType.Connection
+                      ? Colors.green.shade100
+                      : event.type == SensorEventType.Disconnection
+                      ? Colors.red.shade100
+                      : Colors.white
+              )
+          );
+        });
     return widgets.reversed.toList();
   }
 
