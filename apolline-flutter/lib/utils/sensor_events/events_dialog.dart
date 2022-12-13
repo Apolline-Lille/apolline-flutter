@@ -2,6 +2,7 @@ import 'package:apollineflutter/services/service_locator.dart';
 import 'package:apollineflutter/services/user_configuration_service.dart';
 import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'SensorEvent.dart';
@@ -41,13 +42,26 @@ class _EventsDialogState extends State<EventsDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.deviceName),
+      title: Row(
+        children: [
+          Text(widget.deviceName),
+          Spacer(),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                _showLiveDataEvents = !_showLiveDataEvents;
+                });
+              },
+              icon: Icon(_showLiveDataEvents ? CupertinoIcons.eye : CupertinoIcons.eye_slash)
+          )
+        ],
+      ),
       contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
       content: _hasEvents() ? Container(
           height: 300,
           width: 300,
           child: ListView(
-            children:  widget.events
+            children: widget.events
                 .where((element) => !_showLiveDataEvents || _showLiveDataEvents && element.type != SensorEventType.LiveData)
                 .map((event) => ListTile(
                     title: Text(event.type.label),
