@@ -33,7 +33,7 @@ class EventsDialog extends StatefulWidget {
 }
 
 class _EventsDialogState extends State<EventsDialog> {
-  bool _showLiveDataEvents = true;
+  bool _showLiveDataEvents = false;
 
   bool _hasEvents() {
     return widget.events.isNotEmpty;
@@ -49,10 +49,10 @@ class _EventsDialogState extends State<EventsDialog> {
           IconButton(
               onPressed: () {
                 setState(() {
-                _showLiveDataEvents = !_showLiveDataEvents;
+                  _showLiveDataEvents = !_showLiveDataEvents;
                 });
               },
-              icon: Icon(_showLiveDataEvents ? CupertinoIcons.eye : CupertinoIcons.eye_slash)
+              icon: Icon(_showLiveDataEvents ? CupertinoIcons.eye_slash : CupertinoIcons.eye)
           )
         ],
       ),
@@ -62,7 +62,7 @@ class _EventsDialogState extends State<EventsDialog> {
           width: 300,
           child: ListView(
             children: widget.events
-                .where((element) => !_showLiveDataEvents || _showLiveDataEvents && element.type != SensorEventType.LiveData)
+                .where((element) => _showLiveDataEvents || !_showLiveDataEvents && element.type != SensorEventType.LiveData)
                 .map((event) => ListTile(
                     title: Text(event.type.label),
                     dense: event.type == SensorEventType.LiveData,
