@@ -38,27 +38,6 @@ class _EventsDialogState extends State<EventsDialog> {
     return widget.events.isNotEmpty;
   }
 
-  List<Widget> _getEventCards () {
-    List<Widget> widgets = [];
-    widget.events
-        .where((element) => !_showLiveDataEvents || _showLiveDataEvents && element.type != SensorEventType.LiveData)
-        .forEach((event) {
-          widgets.add(
-              ListTile(
-                  title: Text(event.type.label),
-                  dense: event.type == SensorEventType.LiveData,
-                  subtitle: Text(formatter.format(event.time).toString()),
-                  tileColor: event.type == SensorEventType.Connection
-                      ? Colors.green.shade100
-                      : event.type == SensorEventType.Disconnection
-                      ? Colors.red.shade100
-                      : Colors.white
-              )
-          );
-        });
-    return widgets.reversed.toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -68,7 +47,18 @@ class _EventsDialogState extends State<EventsDialog> {
           height: 300,
           width: 300,
           child: ListView(
-            children: _getEventCards(),
+            children:  widget.events
+                .where((element) => !_showLiveDataEvents || _showLiveDataEvents && element.type != SensorEventType.LiveData)
+                .map((event) => ListTile(
+                    title: Text(event.type.label),
+                    dense: event.type == SensorEventType.LiveData,
+                    subtitle: Text(formatter.format(event.time).toString()),
+                    tileColor: event.type == SensorEventType.Connection
+                        ? Colors.green.shade100
+                        : event.type == SensorEventType.Disconnection
+                        ? Colors.red.shade100
+                        : Colors.white
+                )).toList().reversed.toList(),
           )
       ) : ListTile(
         title: Text("events.noEventsText").tr(),
