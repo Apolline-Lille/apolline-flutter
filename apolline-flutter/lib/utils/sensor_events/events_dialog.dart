@@ -72,11 +72,7 @@ class _EventsDialogState extends State<EventsDialog> {
                     title: Text(event.type.label),
                     dense: event.type == SensorEventType.LiveData,
                     subtitle: Text(formatter.format(event.time).toString()),
-                    tileColor: event.type == SensorEventType.Connection
-                        ? Colors.green.shade100
-                        : event.type == SensorEventType.Disconnection
-                        ? Colors.red.shade100
-                        : Colors.white
+                    tileColor: event.type.color
                 )).toList().reversed.toList(),
           )
       ) : ListTile(

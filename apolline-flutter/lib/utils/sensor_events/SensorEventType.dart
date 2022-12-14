@@ -23,7 +23,13 @@ extension SensorEventTypeUtils on SensorEventType {
 
   String get label {
     if (SensorEventTypeUtils._labels[this] == null)
-      throw RangeError("This SensorEventType has no associated label.");
+      throw RangeError("This SensorEventType has no associated data.");
     return SensorEventTypeUtils._labels[this]!.label.tr();
+  }
+
+  Color get color {
+    if (SensorEventTypeUtils._labels[this] == null)
+      throw RangeError("This SensorEventType has no associated data.");
+    return SensorEventTypeUtils._labels[this]!.color;
   }
 }
