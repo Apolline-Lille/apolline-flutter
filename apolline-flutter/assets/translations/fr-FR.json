@@ -121,7 +121,9 @@
     "types": {
       "disconnection": "Déconnecté du capteur",
       "connection": "Connecté au capteur",
-      "liveData": "Données de qualité de l'air reçues (live)"
+      "liveData": "Données de qualité de l'air reçues (live)",
+      "dataSendingOk": "Données transférées au serveur",
+      "dataSendingFailed": "Echec de l'envoi des données au serveur"
     }
   },
   "endpointDialog": {
