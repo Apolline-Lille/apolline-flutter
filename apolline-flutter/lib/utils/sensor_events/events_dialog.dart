@@ -42,19 +42,24 @@ class _EventsDialogState extends State<EventsDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Row(
-        children: [
-          Text(widget.deviceName),
-          Spacer(),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _showLiveDataEvents = !_showLiveDataEvents;
-                });
-              },
-              icon: Icon(_showLiveDataEvents ? CupertinoIcons.eye_slash : CupertinoIcons.eye)
-          )
-        ],
+      titlePadding: EdgeInsets.all(0),
+      title: Container(
+        padding: EdgeInsets.only(right: 20, left: 20, top: 16, bottom: 0),
+        color: Colors.white,
+        child: Row(
+          children: [
+            Text(widget.deviceName),
+            Spacer(),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    _showLiveDataEvents = !_showLiveDataEvents;
+                  });
+                },
+                icon: Icon(_showLiveDataEvents ? CupertinoIcons.eye_slash : CupertinoIcons.eye)
+            )
+          ],
+        )
       ),
       contentPadding: EdgeInsets.only(left: 0, bottom: 0, right: 0, top: 20),
       content: _hasEvents() ? Container(
