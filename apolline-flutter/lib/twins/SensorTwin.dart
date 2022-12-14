@@ -231,7 +231,11 @@ class SensorTwin {
       // Send data to influxDB
       List<DataPointModel> models = dataPoints.sublist(lowerBound, upperBound);
       print('Sending ${models.length} data points to InfluxDB');
-      await _service.write(DataPointModel.sensorsFmtToInfluxData(models), token: this._databaseToken);
+      await _service.write(
+          DataPointModel.sensorsFmtToInfluxData(models),
+          deviceName: this.name,
+          token: this._databaseToken
+      );
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();

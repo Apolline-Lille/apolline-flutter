@@ -121,7 +121,9 @@
     "types": {
       "disconnection": "Disconnected from sensor",
       "connection": "Connected to sensor",
-      "liveData": "Air quality data received (live)"
+      "liveData": "Air quality data received (live)",
+      "dataSendingOk": "Data sent successfully to server",
+      "dataSendingFailed": "Failed sending data to server"
     }
   },
   "endpointDialog": {
