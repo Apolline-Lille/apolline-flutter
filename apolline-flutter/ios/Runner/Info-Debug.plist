@@ -32,17 +32,19 @@
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Apolline uses Bluetooth to connect to the Blue sensors.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-    <string>Apolline uses a Bluetooth low energy connection to receive data from air quality sensors.</string>
+	<string>Apolline uses a Bluetooth low energy connection to receive data from air quality sensors.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_dartobservatory._tcp</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to scan QR codes</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always and when in use!</string>
+	<string>When sensor location is not available, Apolline uses your phone's location to tag gathered air quality measurements.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I have location always?</string>
+	<string>When sensor location is not available, Apolline uses your phone's location to tag gathered air quality measurements.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
+	<string>When sensor location is not available, Apolline uses your phone's location to tag gathered air quality measurements.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Need location when in use</string>
 	<key>UIBackgroundModes</key>
@@ -69,8 +71,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
-    <true/>
-    <key>NSCameraUsageDescription</key>
-    <string>This app needs camera access to scan QR codes</string>
+	<true/>
 </dict>
 </plist>
