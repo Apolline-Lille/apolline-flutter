@@ -31,6 +31,8 @@
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Apolline uses Bluetooth to connect to the Blue sensors.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+    <string>Apolline uses a Bluetooth low energy connection to receive data from air quality sensors.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_dartobservatory._tcp</string>
