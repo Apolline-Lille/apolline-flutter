@@ -42,6 +42,11 @@ class InfluxDBAPI {
   Future<void> write(String data, {String token = "", required String deviceName}) async {
     bool useTokenAuth = token.isNotEmpty;
 
+    if (!useTokenAuth) {
+      // TODO find out why this happens
+      print("This should NEVER happen anymore.");
+    }
+
     return useTokenAuth
         ? await client.postSilent("$_connectionString/write?db=$_db", deviceName, body: data, headers: {'Authorization': 'Token $token'}, encoding: Encoding.getByName("utf-8")!)
         : await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", deviceName, body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);

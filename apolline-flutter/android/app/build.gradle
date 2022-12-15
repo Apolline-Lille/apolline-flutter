@@ -42,6 +42,8 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        // https://github.com/MaikuB/flutter_local_notifications/issues/1771
+        checkReleaseBuilds false
     }
 
     defaultConfig {
