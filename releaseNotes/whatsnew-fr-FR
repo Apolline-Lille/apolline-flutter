@@ -1,7 +1,1 @@
-Apolline utilise désormais des jetons récupérés depuis les capteurs pour envoyer les données ;
-l'application envoie désormais les positions sous forme de longitude/latitude (au lieu d'utiliser des
-geohashes) ; le graphe affichant les données de qualité de l'air en direct ne clignote plus ; les
-dépendences de développement ainsi que la librairie Bluetooth ont été mises à jour ; appuyer sur le
-bouton "Scanner" lance effectivement un nouveau scan Bluetooth ; de nouvelles valeurs d'environnement
-sont envoyées au serveur ; le résultat de l'envoi des données au serveur est sauvegardé dans le
-journal des événements.
+Apolline utilise désormais des jetons récupérés depuis les capteurs pour envoyer les données ; l'application envoie désormais les positions sous forme exploitable ; le graphe affichant les données de qualité de l'air en direct ne clignote plus ; les dépendences de développement ainsi que la librairie Bluetooth ont été mises à jour ; appuyer sur le bouton "Scanner" lance effectivement un nouveau scan Bluetooth ; de nouvelles valeurs d'environnement sont envoyées au serveur.
