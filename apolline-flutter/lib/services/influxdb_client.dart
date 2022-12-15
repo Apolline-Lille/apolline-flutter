@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:apollineflutter/exception/bad_request_exception.dart';
 import 'package:apollineflutter/exception/lost_connection_exception.dart';
 import 'package:apollineflutter/models/server_endpoint_handler.dart';
+import 'package:apollineflutter/services/service_locator.dart';
+import 'package:apollineflutter/services/user_configuration_service.dart';
+import 'package:apollineflutter/utils/sensor_events/SensorEventType.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -36,12 +39,17 @@ class InfluxDBAPI {
 
   ///
   ///write data to influx database
-  Future<void> write(String data, {String token = ""}) async {
+  Future<void> write(String data, {String token = "", required String deviceName}) async {
     bool useTokenAuth = token.isNotEmpty;
 
+    if (!useTokenAuth) {
+      // TODO find out why this happens
+      print("This should NEVER happen anymore.");
+    }
+
     return useTokenAuth
-        ? await client.postSilent("$_connectionString/write?db=$_db", body: data, headers: {'Authorization': 'Token $token'}, encoding: Encoding.getByName("utf-8")!)
-        : await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);
+        ? await client.postSilent("$_connectionString/write?db=$_db", deviceName, body: data, headers: {'Authorization': 'Token $token'}, encoding: Encoding.getByName("utf-8")!)
+        : await client.postSilent("$_connectionString/write?db=$_db&u=$_username&p=$_password", deviceName, body: data, headers: {}, encoding: Encoding.getByName("utf-8")!);
   }
 
   ///
@@ -70,6 +78,7 @@ class InfluxDBAPI {
 class _InfluxDBClient extends http.BaseClient {
   static const OKSTATUS = [204, 200];
   http.Client _inner;
+  final UserConfigurationService _ucS = locator<UserConfigurationService>();
 
   ///
   ///constructor
@@ -100,13 +109,22 @@ class _InfluxDBClient extends http.BaseClient {
 
   ///
   ///post.
-  Future<void> postSilent(url, {required Map<String, String> headers, body, required Encoding encoding}) async {
+  Future<void> postSilent(url, String deviceName, {required Map<String, String> headers, body, required Encoding encoding}) async {
     http.Response resp;
     try{
       resp = await this.post(Uri.parse(url), headers: headers, body: body, encoding: encoding);
     } on SocketException catch(e) {
       throw LostConnectionException("server is unavailable ${e.toString()}");
     }
+
+    // log event
+    _ucS.userConf.addSensorEvent(
+        deviceName,
+        resp.statusCode == 204
+            ? SensorEventType.DataSendingOk
+            : SensorEventType.DataSendingFail
+    );
+    print(resp.body);
 
     if(!OKSTATUS.contains(resp.statusCode) ) {
       throw BadRequestException("Server not access with status code ${resp.statusCode} and body ${resp.body}");

@@ -231,7 +231,11 @@ class SensorTwin {
       // Send data to influxDB
       List<DataPointModel> models = dataPoints.sublist(lowerBound, upperBound);
       print('Sending ${models.length} data points to InfluxDB');
-      await _service.write(DataPointModel.sensorsFmtToInfluxData(models), token: this._databaseToken);
+      await _service.write(
+          DataPointModel.sensorsFmtToInfluxData(models),
+          deviceName: this.name,
+          token: this._databaseToken
+      );
 
       // Update local data in sqfLite
       List<int> ids = models.map((model) => model.id).toList();
@@ -277,7 +281,7 @@ class SensorTwin {
 
     if (!message.contains('\n')) return null;
     print("Got full line: " + message);
-    DataPointModel model = this._getPointWithPosition(message.split(';'));
+    DataPointModel model = this._getPointWithPosition(message.split('\n')[0].split(';'));
     _dataService.update(model);
     /* insert to sqflite */
     _sqfLiteService.addDataPoint(model.toJSON());
@@ -297,7 +301,9 @@ class SensorTwin {
   DataPointModel _getPointWithPosition (List<String> values) {
     double sensorLongitude = double.parse(values[DataPointModel.SENSOR_LONGITUDE]);
     double sensorLatitude = double.parse(values[DataPointModel.SENSOR_LATITUDE]);
+    double sensorAltitude = double.parse(values[DataPointModel.SENSOR_ALTITUDE]);
     double satellitesCount = double.parse(values[DataPointModel.SENSOR_GPS_SATELLITES_COUNT]);
+    double sensorSpeed = double.parse(values[DataPointModel.SENSOR_SPEED]);
 
     Position currentPosition;
     bool shouldUseSatellitePositioning = satellitesCount >= 3 && sensorLongitude != 0 && sensorLatitude != 0;
@@ -305,7 +311,7 @@ class SensorTwin {
     if (shouldUseSatellitePositioning) {
       currentPosition = Position(
           provider: PositionProvider.SENSOR,
-          geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude));
+          geohash: SimpleGeoHash.encode(sensorLatitude, sensorLongitude, sensorAltitude, sensorSpeed));
       if (!this._isUsingSatellitePositioning) {
         this._isUsingSatellitePositioning = true;
         _stopLocationService();
