@@ -122,16 +122,26 @@ class DataPointModel {
     var tmpK = addNestedData("temperature.k", this.temperatureK.toString(), Units.TEMPERATURE_KELVIN);
     var tmpDps310 = addNestedData("temperature_dps310.c", this.values[SENSOR_TEMP_DPS310], Units.TEMPERATURE_CELSIUS);
     var tmpAdj = addNestedData("temperature_adjusted.c", this.values[SENSOR_TEMP_ADJUSTED], Units.TEMPERATURE_CELSIUS);
-    // var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
 
     // Humidity
     var humi = addNestedData("humidity", this.values[SENSOR_HUMI], Units.PERCENTAGE);
     var humiC = addNestedData("humidity.compensated", this.humidityC.toString(), Units.PERCENTAGE);
     var humAdj = addNestedData("humidity_adjusted", this.values[SENSOR_HUMI_ADJUSTED], Units.PERCENTAGE);
-    // var humAm2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
 
+    // Others
     var batLevel = addNestedData("voltage", this.values[SENSOR_VOLT], Units.VOLTAGE);
     var pressure = addNestedData("pressure", this.values[SENSOR_PRESSURE], Units.PRESSURE);
+
+
+    //
+    // Check if sensor provides AM2320 data, and incorporate them if applicable
+    // TODO export this check in a method (will also be needed to display humidity)
+    if (this.values.length >= SENSOR_HUMI_AM2320) {
+      print("We should use AM2320 data.");
+      // var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
+      // var humAm2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
+    }
+
 
     // TODO add AM2320 metrics once sensor has actually been added
     return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$pressure\n$humAdj\n$batLevel";
