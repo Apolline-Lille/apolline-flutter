@@ -133,16 +133,17 @@ class DataPointModel {
     var pressure = addNestedData("pressure", this.values[SENSOR_PRESSURE], Units.PRESSURE);
 
 
+    String influxData =
+        "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$pressure\n$humAdj\n$batLevel";
+
     // Check if sensor provides AM2320 data, and incorporate them if applicable
     if (_hasAM2320Sensor()) {
-      print("We should use AM2320 data.");
-      // var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
-      // var humAm2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
+      var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
+      var humAm2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
+      influxData += "\n$tmpAm2320\n$humAm2320";
     }
 
-
-    // TODO add AM2320 metrics once sensor has actually been added
-    return "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$pressure\n$humAdj\n$batLevel";
+    return influxData;
   }
 
   ///Format data to write many sensorData into influxdb.
