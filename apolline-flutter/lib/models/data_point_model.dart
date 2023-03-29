@@ -133,10 +133,8 @@ class DataPointModel {
     var pressure = addNestedData("pressure", this.values[SENSOR_PRESSURE], Units.PRESSURE);
 
 
-    //
     // Check if sensor provides AM2320 data, and incorporate them if applicable
-    // TODO export this check in a method (will also be needed to display humidity)
-    if (this.values.length >= SENSOR_HUMI_AM2320) {
+    if (_hasAM2320Sensor()) {
       print("We should use AM2320 data.");
       // var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
       // var humAm2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
@@ -177,4 +175,12 @@ class DataPointModel {
             sensorName: json['deviceName'],
             position: Position(geohash: json['geohash'], provider: PositionProviderUtils.fromString(json['provider']), transport: json['transport']),
             date: json['date']);
+
+  /// AM2320 sensor was added to PAMELA sensors after their deployment, some of
+  /// them don't have this external sensor.
+  /// This allows to check if the current data point contains data produced by
+  /// the AM2320 sensor.
+  bool _hasAM2320Sensor() {
+    return this.values.length >= SENSOR_HUMI_AM2320 + 1;
+  }
 }
