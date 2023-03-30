@@ -54,7 +54,7 @@ class Quality extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(double.parse(lastReceivedData!.values[DataPointModel.SENSOR_TEMP]).toStringAsFixed(2) + '°C',
+            Text(double.parse(lastReceivedData!.values[DataPointModel.SENSOR_TEMP_AM2320]).toStringAsFixed(2) + '°C',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
