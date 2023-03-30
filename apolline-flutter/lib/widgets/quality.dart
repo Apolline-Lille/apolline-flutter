@@ -160,9 +160,9 @@ class Quality extends StatelessWidget {
                 Expanded(
                     child: Row(
                       children: [
-                        Expanded(child: this._getTemperatureInfo()),
-                        Expanded(child: this._getBatteryInfo()),
-                        Expanded(child: this._getHumidityInfo())
+                        Expanded(child: Transform.translate(child: this._getTemperatureInfo(), offset: Offset(10, 0),)),
+                        Expanded(child: Transform.translate(offset: Offset(10, 0), child: Transform.scale(child: this._getBatteryInfo(), scale: 0.7,))),
+                        Expanded(child: Transform.translate(child: this._getHumidityInfo(), offset: Offset(-5, 0),))
                       ],
                     )
                 )
