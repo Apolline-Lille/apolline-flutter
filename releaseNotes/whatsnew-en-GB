@@ -1,5 +1,1 @@
-Apolline now uses tokens from sensors to upload data; application now sends raw latitude/longitude
-coordinates instead of geohashes; live data graph does not blink anymore; development dependencies
-and Bluetooth library have been updated; "Scan" button now effectively triggers a new Bluetooth
-scan; new data values are reported to the server; data sending result to server is logged in events
-journal.
+Apolline now uses data from a sensor that's located outside of PAMELA body, which allows more accurate temperature and humidity measurements.
