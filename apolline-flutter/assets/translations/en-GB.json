@@ -23,6 +23,7 @@
     "incompatible": "This device is not compatible."
   },
   "temperature": "TEMPERATURE",
+  "humidity": "HUMIDITY",
   "statsView": {
     "pauseGathering": "Pause data gathering",
     "resumeGathering": "Resume data gathering"

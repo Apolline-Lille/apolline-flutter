@@ -54,7 +54,8 @@ class Quality extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(double.parse(lastReceivedData!.values[DataPointModel.SENSOR_TEMP]).toStringAsFixed(2) + '°C',
+            // Lower displayed temperature by 2 degrees, as Jerome told sensor is still influenced by internal battery warmth
+            Text((double.parse(lastReceivedData!.values[DataPointModel.SENSOR_TEMP_AM2320]) - 2).toStringAsFixed(2) + '°C',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
@@ -79,6 +80,32 @@ class Quality extends StatelessWidget {
         child: BatteryLevelIndicator(
             currentBatteryLevel: double.parse(lastReceivedData!.values[DataPointModel.SENSOR_VOLT]),
             key: this.key!,
+        )
+    );
+  }
+
+  Widget _getHumidityInfo () {
+    return Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(double.parse(lastReceivedData!.values[DataPointModel.SENSOR_HUMI_AM2320]).toStringAsFixed(2) + '%',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 30)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+              child: Text(
+                "humidity".tr(),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 14),
+              ),
+            )
+          ],
         )
     );
   }
@@ -108,6 +135,7 @@ class Quality extends StatelessWidget {
                   this._getPM25Gauge(),
                   this._getPM10Gauge(),
                   this._getTemperatureInfo(),
+                  this._getHumidityInfo(),
                   this._getBatteryInfo()
                 ],
               ),
@@ -132,8 +160,9 @@ class Quality extends StatelessWidget {
                 Expanded(
                     child: Row(
                       children: [
-                        Expanded(child: this._getTemperatureInfo()),
-                        Expanded(child: this._getBatteryInfo())
+                        Expanded(child: Transform.translate(child: this._getTemperatureInfo(), offset: Offset(10, 0),)),
+                        Expanded(child: Transform.translate(offset: Offset(10, 0), child: Transform.scale(child: this._getBatteryInfo(), scale: 0.7,))),
+                        Expanded(child: Transform.translate(child: this._getHumidityInfo(), offset: Offset(-5, 0),))
                       ],
                     )
                 )
