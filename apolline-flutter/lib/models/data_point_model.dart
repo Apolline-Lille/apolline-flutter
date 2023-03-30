@@ -137,7 +137,7 @@ class DataPointModel {
         "$pm1\n$pm25\n$pm10\n$pm03ab\n$pm05ab\n$pm1ab\n$pm25ab\n$pm5ab\n$pm10ab\n$tmpC\n$tmpK\n$tmpDps310\n$tmpAdj\n$humi\n$humiC\n$pressure\n$humAdj\n$batLevel";
 
     // Check if sensor provides AM2320 data, and incorporate them if applicable
-    if (hasAM2320Sensor()) {
+    if (featuresAM2320SensorData()) {
       var tmpAm2320 = addNestedData("temperature_am2320.c", this.values[SENSOR_TEMP_AM2320], Units.TEMPERATURE_CELSIUS);
       var humAm2320 = addNestedData("humidity_am2320", this.values[SENSOR_HUMI_AM2320], Units.PERCENTAGE);
       influxData += "\n$tmpAm2320\n$humAm2320";
@@ -181,7 +181,7 @@ class DataPointModel {
   /// them don't have this external sensor.
   /// This allows to check if the current data point contains data produced by
   /// the AM2320 sensor.
-  bool hasAM2320Sensor() {
+  bool featuresAM2320SensorData() {
     return this.values.length >= SENSOR_HUMI_AM2320 + 1;
   }
 }
