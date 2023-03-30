@@ -23,6 +23,7 @@
     "incompatible": "Ce périphérique n'est pas compatible avec l'application."
   },
   "temperature": "TEMPÉRATURE",
+  "humidity": "HUMIDITÉ",
   "statsView": {
     "pauseGathering": "Mettre en pause l'affichage des données",
     "resumeGathering": "Reprendre l'affichage des données"

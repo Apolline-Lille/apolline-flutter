@@ -84,6 +84,32 @@ class Quality extends StatelessWidget {
     );
   }
 
+  Widget _getHumidityInfo () {
+    return Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(double.parse(lastReceivedData!.values[DataPointModel.SENSOR_HUMI_AM2320]).toStringAsFixed(2) + '%',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 30)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+              child: Text(
+                "humidity".tr(),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 14),
+              ),
+            )
+          ],
+        )
+    );
+  }
+
 
   //Build gauges
   @override
@@ -109,6 +135,7 @@ class Quality extends StatelessWidget {
                   this._getPM25Gauge(),
                   this._getPM10Gauge(),
                   this._getTemperatureInfo(),
+                  this._getHumidityInfo(),
                   this._getBatteryInfo()
                 ],
               ),
@@ -134,7 +161,8 @@ class Quality extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(child: this._getTemperatureInfo()),
-                        Expanded(child: this._getBatteryInfo())
+                        Expanded(child: this._getBatteryInfo()),
+                        Expanded(child: this._getHumidityInfo())
                       ],
                     )
                 )
